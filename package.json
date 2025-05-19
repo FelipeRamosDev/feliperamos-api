@@ -1,0 +1,23 @@
+{
+  "name": "feliperamos-cv",
+  "version": "1.0.0",
+  "description": "Chat bot integrated with an OpenAI GPT agent that replies anything about me, if you are a recruiter, please try to chat with him.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsc ./index.ts && node ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FelipeRamosDev/feliperamos-cv.git"
+  },
+  "author": "Felipe Ramos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FelipeRamosDev/feliperamos-cv/issues"
+  },
+  "homepage": "https://github.com/FelipeRamosDev/feliperamos-cv#readme",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
