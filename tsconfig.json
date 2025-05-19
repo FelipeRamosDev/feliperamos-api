@@ -1,0 +1,9 @@
+{
+   "compilerOptions": {
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "dist"
+   },
+   "include": ["*.ts"],
+   "exclude": ["dist"]
+}
