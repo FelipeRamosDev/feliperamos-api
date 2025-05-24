@@ -2,7 +2,10 @@
    "compilerOptions": {
       "strict": true,
       "forceConsistentCasingInFileNames": true,
-      "outDir": "dist"
+      "outDir": "dist",
+      "target": "ES2015", // Ensures private fields are supported
+      "module": "NodeNext", // Modern module system
+      "moduleResolution": "nodenext"
    },
    "include": ["*.ts"],
    "exclude": ["dist"]
