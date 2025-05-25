@@ -1,6 +1,7 @@
 export interface AISetup {
    apiKey: string;
    assistantID?: string;
+   model?: string;
 }
 
 export type CreateResponseOpt = {
