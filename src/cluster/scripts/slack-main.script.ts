@@ -19,3 +19,14 @@ const slack = new SlackApp({
    botToken: SLACK_BOT_TOKEN,
    signingSecret: SLACK_SIGNING_SECRET
 });
+
+slack.onMessage(async ({ message, say }) => {
+   slack.askAssistant(message, async ({ error, data, output, threadID }) => {
+      if (error) {
+         return toError(`Something went wrong with askAssistent request! Error caught.`);
+      }
+
+      slack.setAiThread(message.user, threadID);
+      say(output).catch((err: any) => toError(`Something went wrong after "askAssistent" request when triggering the "say" method! Error caught.`));
+   });
+});

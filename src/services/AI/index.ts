@@ -72,7 +72,7 @@ export default class AI {
    
          return response.output_text;
       } catch (err) {
-         throw err;
+         throw toError('Error caught durig GPT response creating.');
       }
    }
 
@@ -109,7 +109,10 @@ export default class AI {
             return;
          }
 
-         return contentBlock.text.value;
+         return {
+            threadID: thread.id,
+            output: contentBlock.text.value
+         };
         } catch (err) {
          throw err;
       }

@@ -8,7 +8,7 @@ const slackAppCore: CoreSetup = {
       console.log('[CORE] slack-app is ready!');
    },
    onError: (err) => {
-      console.error(err);
+      toError(`Something went wrong with the "slack-app" core! Error caught.`);
    },
    onClose: () => {
       console.log('[CORE] slack-app was closed!');
