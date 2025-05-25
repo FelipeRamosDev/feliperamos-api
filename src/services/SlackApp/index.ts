@@ -1,4 +1,4 @@
-import { SlackAppSetup } from '../types/SlackApp.types';
+import { SlackAppSetup } from '../../types/SlackApp.types';
 import { App, StringIndexed } from '@slack/bolt';
 
 export default class SlackApp {

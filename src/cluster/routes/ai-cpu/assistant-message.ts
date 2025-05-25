@@ -1,4 +1,4 @@
-import { EndpointSetup } from '../../../models/types/EventEndpoint.types';
+import { EndpointSetup } from '../../../types/EventEndpoint.types';
 
 const aiCpuAssistantMessage: EndpointSetup = {
    path: '/ai-cpu/assistant-message',

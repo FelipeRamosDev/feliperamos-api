@@ -4,7 +4,7 @@ import InstanceBase from './InstanceBase';
 import Core from './Core';
 
 // Types
-import { ClusterSetup, CoreSetup } from '../types/ClusterManager.types';
+import { ClusterSetup, CoreSetup } from '../../types/ClusterManager.types';
 
 /**
  * Represents a cluster of Node.js processes managed by the InstanceBase.

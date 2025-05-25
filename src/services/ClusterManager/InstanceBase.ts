@@ -6,8 +6,8 @@ import Core from './Core';
 import Thread from './Thread';
 
 // Types
-import { InstanceBaseSetup } from '../types/ClusterManager.types';
-import { EndpointSetup } from '../../models/types/EventEndpoint.types';
+import { InstanceBaseSetup } from '../../types/ClusterManager.types';
+import { EndpointSetup } from '../../types/EventEndpoint.types';
 
 const publisher = new IORedis();
 

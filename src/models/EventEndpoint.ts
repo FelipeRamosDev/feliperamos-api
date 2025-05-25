@@ -2,7 +2,7 @@ import IORedis from 'ioredis';
 import Cluster from '../services/ClusterManager';
 import Core from '../services/ClusterManager/Core';
 import Thread from '../services/ClusterManager/Thread';
-import { EndpointSetup } from './types/EventEndpoint.types';
+import { EndpointSetup } from '../types/EventEndpoint.types';
 
 const ioRedis = new IORedis();
 
