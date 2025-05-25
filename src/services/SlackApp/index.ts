@@ -1,5 +1,5 @@
 import { SlackAppSetup } from '../types/SlackApp.types';
-import { App } from '@slack/bolt';
+import { App, StringIndexed } from '@slack/bolt';
 
 export default class SlackApp {
    public app: App;
@@ -32,5 +32,25 @@ export default class SlackApp {
 
    logError(...data: any) {
       this.app.logger.error('⚡️ ', ...data);
+   }
+
+   onMessage(callback: (params: StringIndexed) => Promise<void>, contain?: string) {
+      if (!callback) {
+         return;
+      }
+
+      if (contain) {
+         this.app.message(contain, callback);
+      } else {
+         this.app.message(callback);
+      }
+   }
+
+   onAction(actionID: string, callback: (params: StringIndexed) => Promise<void>) {
+      if (!actionID || !callback){
+         return;
+      }
+
+      this.app.action(actionID, callback);
    }
 }
