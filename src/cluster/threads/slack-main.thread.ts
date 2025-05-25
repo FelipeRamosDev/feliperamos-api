@@ -1,4 +1,4 @@
-import { ThreadSetup } from '../../services/types/ClusterManager.types';
+import { ThreadSetup } from '../../types/ClusterManager.types';
 
 const slackMainThread: ThreadSetup = {
    tagName: 'slack-main',

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
 
-import type { AISetup, CreateResponseOpt, ResponseInput } from '../types/AI.types.ts';
+import type { AISetup, CreateResponseOpt, ResponseInput } from '../../types/AI.types.ts';
 import { Thread } from 'openai/resources/beta/index.mjs';
 
 export default class AI {

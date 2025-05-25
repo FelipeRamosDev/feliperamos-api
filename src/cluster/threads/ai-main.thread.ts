@@ -1,4 +1,4 @@
-import { ThreadSetup } from '../../services/types/ClusterManager.types';
+import { ThreadSetup } from '../../types/ClusterManager.types';
 import aiCpuAssistantMessage from '../routes/ai-cpu/assistant-message';
 
 const aiMainThread: ThreadSetup = {
