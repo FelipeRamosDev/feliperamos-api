@@ -7,6 +7,10 @@ import Cluster from './Cluster';
 import { ThreadSetup } from '../types/ClusterManager.types';
 import { EndpointSetup } from '../../models/types/EventEndpoint.types';
 
+declare global {
+  var thread: Thread;
+}
+
 /**
  * Represents a thread in a multi-threaded environment, extending the capabilities of InstanceBase.
  */
@@ -28,7 +32,7 @@ class Thread extends InstanceBase {
          routes.map((route: EndpointSetup) => this.setRoute(route));
       }
 
-      process.thread = this;
+      global.thread = this;
    }
 
    init(parent?: Core): this {
