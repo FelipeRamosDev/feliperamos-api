@@ -1,14 +1,6 @@
 import Thread from '../ClusterManager/Thread';
 import { EndpointSetup } from '../../models/types/EventEndpoint.types';
 
-declare global {
-   namespace NodeJS {
-      interface Process {
-         thread: Thread;
-      }
-   }
-}
-
 export interface InstanceBaseSetup {
    id?: string;
    tagName?: string;

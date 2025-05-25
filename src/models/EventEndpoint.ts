@@ -15,7 +15,7 @@ type InstanceBase = any; // Replace `any` with the actual type if known
  */
 class EventEndpoint {
    public path: string;
-   public controller: (data: any) => void;
+   public controller: (data: any, done?: () => void) => void;
    private _instance: () => Cluster | Thread | Core;
    public ioRedis: IORedis;
 
@@ -56,11 +56,25 @@ class EventEndpoint {
       });
 
       this.ioRedis.on('message', (channel: string, message: string) => {
-         if (channel !== this.path) return;
+         if (channel !== this.path) {
+            return;
+         }
 
          try {
             const data = JSON.parse(message);
-            this.controller.call(this, data);
+
+            if (data.callbackID) {
+               this.controller.call(this, data, (...args: any) => {
+                  if (!data.fromPath || !data.callbackID) {
+                     return;
+                  }
+
+                  this.instance.sendTo(data.fromPath, { callbackID: data.callbackID, params: args });
+               });
+            } else {
+               this.controller.call(this, data);
+            }
+
          } catch (err) {
             console.error(err);
          }

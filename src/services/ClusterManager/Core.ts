@@ -7,10 +7,6 @@ import Cluster from './Cluster';
 import { CoreSetup, ThreadSetup } from '../types/ClusterManager.types';
 import { EndpointSetup } from '../../models/types/EventEndpoint.types';
 
-declare global {
-  var core: Core;
-}
-
 /**
  * Represents a core process managed by InstanceBase, handling threads and worker processes.
  */
@@ -47,8 +43,6 @@ class Core extends InstanceBase {
       this.worker.on('error', this.callbacks.onError.bind(this));
       this.worker.on('errormessage', this.callbacks.onError.bind(this));
     }
-
-    global.core = this;
   }
 
   get isWorker(): boolean {
