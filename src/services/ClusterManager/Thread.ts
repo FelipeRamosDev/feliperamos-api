@@ -27,8 +27,6 @@ class Thread extends InstanceBase {
       if (this.isThread) {
          routes.map((route: EndpointSetup) => this.setRoute(route));
       }
-
-      process.thread = this;
    }
 
    init(parent?: Core): this {
