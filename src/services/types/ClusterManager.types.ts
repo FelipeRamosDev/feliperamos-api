@@ -14,13 +14,14 @@ export interface InstanceBaseSetup {
 }
 
 export interface ThreadSetup extends InstanceBaseSetup {
+   filePath?: string;
    isInit?: boolean;
 }
 
 export interface CoreSetup extends InstanceBaseSetup {
   worker?: Worker;
   _threads?: Map<string, Thread>;
-  threads?: Thread[];
+  threads?: ThreadSetup[];
 };
 
 export interface ClusterSetup extends InstanceBaseSetup {

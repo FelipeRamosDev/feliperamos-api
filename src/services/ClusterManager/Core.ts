@@ -4,7 +4,7 @@ import Thread from './Thread';
 import Cluster from './Cluster';
 
 // Types
-import { CoreSetup } from '../types/ClusterManager.types';
+import { CoreSetup, ThreadSetup } from '../types/ClusterManager.types';
 import { EndpointSetup } from '../../models/types/EventEndpoint.types';
 
 /**
@@ -28,7 +28,9 @@ class Core extends InstanceBase {
       routes.map((route: EndpointSetup) => this.setRoute(route));
       if (!this.worker) return;
 
-      threads.map((thread: Thread) => {
+      threads.map((threadSetup: ThreadSetup) => {
+        const thread = new Thread(threadSetup, this);
+
         thread.init(this);
         this.setThread(thread);
       });
