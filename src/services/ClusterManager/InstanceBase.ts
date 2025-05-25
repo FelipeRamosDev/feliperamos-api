@@ -69,7 +69,7 @@ class InstanceBase {
 
       this.ioRedis.subscribe(this.id, (err) => {
          if (err) {
-            console.error('Error on subscribing the event endpoint: ' + this.id);
+            toError('Error on subscribing the event endpoint: ' + this.id);
          } else {
             console.log(`Subscribed to event endpoint: ${this.id}`);
          }
@@ -90,7 +90,7 @@ class InstanceBase {
 
             callback.call(this, ...data.params);
          } catch (err) {
-            console.error(err);
+            toError(`Something went wrong when parsing message coming from the ioredis event! Error caught.`);
          }
       });
    }

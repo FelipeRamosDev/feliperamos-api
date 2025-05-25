@@ -23,10 +23,10 @@ const slack = new SlackApp({
 slack.onMessage(async ({ message, say }) => {
    slack.askAssistant(message, async ({ error, data, output, threadID }) => {
       if (error) {
-         return console.error(data);
+         return toError(`Something went wrong with askAssistent request! Error caught.`);
       }
 
       slack.setAiThread(message.user, threadID);
-      say(output).catch((err: any) => console.error(err));
+      say(output).catch((err: any) => toError(`Something went wrong after "askAssistent" request when triggering the "say" method! Error caught.`));
    });
 });

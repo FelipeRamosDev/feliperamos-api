@@ -46,10 +46,7 @@ class EventEndpoint {
 
       this.ioRedis.subscribe(this.path, (err) => {
          if (err) {
-            console.error({
-               name: 'EVENT_ENDPOINT_SUBSCRIBE',
-               message: 'Error on subscribing the event endpoint: ' + this.path,
-            });
+            toError('Error on subscribing the event endpoint: ' + this.path);
          } else {
             console.log(`Subscribed to event endpoint: ${this.path}`);
          }
@@ -76,7 +73,7 @@ class EventEndpoint {
             }
 
          } catch (err) {
-            console.error(err);
+            toError(`Something went wrong parsing the arrived message on ioredis event!`);
          }
       });
    }
