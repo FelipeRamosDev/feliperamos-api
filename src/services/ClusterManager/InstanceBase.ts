@@ -9,6 +9,15 @@ import Thread from './Thread';
 import { InstanceBaseSetup } from '../types/ClusterManager.types';
 import { EndpointSetup } from '../../models/types/EventEndpoint.types';
 
+const publisher = new IORedis();
+
+declare global {
+  var callbacks: Map<string, (...args: any) => any>;
+  var instance: Cluster | Core | Thread | InstanceBase;
+}
+
+global.callbacks = new Map();
+
 /**
  * Represents a base instance with routes, data storage, and lifecycle callbacks.
  */
@@ -55,6 +64,35 @@ class InstanceBase {
          onClose,
          onError,
       };
+
+      global.instance = this;
+
+      this.ioRedis.subscribe(this.id, (err) => {
+         if (err) {
+            console.error('Error on subscribing the event endpoint: ' + this.id);
+         } else {
+            console.log(`Subscribed to event endpoint: ${this.id}`);
+         }
+      });
+
+      this.ioRedis.on('message', (channel: string, message: string) => {
+         if (channel !== this.id) {
+            return;
+         }
+
+         try {
+            const data = JSON.parse(message);
+            const callback = callbacks.get(data.callbackID);
+
+            if (typeof callback !== 'function') {
+               return;
+            }
+
+            callback.call(this, ...data.params);
+         } catch (err) {
+            console.error(err);
+         }
+      });
    }
 
    get parent(): InstanceBase | undefined {
@@ -104,7 +142,15 @@ class InstanceBase {
       this.callbacks.onError(err);
    }
 
-   sendTo(path: string, data: any) {
+   sendTo(path: string, data: any, callback?: (...params: any) => void | Promise<void>) {
+      if (callback) {
+         const callbackID = this.genRandomBytes();
+
+         callbacks.set(callbackID, callback);
+         data.callbackID = callbackID;
+         data.fromPath = instance.id;
+      }
+
       this.publishEvent(path, data);
    }
 
@@ -116,8 +162,8 @@ class InstanceBase {
       } catch (err) {
          return;
       }
-   
-      this.ioRedis.publish(eventName, dataString);
+
+      publisher.publish(eventName, dataString);
    }
 }
 

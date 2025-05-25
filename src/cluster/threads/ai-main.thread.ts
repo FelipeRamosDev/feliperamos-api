@@ -3,6 +3,7 @@ import { ThreadSetup } from '../../services/types/ClusterManager.types';
 const aiMainThread: ThreadSetup = {
    tagName: 'ai-main',
    filePath: './dist/src/cluster/scripts/ai-main.script.js',
+   routes: [  ],
    onReady: () => {
       console.log('[THREAD] ai-main is ready!');
    },

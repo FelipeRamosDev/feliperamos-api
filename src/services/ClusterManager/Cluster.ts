@@ -6,10 +6,6 @@ import Core from './Core';
 // Types
 import { ClusterSetup, CoreSetup } from '../types/ClusterManager.types';
 
-declare global {
-  var cluster: Cluster;
-}
-
 /**
  * Represents a cluster of Node.js processes managed by the InstanceBase.
  */
@@ -26,9 +22,6 @@ class Cluster extends InstanceBase {
       this._cores = new Map();
       this.type = 'cluster';
       this.onlineCores = 0;
-
-      // Appending the cluster to the current global context
-      global.cluster = this;
 
       try {
          const maxCPUs = os.cpus().length;
