@@ -109,7 +109,10 @@ export default class AI {
             return;
          }
 
-         return contentBlock.text.value;
+         return {
+            threadID: thread.id,
+            output: contentBlock.text.value
+         };
         } catch (err) {
          throw err;
       }

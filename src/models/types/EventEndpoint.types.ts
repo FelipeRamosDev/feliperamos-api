@@ -1,4 +1,4 @@
 export interface EndpointSetup {
    path: string;
-   controller: (data: any, done?: () => void | Promise<void>) => void;
+   controller: (data: any, done?: (...args: any) => void | Promise<void>) => void;
 }

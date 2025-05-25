@@ -19,3 +19,14 @@ const slack = new SlackApp({
    botToken: SLACK_BOT_TOKEN,
    signingSecret: SLACK_SIGNING_SECRET
 });
+
+slack.onMessage(async ({ message, say }) => {
+   slack.askAssistant(message, async ({ error, data, output, threadID }) => {
+      if (error) {
+         return console.error(data);
+      }
+
+      slack.setAiThread(message.user, threadID);
+      say(output).catch((err: any) => console.error(err));
+   });
+});
