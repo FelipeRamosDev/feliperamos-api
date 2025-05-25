@@ -8,7 +8,7 @@ const aiCPU: CoreSetup = {
       console.log('[CORE] ai-cpu is ready!');
    },
    onError: (err) => {
-      console.error(err);
+      toError(`Something went wrong with the "ai-cpu" core! Error caught.`);
    },
    onClose: () => {
       console.log('[CORE] ai-cpu was closed!');

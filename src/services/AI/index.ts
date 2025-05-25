@@ -72,7 +72,7 @@ export default class AI {
    
          return response.output_text;
       } catch (err) {
-         throw err;
+         throw toError('Error caught durig GPT response creating.');
       }
    }
 

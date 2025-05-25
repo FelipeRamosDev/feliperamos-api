@@ -7,7 +7,7 @@ const slackMainThread: ThreadSetup = {
       console.log('[THREAD] slack-main is ready!');
    },
    onError: (err) => {
-      console.error(err);
+      toError(`Something went wrong with "slack-main" thread! Error caught.`);
    },
    onClose: () => {
       console.log('[THREAD] slack-main was closed!');

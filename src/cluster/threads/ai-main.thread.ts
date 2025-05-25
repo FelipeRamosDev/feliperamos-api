@@ -9,7 +9,7 @@ const aiMainThread: ThreadSetup = {
       console.log('[THREAD] ai-main is ready!');
    },
    onError: (err) => {
-      console.error(err);
+      toError(`Something went wrong with "ai-main" thread! Error caught.`);
    },
    onClose: () => {
       console.log('[THREAD] ai-main was closed!');
