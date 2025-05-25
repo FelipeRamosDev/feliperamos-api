@@ -12,14 +12,16 @@ export default class AI {
 
    public client: OpenAI;
    public isAssistant: boolean;
+   public model: string;
 
    constructor (setup: AISetup) {
-      const { apiKey, assistantID } = setup || {};
+      const { apiKey, assistantID, model = 'gpt-4.1-nano' } = setup || {};
 
       this._threads = new Map();
       this._apiKey = apiKey;
       this._assistantID = assistantID;
 
+      this.model = model;
       this.isAssistant = Boolean(this._assistantID);
       this.client = new OpenAI({ apiKey: this._apiKey });
    }
@@ -61,7 +63,7 @@ export default class AI {
    }
 
    async createResponse(input: string | ResponseInput[], opt?: CreateResponseOpt) {
-      const { model = 'gpt-4.1' } = Object(opt);
+      const { model = this.model } = Object(opt);
 
       try {
          const response = await this.responses.create({
