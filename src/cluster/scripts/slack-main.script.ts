@@ -14,7 +14,7 @@ if (!SLACK_APP_TOKEN || !SLACK_BOT_TOKEN || !SLACK_SIGNING_SECRET) {
 const thread = new Thread(slackMainThread);
 thread.init();
 
-process.slack = new SlackApp({
+const slack = new SlackApp({
    appToken: SLACK_APP_TOKEN,
    botToken: SLACK_BOT_TOKEN,
    signingSecret: SLACK_SIGNING_SECRET

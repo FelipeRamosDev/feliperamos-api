@@ -15,4 +15,3 @@ export interface SlackAppSetup extends AppOptions {
    botToken: string;
    signingSecret: string;
 }
-
