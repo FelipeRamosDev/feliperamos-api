@@ -9,6 +9,7 @@ import { EndpointSetup } from '../../types/EventEndpoint.types';
 
 /**
  * Represents a thread in a multi-threaded environment, extending the capabilities of InstanceBase.
+ * Handles thread initialization, route registration, and worker lifecycle management.
  */
 class Thread extends InstanceBase {
    public type: string;
@@ -16,6 +17,11 @@ class Thread extends InstanceBase {
    public isInit: boolean = false;
    public worker?: Worker;
 
+   /**
+    * Constructs a Thread instance, registers routes, and sets thread state.
+    * @param setup - The thread configuration object, including routes and initialization flag.
+    * @param parent - Optional parent Core or Cluster instance.
+    */
    constructor(setup: ThreadSetup = {}, parent?: Core | Cluster) {
       const { routes = [], isInit } = setup || {};
       super(setup, parent);
@@ -29,6 +35,12 @@ class Thread extends InstanceBase {
       }
    }
 
+   /**
+    * Initializes the thread, sets the parent, and manages worker creation or data assignment.
+    * Registers lifecycle event listeners for the worker.
+    * @param parent - Optional parent Core instance.
+    * @returns The initialized Thread instance.
+    */
    init(parent?: Core): this {
       if (parent) {
          this.setParent(parent);
@@ -53,10 +65,17 @@ class Thread extends InstanceBase {
       return this;
    }
 
+   /**
+    * Gets the thread ID if running as a thread.
+    * @returns The thread ID or undefined if not a thread.
+    */
    get threadID(): number | undefined {
       return this.isThread ? this.worker?.threadId : undefined;
    }
 
+   /**
+    * Terminates the worker thread if running as the main thread and a worker exists.
+    */
    terminate(): void {
       if (!this.isThread && this.worker) {
          this.worker.terminate();
