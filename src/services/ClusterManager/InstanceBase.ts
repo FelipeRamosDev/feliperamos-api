@@ -10,13 +10,9 @@ import { InstanceBaseSetup } from '../../types/ClusterManager.types';
 import { EndpointSetup } from '../../types/EventEndpoint.types';
 
 const publisher = new IORedis();
-
-declare global {
-  var callbacks: Map<string, (...args: any) => any>;
-  var instance: Cluster | Core | Thread | InstanceBase;
+if (!global.callbacks) {
+   global.callbacks = new Map();
 }
-
-global.callbacks = new Map();
 
 /**
  * Represents a base instance with routes, data storage, and lifecycle callbacks.
@@ -134,11 +130,11 @@ class InstanceBase {
       return value;
    }
 
-   deleteValue(key: string): void {
+   deleteValue(key: string) {
       this._dataStore.delete(key);
    }
 
-   triggerError(err: any): void {
+   triggerError(err: any) {
       this.callbacks.onError(err);
    }
 

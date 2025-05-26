@@ -28,7 +28,7 @@ export default class SlackApp {
       process.slack = this;
    }
 
-   getAiThread(slackUser: string) {
+   getAiThread(slackUser: string): string | undefined {
       return this._aiThreads.get(slackUser);
    }
 

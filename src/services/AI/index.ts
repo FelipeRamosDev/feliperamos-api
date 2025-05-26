@@ -74,11 +74,11 @@ export default class AI {
    
          return response.output_text;
       } catch (err) {
-         throw toError('Error caught durig GPT response creating.');
+         throw toError('Error caught during GPT response creating.');
       }
    }
 
-   async threadMessage(threadID: string, message: string) {
+   async threadMessage(threadID: string = '', message: string) {
       if (!this.isAssistant || this._assistantID === undefined) {
          throw new Error(`You need to provide the "assistantID" on the AI instance construction.`);
       }
