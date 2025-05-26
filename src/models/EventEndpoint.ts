@@ -6,12 +6,11 @@ import { EndpointSetup } from '../types/EventEndpoint.types';
 
 const ioRedis = new IORedis();
 
-
-
 type InstanceBase = any; // Replace `any` with the actual type if known
 
 /**
  * Represents an API endpoint configuration.
+ * Handles subscription to a Redis channel, message routing, and controller invocation.
  */
 class EventEndpoint {
    public path: string;
@@ -19,6 +18,12 @@ class EventEndpoint {
    private _instance: () => Cluster | Thread | Core;
    public ioRedis: IORedis;
 
+   /**
+    * Constructs an EventEndpoint, subscribes to the Redis channel, and sets up message handling.
+    * @param setup - The endpoint configuration object, including path and controller.
+    * @param instance - The parent instance (Cluster, Core, or Thread).
+    * @throws If path or controller are not provided.
+    */
    constructor(setup: EndpointSetup, instance: InstanceBase) {
       const { path, controller } = setup;
 
@@ -44,6 +49,7 @@ class EventEndpoint {
       this.path = path;
       this.controller = controller;
 
+      // Subscribe to the Redis channel for this endpoint's path
       this.ioRedis.subscribe(this.path, (err) => {
          if (err) {
             toError('Error on subscribing the event endpoint: ' + this.path);
@@ -52,6 +58,7 @@ class EventEndpoint {
          }
       });
 
+      // Listen for messages on the Redis channel and invoke the controller
       this.ioRedis.on('message', (channel: string, message: string) => {
          if (channel !== this.path) {
             return;
@@ -80,6 +87,7 @@ class EventEndpoint {
 
    /**
     * Retrieves the instance to which this route belongs.
+    * @returns The parent instance (Cluster, Core, or Thread).
     */
    get instance(): InstanceBase {
       return this._instance();
@@ -87,6 +95,7 @@ class EventEndpoint {
 
    /**
     * Sets a new instance for this route.
+    * @param instance - The new parent instance.
     */
    setInstance(instance: InstanceBase): void {
       this._instance = () => instance;
