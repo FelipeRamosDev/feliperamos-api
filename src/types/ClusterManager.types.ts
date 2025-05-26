@@ -1,5 +1,5 @@
-import Thread from '../ClusterManager/Thread';
-import { EndpointSetup } from '../../models/types/EventEndpoint.types';
+import Thread from '../services/ClusterManager/Thread';
+import { EndpointSetup } from './EventEndpoint.types';
 
 export interface InstanceBaseSetup {
    id?: string;

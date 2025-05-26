@@ -2,11 +2,6 @@ import AI from '../../services/AI';
 import Thread from '../../services/ClusterManager/Thread';
 import aiMainThread from '../threads/ai-main.thread';
 
-declare global {
-  var thread: Thread;
-  var ai: AI;
-}
-
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID;
 

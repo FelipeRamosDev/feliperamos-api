@@ -1,6 +1,7 @@
 import Thread from '../../services/ClusterManager/Thread';
 import slackMainThread from '../threads/slack-main.thread';
 import SlackApp from '../../services/SlackApp';
+import { StringIndexed } from '@slack/bolt';
 
 // Keys
 const SLACK_APP_TOKEN = process.env.SLACK_APP_TOKEN;
@@ -20,8 +21,19 @@ const slack = new SlackApp({
    signingSecret: SLACK_SIGNING_SECRET
 });
 
-slack.onMessage(async ({ message, say }) => {
+slack.onMessage(async ({ message, say }: StringIndexed) => {
+   const feedbackTime1 = setTimeout(() => {
+      say(`_Thinking... I'll have a response for you shortly!..._`);
+   }, 1000);
+
+   const feedbackTime2 = setTimeout(() => {
+      say(`_One moment while I get that information for you..._`);
+   }, 5000);
+
    slack.askAssistant(message, async ({ error, data, output, threadID }) => {
+      clearTimeout(feedbackTime1);
+      clearTimeout(feedbackTime2);
+
       if (error) {
          return toError(`Something went wrong with askAssistent request! Error caught.`);
       }

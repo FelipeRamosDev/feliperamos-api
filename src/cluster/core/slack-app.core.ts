@@ -1,4 +1,4 @@
-import { CoreSetup } from '../../services/types/ClusterManager.types';
+import { CoreSetup } from '../../types/ClusterManager.types';
 import slackMainThread from '../threads/slack-main.thread';
 
 const slackAppCore: CoreSetup = {

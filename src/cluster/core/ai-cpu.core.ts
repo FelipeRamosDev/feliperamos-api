@@ -1,4 +1,4 @@
-import { CoreSetup } from '../../services/types/ClusterManager.types';
+import { CoreSetup } from '../../types/ClusterManager.types';
 import aiMainThread from '../threads/ai-main.thread';
 
 const aiCPU: CoreSetup = {
