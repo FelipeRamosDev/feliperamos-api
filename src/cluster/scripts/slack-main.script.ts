@@ -31,12 +31,12 @@ slack.onMessage(async ({ message, say }: StringIndexed) => {
    }, 5000);
 
    slack.askAssistant(message, async ({ error, data, output, threadID }) => {
+      clearTimeout(feedbackTime1);
+      clearTimeout(feedbackTime2);
+
       if (error) {
          return toError(`Something went wrong with askAssistent request! Error caught.`);
       }
-
-      clearTimeout(feedbackTime1);
-      clearTimeout(feedbackTime2);
 
       slack.setAiThread(message.user, threadID);
       say(output).catch((err: any) => toError(`Something went wrong after "askAssistent" request when triggering the "say" method! Error caught.`));

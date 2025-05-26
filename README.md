@@ -1,5 +1,6 @@
 # feliperamos-cv (v1.0.0)
 
+This app is a chatbot powered by my personal assistant. It was trained to answer questions about my career, acting as a live, interactive resumé. Recruiters can ask it anything they’d like to know about my professional background.
 A modular, scalable Node.js/TypeScript backend for AI-powered Slack applications, built with a cluster/thread architecture and Redis-based event routing.
 
 ---
@@ -85,12 +86,12 @@ slack.onMessage(async ({ message, say }) => {
    }, 5000);
 
    slack.askAssistant(message, async ({ error, data, output, threadID }) => {
+      clearTimeout(feedbackTime1);
+      clearTimeout(feedbackTime2);
+
       if (error) {
          return toError(`Something went wrong with askAssistant request! Error caught.`);
       }
-
-      clearTimeout(feedbackTime1);
-      clearTimeout(feedbackTime2);
 
       slack.setAiThread(message.user, threadID);
    });
@@ -101,12 +102,12 @@ slack.onMessage(async ({ message, say }) => {
 
 ## Project Structure
 
-- `src/services/ClusterManager/` — Cluster, Core, Thread, and InstanceBase classes
-- `src/services/SlackApp/` — SlackApp integration and helpers
-- `src/services/AI/` — OpenAI API integration and thread/message management
-- `src/models/` — EventEndpoint, ErrorModel, and related models
-- `src/cluster/routes/` — Event endpoint route definitions
-- `src/cluster/core/` — Core definitions for Slack and AI
+- `src/services/ClusterManager/` — Cluster, Core, Thread, and InstanceBase classes to create a cluster.
+- `src/services/SlackApp/` — SlackApp integration with Slack API.
+- `src/services/AI/` — OpenAI API integration and thread/message management.
+- `src/models/` — EventEndpoint, ErrorModel, and project models.
+- `src/cluster/routes/` — Event endpoint route definitions.
+- `src/cluster/core/` — The code that will create a Core under the cluster, a fork on the cluster.
 - `src/types/` — TypeScript type definitions
 
 ---
