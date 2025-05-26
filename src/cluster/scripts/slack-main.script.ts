@@ -1,6 +1,7 @@
 import Thread from '../../services/ClusterManager/Thread';
 import slackMainThread from '../threads/slack-main.thread';
 import SlackApp from '../../services/SlackApp';
+import { StringIndexed } from '@slack/bolt';
 
 // Keys
 const SLACK_APP_TOKEN = process.env.SLACK_APP_TOKEN;
@@ -20,7 +21,7 @@ const slack = new SlackApp({
    signingSecret: SLACK_SIGNING_SECRET
 });
 
-slack.onMessage(async ({ message, say }) => {
+slack.onMessage(async ({ message, say }: StringIndexed) => {
    const feedbackTime1 = setTimeout(() => {
       say(`_Thinking... I'll have a response for you shortly!..._`);
    }, 1000);

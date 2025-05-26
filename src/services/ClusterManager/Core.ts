@@ -53,7 +53,7 @@ class Core extends InstanceBase {
     return this.isWorker ? cluster.worker?.id : this.worker?.id;
   }
 
-  getThread(threadID: string) {
+  getThread(threadID: string): Thread | undefined {
     return this._threads.get(threadID);
   }
 
