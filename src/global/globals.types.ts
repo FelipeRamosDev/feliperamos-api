@@ -4,7 +4,7 @@ import Cluster from '../services/ClusterManager/Cluster';
 import Core from '../services/ClusterManager/Core';
 import InstanceBase from '../services/ClusterManager/InstanceBase';
 import Thread from '../services/ClusterManager/Thread';
-import SlackApp from '../services/SlackApp';
+import SlackApp from '../services/SlackApp/SlackApp';
 
 declare global {
   var ai: AI;
