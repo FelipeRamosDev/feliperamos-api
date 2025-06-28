@@ -33,8 +33,8 @@ const aiCpuAssistantMessage: EndpointSetup = {
             threadID,
             output
          });
-      }).catch(err => {
-         done(toError(err.message || err.msg || `Error occured when requesting response from OpenAI!`));
+      }).catch((err: Error) => {
+         done(toError(err.message || `Error occured when requesting response from OpenAI!`));
       });
    }
 };
