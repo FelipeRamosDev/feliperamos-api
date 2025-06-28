@@ -34,7 +34,7 @@ const aiCpuAssistantMessage: EndpointSetup = {
             output
          });
       }).catch((err: Error) => {
-         done(toError(err.message || `Error occured when requesting response from OpenAI!`));
+         done(toError(err.message || `Error occurred when requesting response from OpenAI!`));
       });
    }
 };
