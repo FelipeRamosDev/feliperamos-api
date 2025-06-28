@@ -1,8 +1,9 @@
 import IORedis from 'ioredis';
-import { Cluster, Core, Thread } from '../services';
+import { Cluster, Core, InstanceBase, Thread } from '../services';
 import { EndpointSetup } from '../types/EventEndpoint.types';
 
-const ioRedis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const ioRedis = new IORedis(REDIS_URL);
 
 /**
  * Represents an API endpoint configuration.
@@ -11,7 +12,7 @@ const ioRedis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
 class EventEndpoint {
    public path: string;
    public controller: (data: any, done?: () => void) => void;
-   private _instance: () => Cluster | Thread | Core;
+   private _instance: () => Cluster | Thread | Core | InstanceBase | undefined;
    public ioRedis: IORedis;
 
    /**
@@ -20,7 +21,7 @@ class EventEndpoint {
     * @param instance - The parent instance (Cluster, Core, or Thread).
     * @throws If path or controller are not provided.
     */
-   constructor(setup: EndpointSetup, instance: Cluster | Thread | Core) {
+   constructor(setup: EndpointSetup, instance?: Cluster | Thread | Core | InstanceBase | undefined) {
       const { path, controller } = setup;
 
       if (!path) {
@@ -69,7 +70,7 @@ class EventEndpoint {
                      return;
                   }
 
-                  this.instance.sendTo(data.fromPath, { callbackID: data.callbackID, params: args });
+                  this.instance?.sendTo(data.fromPath, { callbackID: data.callbackID, params: args });
                });
             } else {
                this.controller.call(this, data);
@@ -85,7 +86,7 @@ class EventEndpoint {
     * Retrieves the instance to which this route belongs.
     * @returns The parent instance (Cluster, Core, or Thread).
     */
-   get instance(): Cluster | Thread | Core {
+   get instance(): Cluster | Thread | Core | InstanceBase | undefined {
       return this._instance();
    }
 
@@ -93,7 +94,7 @@ class EventEndpoint {
     * Sets a new instance for this route.
     * @param instance - The new parent instance.
     */
-   setInstance(instance: Cluster | Thread | Core): void {
+   setInstance(instance: Cluster | Thread | Core | InstanceBase | undefined): void {
       this._instance = () => instance;
    }
 }

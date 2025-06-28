@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    container_name: feliperamos-api
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    volumes:
+      - ./logs:/app/logs
+    env_file:
+      - .env.local
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+  logs:
+
+networks:
+  feliperamos-net:
+    driver: bridge

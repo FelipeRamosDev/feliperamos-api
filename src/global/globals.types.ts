@@ -1,5 +1,5 @@
 import ErrorModel from '../models/ErrorModel';
-import AI from '../services/AI';
+import { AI } from '../services';
 import Cluster from '../services/ClusterManager/Cluster';
 import Core from '../services/ClusterManager/Core';
 import InstanceBase from '../services/ClusterManager/InstanceBase';
