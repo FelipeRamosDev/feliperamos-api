@@ -1,4 +1,4 @@
-import AI from '../../services/AI';
+import { AI } from '../../services';
 import Thread from '../../services/ClusterManager/Thread';
 import aiMainThread from '../threads/ai-main.thread';
 

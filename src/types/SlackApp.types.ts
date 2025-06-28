@@ -1,5 +1,5 @@
 import { AppOptions } from '@slack/bolt';
-import SlackApp from '../services/SlackApp';
+import SlackApp from '../services/SlackApp/SlackApp';
 
 declare global {
    namespace NodeJS {

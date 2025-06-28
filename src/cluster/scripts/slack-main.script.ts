@@ -1,6 +1,6 @@
 import Thread from '../../services/ClusterManager/Thread';
 import slackMainThread from '../threads/slack-main.thread';
-import SlackApp from '../../services/SlackApp';
+import SlackApp from '../../services/SlackApp/SlackApp';
 import { StringIndexed } from '@slack/bolt';
 
 // Keys
