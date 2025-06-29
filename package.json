@@ -2,13 +2,13 @@
   "name": "feliperamos-cv",
   "version": "1.0.0",
   "description": "Chat bot integrated with an OpenAI GPT agent that replies anything about me, if you are a recruiter, please try to chat with him.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node dist/cluster",
+    "start": "node dist/app",
     "build": "npx tsc",
-    "dev": "npx tsc && node dist/cluster",
+    "dev": "npx tsc && node dist/app",
     "service:ai": "node dist/src/containers/ai.service.js",
-    "service:slack": "node dist/cluster/scripts/slack-main.script.js",
+    "service:slack": "node dist/src/containers/slack.service.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

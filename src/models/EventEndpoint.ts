@@ -49,9 +49,9 @@ class EventEndpoint {
       // Subscribe to the Redis channel for this endpoint's path
       this.ioRedis.subscribe(this.path, (err) => {
          if (err) {
-            toError('Error on subscribing the event endpoint: ' + this.path);
+            toError(`[EventEndpoint] Error on subscribing the event endpoint: ${this.path}`);
          } else {
-            console.log(`Subscribed to event endpoint: ${this.path}`);
+            console.log(`[EventEndpoint] Subscribed to event endpoint: ${this.path}`);
          }
       });
 
