@@ -7,6 +7,6 @@
       "module": "NodeNext", // Modern module system
       "moduleResolution": "nodenext"
    },
-   "include": ["*.ts", "src/**/*.ts"],
+   "include": ["*.ts", "*.service.ts", "*.route.ts", "src/**/*.ts"],
    "exclude": ["dist"]
 }

@@ -2,11 +2,10 @@ import 'dotenv/config';
 import './src/global/globals';
 import { Cluster } from './src/services';
 import slackAppCore from './src/cluster/core/slack-app.core';
-import aiCPUCore from './src/cluster/core/ai-cpu.core';
 
 new Cluster({
    tagName: 'feliperamos-cv',
-   cores: [ slackAppCore, aiCPUCore ],
+   cores: [ slackAppCore ],
    onReady: () => {
       console.log('[CLUSTER] Cluster is ready!');
    },
