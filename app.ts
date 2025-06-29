@@ -23,6 +23,9 @@ async function executeCommands() {
       console.log('Starting Slack service...');
       executeCommand('npm', ['run', 'service:slack']);
 
+      console.log('Starting Server API service...');
+      executeCommand('npm', ['run', 'service:api-server']);
+
       console.log('All commands completed!');
    } catch (error) {
       console.error('Error executing commands:', error);

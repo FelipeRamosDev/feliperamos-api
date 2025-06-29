@@ -1,0 +1,43 @@
+import 'dotenv/config';
+import { Route } from "../services";
+import ServerAPI from "../services/ServerAPI/ServerAPI";
+
+const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
+const {
+   SSL_KEY_PATH,
+   SSL_CERT_PATH,
+   API_SECRET = 'default_secret',
+   REDIS_URL = 'redis://localhost:6379'
+} = process.env;
+
+if (isNaN(SERVER_API_PORT)) {
+   throw new Error(`Invalid SERVER_API_PORT: ${SERVER_API_PORT}. It must be a number.`);
+}
+
+const cookiesMaxAge = 24 * 60 * 60 * 1000; // 1 day
+const sslConfig = SSL_KEY_PATH && SSL_CERT_PATH ? {
+   keySSLPath: SSL_KEY_PATH,
+   certSSLPath: SSL_CERT_PATH
+} : undefined;
+
+global.service = new ServerAPI({
+   id: 'server-api',
+   API_SECRET: API_SECRET,
+   projectName: 'feliperamos-api',
+   redisURL: REDIS_URL,
+   sessionCookiesMaxAge: cookiesMaxAge,
+   PORT: SERVER_API_PORT,
+   sslConfig: sslConfig,
+   httpEndpoints: [
+      new Route({
+         routePath: '/health',
+         method: 'GET',
+         controller: (req, res) => {
+            res.status(200).send({ status: 'ok', message: 'Server is running' });
+         }
+      })
+   ],
+   onReady: function () {
+      console.log(`Server API is running on port ${this.PORT}`);
+   }
+});
