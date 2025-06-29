@@ -1,5 +1,6 @@
 export { default as AI } from './AI/AI';
 export { default as SlackApp } from './SlackApp/SlackApp';
+export { default as Microservice } from './Microservice/Microservice';
 
 export { default as ClusterManager } from './ClusterManager/ClusterManager';
 export { default as Cluster } from './ClusterManager/Cluster';

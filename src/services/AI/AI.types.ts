@@ -1,4 +1,6 @@
-export interface AISetup {
+import { MicroserviceSetup } from "../Microservice/Microservice.types";
+
+export interface AISetup extends MicroserviceSetup {
    apiKey: string;
    assistantID?: string;
    model?: string;

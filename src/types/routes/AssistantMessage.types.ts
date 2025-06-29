@@ -1,9 +1,9 @@
-export type AiCpuAssistantMessageDataResponse = {
+export interface AssistantMessageDataResponse {
    input?: string;
    threadID?: string;
 }
 
-export type AiCpuAssistantMessageDoneResponse = {
+export type AssistantMessageDoneResponse = {
    success?: boolean;
    threadID?: string;
    output?: string;

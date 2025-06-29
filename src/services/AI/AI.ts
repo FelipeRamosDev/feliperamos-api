@@ -2,13 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
 
-import type { AISetup, CreateResponseOpt, ResponseInput } from '../../types/AI.types.ts';
+import type { AISetup, CreateResponseOpt, ResponseInput } from './AI.types.js';
 import { Thread } from 'openai/resources/beta/index.mjs';
+import Microservice from '../Microservice/Microservice.js';
 
 /**
  * AI class for managing OpenAI assistant interactions, thread management, and message handling.
  */
-export default class AI {
+export default class AI extends Microservice {
    private _apiKey: string;
    private _threads: Map<string, Thread>;
    private _assistantID?: string;
@@ -22,6 +23,7 @@ export default class AI {
     * @param setup - Configuration object containing API key, assistant ID, and model.
     */
    constructor (setup: AISetup) {
+      super(setup)
       const { apiKey, assistantID, model = 'gpt-4.1-nano' } = setup || {};
 
       this._threads = new Map();

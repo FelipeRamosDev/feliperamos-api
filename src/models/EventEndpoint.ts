@@ -1,5 +1,5 @@
 import IORedis from 'ioredis';
-import { Cluster, Core, InstanceBase, Thread } from '../services';
+import { AI, Cluster, Core, InstanceBase, Microservice, Thread } from '../services';
 import { EndpointSetup } from '../types/EventEndpoint.types';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
@@ -12,7 +12,7 @@ const ioRedis = new IORedis(REDIS_URL);
 class EventEndpoint {
    public path: string;
    public controller: (data: any, done?: () => void) => void;
-   private _instance: () => Cluster | Thread | Core | InstanceBase | undefined;
+   private _instance: () => Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined;
    public ioRedis: IORedis;
 
    /**
@@ -21,7 +21,7 @@ class EventEndpoint {
     * @param instance - The parent instance (Cluster, Core, or Thread).
     * @throws If path or controller are not provided.
     */
-   constructor(setup: EndpointSetup, instance?: Cluster | Thread | Core | InstanceBase | undefined) {
+   constructor(setup: EndpointSetup, instance?: Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined) {
       const { path, controller } = setup;
 
       if (!path) {
@@ -86,7 +86,7 @@ class EventEndpoint {
     * Retrieves the instance to which this route belongs.
     * @returns The parent instance (Cluster, Core, or Thread).
     */
-   get instance(): Cluster | Thread | Core | InstanceBase | undefined {
+   get instance(): Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined {
       return this._instance();
    }
 
@@ -94,7 +94,7 @@ class EventEndpoint {
     * Sets a new instance for this route.
     * @param instance - The new parent instance.
     */
-   setInstance(instance: Cluster | Thread | Core | InstanceBase | undefined): void {
+   setInstance(instance: Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined): void {
       this._instance = () => instance;
    }
 }
