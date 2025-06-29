@@ -80,8 +80,8 @@ class Field {
          SQLQuery.push('UNIQUE');
       }
 
-      if (this.autoIncrement) {
-         SQLQuery.push('AUTOINCREMENT');
+      if (this.autoIncrement && !this.primaryKey) {
+         SQLQuery.push('SERIAL');
       }
 
       if (this.notNull) {

@@ -1,3 +1,5 @@
+import { RelatedFieldSetup } from './RelatedField.types';
+
 export interface FieldSetup {
    name: string;
    type?: string;
@@ -7,10 +9,4 @@ export interface FieldSetup {
    primaryKey?: boolean;
    autoIncrement?: boolean;
    relatedField?: RelatedFieldSetup;
-}
-
-export interface RelatedFieldSetup {
-   schema: string;
-   table: string;
-   field: string;
 }
