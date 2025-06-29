@@ -1,6 +1,6 @@
 import EventEndpoint from '../../../models/EventEndpoint';
 import { AI } from '../../../services';
-import { AssistantMessageDataResponse, AssistantMessageDoneResponse } from '../../../types/routes/AssistantMessage.types';
+import { AssistantMessageDataResponse, AssistantMessageDoneResponse } from '../../types/ai-service/assistant-message.types';
 
 export default new EventEndpoint({
    path: '/ai-service/assistant-message',

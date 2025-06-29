@@ -6,8 +6,8 @@ import Core from './Core';
 import Thread from './Thread';
 
 // Types
-import { InstanceBaseSetup } from '../../types/ClusterManager.types';
-import { EndpointSetup } from '../../types/EventEndpoint.types';
+import { InstanceBaseSetup } from './ClusterManager.types';
+import { EndpointSetup } from '../../models/types/EventEndpoint.types';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const publisher = new IORedis(REDIS_URL);
