@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { Route } from "../services";
 import ServerAPI from "../services/ServerAPI/ServerAPI";
-import RedisDB from '../services/RedisDB/RedisDB';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const {
