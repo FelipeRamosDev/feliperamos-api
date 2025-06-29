@@ -78,7 +78,7 @@ class ServerAPI extends Microservice {
          sessionSaveUninitialized = true,
          redisURL = 'redis://localhost:6379',
          corsOrigin = ['http://localhost', 'https://localhost']
-      } = Object(setup);
+      } = setup;
 
       /**
        * The main 4hands-api instance.
@@ -111,14 +111,6 @@ class ServerAPI extends Microservice {
          events.EventEmitter.defaultMaxListeners = this.defaultMaxListeners;
       }
 
-      if (this.sslConfig?.keySSLPath) {
-         this.sslConfig.keySSLPath = this.normalizePath(this.sslConfig.keySSLPath);
-      }
-
-      if (this.sslConfig?.certSSLPath) {
-         this.sslConfig.certSSLPath = this.normalizePath(this.sslConfig.certSSLPath);
-      }
-
       this.isSuccess = (customCallback?: Callback) => {
          try {
             this.runAppQueue();
@@ -134,7 +126,7 @@ class ServerAPI extends Microservice {
          }
       };
 
-
+      this.normalizeSSLPath();
       if (this.sslConfig) {
          this.useSSL = true;
          if (this.PORT === 80) {
@@ -186,6 +178,20 @@ class ServerAPI extends Microservice {
 
    normalizePath(filePath: string): string {
       return path.normalize(this.projectPath + filePath);
+   }
+
+   normalizeSSLPath(): void {
+      if (!this.sslConfig || typeof this.sslConfig !== 'object') {
+         throw new Error('The "sslConfig" param must be an object with keySSLPath and certSSLPath properties!');
+      }
+
+      if (this.sslConfig.keySSLPath) {
+         this.sslConfig.keySSLPath = this.normalizePath(this.sslConfig.keySSLPath);
+      }
+
+      if (this.sslConfig.certSSLPath) {
+         this.sslConfig.certSSLPath = this.normalizePath(this.sslConfig.certSSLPath);
+      }
    }
 
    async init(): Promise<void> {
