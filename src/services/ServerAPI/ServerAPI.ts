@@ -252,33 +252,34 @@ class ServerAPI extends Microservice {
     */
    listenSSL(PORT: number, callback?: Callback): void {
       try {
-         if (this.PORT || PORT) {
-            // Verificação segura antes de usar
-            if (!this.sslConfig?.keySSLPath || !this.sslConfig?.certSSLPath) {
-               throw new Error('SSL configuration is incomplete. Both keySSLPath and certSSLPath are required.');
-            }
-
-            const SSL_KEY = fs.readFileSync(this.sslConfig.keySSLPath);
-            const SSL_CERT = fs.readFileSync(this.sslConfig.certSSLPath);
-
-            if (!SSL_KEY || !SSL_CERT) {
-               throw new Error(`The SSL certificate wasn't found in the directory!`);
-            }
-
-            const options = {
-               key: SSL_KEY,
-               cert: SSL_CERT
-            };
-
-            if (!callback) {
-               callback = this.isSuccess;
-            }
-
-            https.createServer(options, this.app!).listen(PORT, () => {
-               this.PORT = PORT;
-               if (typeof callback === 'function') callback();
-            });
+         // Verificação segura antes de usar
+         if (!this.sslConfig?.keySSLPath || !this.sslConfig?.certSSLPath) {
+            throw new Error('SSL configuration is incomplete. Both keySSLPath and certSSLPath are required.');
          }
+
+         const SSL_KEY = fs.readFileSync(this.sslConfig.keySSLPath);
+         const SSL_CERT = fs.readFileSync(this.sslConfig.certSSLPath);
+
+         if (!SSL_KEY || !SSL_CERT) {
+            throw new Error(`The SSL certificate wasn't found in the directory!`);
+         }
+
+         const options = {
+            key: SSL_KEY,
+            cert: SSL_CERT
+         };
+
+         if (!callback) {
+            callback = this.isSuccess;
+         }
+
+         if (PORT && !isNaN(PORT)) {
+            this.PORT = Number(PORT);
+         }
+
+         https.createServer(options, this.app!).listen(this.PORT, () => {
+            if (typeof callback === 'function') callback();
+         });
       } catch (error) {
          throw error;
       }
