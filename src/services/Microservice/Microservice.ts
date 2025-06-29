@@ -95,7 +95,7 @@ export default class Microservice {
 
          callbacks.set(callbackID, callback);
          data.callbackID = callbackID;
-         data.fromPath = instance.id;
+         data.fromPath = this.id;
       }
 
       this.publishEvent(path, data);
