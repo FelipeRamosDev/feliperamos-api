@@ -1,4 +1,5 @@
 import EventEndpoint from '../../../models/EventEndpoint';
+import { AI } from '../../../services';
 import { AssistantMessageDataResponse, AssistantMessageDoneResponse } from '../../../types/routes/AssistantMessage.types';
 
 export default new EventEndpoint({
@@ -11,6 +12,10 @@ export default new EventEndpoint({
 
       if (!input) {
          return done(toError(`It's required to provide an input when requesting a GPT response!`));
+      }
+
+      if (!(service instanceof AI)) {
+         return done(toError(`The AI service is not available!`));
       }
 
       service.threadMessage(threadID, input).then(({ threadID, output }: any) => {

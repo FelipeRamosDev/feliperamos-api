@@ -32,7 +32,6 @@ export default class Microservice {
       endpoints.map(endpoint => this.setRoute(endpoint));
 
       this.createCallbackEvents();
-      this.onReady();
    }
 
    getRoute(path: string): EventEndpoint | undefined {
