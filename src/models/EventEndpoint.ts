@@ -1,12 +1,9 @@
 import IORedis from 'ioredis';
-import Cluster from '../services/ClusterManager';
-import Core from '../services/ClusterManager/Core';
-import Thread from '../services/ClusterManager/Thread';
+import { AI, Cluster, Core, InstanceBase, Microservice, Thread } from '../services';
 import { EndpointSetup } from '../types/EventEndpoint.types';
 
-const ioRedis = new IORedis();
-
-type InstanceBase = any; // Replace `any` with the actual type if known
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const ioRedis = new IORedis(REDIS_URL);
 
 /**
  * Represents an API endpoint configuration.
@@ -15,7 +12,7 @@ type InstanceBase = any; // Replace `any` with the actual type if known
 class EventEndpoint {
    public path: string;
    public controller: (data: any, done?: () => void) => void;
-   private _instance: () => Cluster | Thread | Core;
+   private _instance: () => Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined;
    public ioRedis: IORedis;
 
    /**
@@ -24,7 +21,7 @@ class EventEndpoint {
     * @param instance - The parent instance (Cluster, Core, or Thread).
     * @throws If path or controller are not provided.
     */
-   constructor(setup: EndpointSetup, instance: InstanceBase) {
+   constructor(setup: EndpointSetup, instance?: Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined) {
       const { path, controller } = setup;
 
       if (!path) {
@@ -52,9 +49,9 @@ class EventEndpoint {
       // Subscribe to the Redis channel for this endpoint's path
       this.ioRedis.subscribe(this.path, (err) => {
          if (err) {
-            toError('Error on subscribing the event endpoint: ' + this.path);
+            toError(`[EventEndpoint] Error on subscribing the event endpoint: ${this.path}`);
          } else {
-            console.log(`Subscribed to event endpoint: ${this.path}`);
+            console.log(`[EventEndpoint] Subscribed to event endpoint: ${this.path}`);
          }
       });
 
@@ -73,7 +70,7 @@ class EventEndpoint {
                      return;
                   }
 
-                  this.instance.sendTo(data.fromPath, { callbackID: data.callbackID, params: args });
+                  this.instance?.sendTo(data.fromPath, { callbackID: data.callbackID, params: args });
                });
             } else {
                this.controller.call(this, data);
@@ -89,7 +86,7 @@ class EventEndpoint {
     * Retrieves the instance to which this route belongs.
     * @returns The parent instance (Cluster, Core, or Thread).
     */
-   get instance(): InstanceBase {
+   get instance(): Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined {
       return this._instance();
    }
 
@@ -97,7 +94,7 @@ class EventEndpoint {
     * Sets a new instance for this route.
     * @param instance - The new parent instance.
     */
-   setInstance(instance: InstanceBase): void {
+   setInstance(instance: Cluster | Thread | Core | InstanceBase | AI | Microservice | undefined): void {
       this._instance = () => instance;
    }
 }

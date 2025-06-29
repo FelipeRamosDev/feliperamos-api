@@ -1,13 +1,13 @@
 import ErrorModel from '../models/ErrorModel';
-import AI from '../services/AI';
+import { AI, Microservice } from '../services';
 import Cluster from '../services/ClusterManager/Cluster';
 import Core from '../services/ClusterManager/Core';
 import InstanceBase from '../services/ClusterManager/InstanceBase';
 import Thread from '../services/ClusterManager/Thread';
-import SlackApp from '../services/SlackApp';
+import SlackApp from '../services/SlackApp/SlackApp';
 
 declare global {
-  var ai: AI;
+  var service: AI;
   var thread: Thread;
   var callbacks: Map<string, (...args: any) => any>;
   var instance: Cluster | Core | Thread | InstanceBase;

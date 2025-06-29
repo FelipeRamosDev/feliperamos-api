@@ -1,0 +1,49 @@
+services:
+  ai-service:
+    build: .
+    container_name: ai-service
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'service:ai']
+    
+  slack-service:
+    build: .
+    container_name: slack-service
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'service:slack']
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+
+networks:
+  feliperamos-net:
+    driver: bridge

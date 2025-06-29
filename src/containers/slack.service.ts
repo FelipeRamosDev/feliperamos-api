@@ -1,6 +1,5 @@
-import Thread from '../../services/ClusterManager/Thread';
-import slackMainThread from '../threads/slack-main.thread';
-import SlackApp from '../../services/SlackApp';
+import 'dotenv/config';
+import SlackApp from '../services/SlackApp/SlackApp';
 import { StringIndexed } from '@slack/bolt';
 
 // Keys
@@ -12,13 +11,17 @@ if (!SLACK_APP_TOKEN || !SLACK_BOT_TOKEN || !SLACK_SIGNING_SECRET) {
    throw 'You need to provide the Slack Keys as env variables!';
 }
 
-const thread = new Thread(slackMainThread);
-thread.init();
-
-const slack = new SlackApp({
+global.slack = new SlackApp({
+   id: 'slack-service',
    appToken: SLACK_APP_TOKEN,
    botToken: SLACK_BOT_TOKEN,
-   signingSecret: SLACK_SIGNING_SECRET
+   signingSecret: SLACK_SIGNING_SECRET,
+   onReady: function () {
+      console.log('Slack app is running!');
+   },
+   onError: (error: Error) => {
+      console.error('Error in Slack app:', error);
+   }
 });
 
 slack.onMessage(async ({ message, say }: StringIndexed) => {
@@ -42,3 +45,4 @@ slack.onMessage(async ({ message, say }: StringIndexed) => {
       say(output).catch((err: any) => toError(`Something went wrong after "askAssistent" request when triggering the "say" method! Error caught.`));
    });
 });
+

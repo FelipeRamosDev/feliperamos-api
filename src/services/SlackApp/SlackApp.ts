@@ -1,11 +1,12 @@
-import { SlackAppSetup } from '../../types/SlackApp.types';
+import { SlackAppSetup } from './SlackApp.types';
 import { App, StringIndexed } from '@slack/bolt';
+import Microservice from '../Microservice/Microservice';
 
 /**
  * SlackApp class encapsulates the Slack Bolt app instance and provides
  * utility methods for managing AI threads, logging, and handling Slack events.
  */
-export default class SlackApp {
+export default class SlackApp extends Microservice {
    public app: App;
    private _aiThreads: Map<string, string>;
 
@@ -15,7 +16,8 @@ export default class SlackApp {
     * @param setup - Slack app configuration options.
     */
    constructor (setup: SlackAppSetup) {
-      const { socketMode = true, port = 3000, signingSecret, appToken, botToken, ...options } = setup || {};
+      super(setup);
+      const { socketMode = true, port = 3000, signingSecret, appToken, botToken, options } = setup || {};
 
       this._aiThreads = new Map();
       this.app = new App({
@@ -32,12 +34,6 @@ export default class SlackApp {
       }).catch(err => {
          this.logError(err);
       });
-
-      /**
-       * Declares the SlackApp instance on the current global context,
-       * making it accessible anywhere on the worker thread.
-       */
-      global.slack = this;
    }
 
    /**
@@ -114,6 +110,6 @@ export default class SlackApp {
       const input = message.text;
       const threadID = this.getAiThread(message.user);
 
-      instance.sendTo('/ai-cpu/assistant-message', { input, threadID }, callback);
+      this.sendTo('/ai-service/assistant-message', { input, threadID }, callback);
    }
 }

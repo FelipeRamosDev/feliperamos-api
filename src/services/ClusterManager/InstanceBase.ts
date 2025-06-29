@@ -9,7 +9,8 @@ import Thread from './Thread';
 import { InstanceBaseSetup } from '../../types/ClusterManager.types';
 import { EndpointSetup } from '../../types/EventEndpoint.types';
 
-const publisher = new IORedis();
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const publisher = new IORedis(REDIS_URL);
 if (!global.callbacks) {
    global.callbacks = new Map();
 }
@@ -62,7 +63,7 @@ class InstanceBase {
       this._dataStore = new Map();
       this._routes = new Map();
 
-      this.ioRedis = new IORedis();
+      this.ioRedis = new IORedis(REDIS_URL);
       this.id = id || this.genRandomBytes();
       this.tagName = tagName || this.id;
       this.filePath = filePath;
@@ -81,7 +82,7 @@ class InstanceBase {
          if (err) {
             toError('Error on subscribing the event endpoint: ' + this.id);
          } else {
-            console.log(`Subscribed to event endpoint: ${this.id}`);
+            console.log(`[InstanceBase] Subscribed to event endpoint: ${this.id}`);
          }
       });
 
