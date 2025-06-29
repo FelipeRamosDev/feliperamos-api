@@ -4,8 +4,8 @@ import ServerAPI from "../services/ServerAPI/ServerAPI";
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const {
-   SSL_KEY_PATH = process.env.SSL_KEY_PATH,
-   SSL_CERT_PATH = process.env.SSL_CERT_PATH,
+   SSL_KEY_PATH,
+   SSL_CERT_PATH,
    API_SECRET = 'default_secret',
    REDIS_URL = 'redis://localhost:6379'
 } = process.env;

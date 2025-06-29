@@ -4,7 +4,6 @@ import '../../global/globals';
 
 import express, { Express, RequestHandler } from 'express';
 import session from 'express-session';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import https from 'https';
 import path from 'path';
@@ -143,7 +142,7 @@ class ServerAPI extends Microservice {
          }
       }
 
-      this.httpEndpoints.map(endpoint => this.createEndpoint(endpoint));
+      this.httpEndpoints.forEach(endpoint => this.createEndpoint(endpoint));
       this.init().catch(err => {
          throw err;
       });
@@ -193,16 +192,11 @@ class ServerAPI extends Microservice {
       this.rootPath = path.normalize(__dirname.replace(path.normalize('/dist/src/services'), '/'));
       this.serverState = 'loading';
 
-
-      // Initializing the Redis DB
-      // Dynamically import connect-redis and use it as the session store
+      this.app.use(express.json({ limit: this.jsonLimit }));
       this.app.use(cors({
          origin: this.corsOrigin,
          credentials: true
       }));
-
-      this.app.use(bodyParser.json({ limit: this.jsonLimit }));
-      this.app.use(express.json());
 
       if (this.API_SECRET) {
          let sessionStore;
@@ -212,6 +206,7 @@ class ServerAPI extends Microservice {
             const RedisStore = require('connect-redis')(session);
             sessionStore = new RedisStore({ client: this.redisService.client });
          }
+
          this.app.use(session({
             store: sessionStore,
             secret: this.API_SECRET,
@@ -267,7 +262,7 @@ class ServerAPI extends Microservice {
             const SSL_CERT = fs.readFileSync(this.sslConfig.certSSLPath);
 
             if (!SSL_KEY || !SSL_CERT) {
-               throw new Error(`The SSL certificate wasn't found on the directory!`);
+               throw new Error(`The SSL certificate wasn't found in the directory!`);
             }
 
             const options = {
@@ -345,6 +340,22 @@ class ServerAPI extends Microservice {
                this.app_queue.push(() => this.app?.patch(routePath, ...middlewares, controller));
             } else {
                this.app.patch(routePath, ...middlewares, controller);
+            }
+            return;
+         }
+         case 'OPTIONS': {
+            if (!this.app) {
+               this.app_queue.push(() => this.app?.options(routePath, ...middlewares, controller));
+            } else {
+               this.app.options(routePath, ...middlewares, controller);
+            }
+            return;
+         }
+         case 'HEAD': {
+            if (!this.app) {
+               this.app_queue.push(() => this.app?.head(routePath, ...middlewares, controller));
+            } else {
+               this.app.head(routePath, ...middlewares, controller);
             }
             return;
          }
