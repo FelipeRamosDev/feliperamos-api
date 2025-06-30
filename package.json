@@ -6,10 +6,18 @@
   "scripts": {
     "start": "node dist/app",
     "build": "npx tsc",
-    "dev": "npx tsc && node dist/app",
-    "service:ai": "node dist/src/containers/ai.service.js",
-    "service:slack": "node dist/src/containers/slack.service.js",
-    "service:api-server": "node dist/src/containers/api-server.service.js",
+    "dev": "ts-node app.ts",
+    "dev:watch": "nodemon --exec ts-node app.ts",
+    "dev:inspect": "nodemon --exec ts-node --inspect app.ts",
+    "dev:check": "ts-node dev-check.ts",
+    "service:ai": "ts-node src/containers/ai.service.ts",
+    "service:slack": "ts-node src/containers/slack.service.ts",
+    "service:api-server": "ts-node src/containers/api-server.service.ts",
+    "service:ai:watch": "nodemon --exec ts-node src/containers/ai.service.ts",
+    "service:slack:watch": "nodemon --exec ts-node src/containers/slack.service.ts",
+    "service:api-server:watch": "nodemon --exec ts-node src/containers/api-server.service.ts",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,7 +35,12 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
+    "@types/node": "^22.15.34",
     "@types/pg": "^8.15.4",
+    "concurrently": "^9.2.0",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {

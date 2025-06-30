@@ -140,6 +140,9 @@ class SQL {
          if (typeof item === 'object' && !Array.isArray(item) && item.path) {
             return item.alias ? `${item.path} AS ${this.charsVerifier(item.alias)}` : item.path;
          }
+
+         // Explicitly handle unexpected cases
+         throw new ErrorDatabase(`Invalid table path configuration: ${JSON.stringify(item)}`, 'INVALID_TABLE_PATH_CONFIG');
       }).join(', ');
 
       this.fromClause = `FROM ${parsePaths}`;
