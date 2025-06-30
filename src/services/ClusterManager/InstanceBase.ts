@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import IORedis from 'ioredis';
-import EventEndpoint from './EventEndpoint';
+import EventEndpoint from '../EventEndpoint/EventEndpoint';
 import Cluster from './Cluster';
 import Core from './Core';
 import Thread from './Thread';
