@@ -14,7 +14,7 @@ global.service = new AI({
    endpoints: [
       assistentMessageRoute
    ],
-   onReady: function () {
+   onServiceReady: function () {
       console.log(`[${this.containerName}] AI service is ready!`);
    },
    onError: function (err) {

@@ -37,7 +37,7 @@ global.service = new ServerAPI({
          }
       })
    ],
-   onReady: function () {
+   onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
    }
 });

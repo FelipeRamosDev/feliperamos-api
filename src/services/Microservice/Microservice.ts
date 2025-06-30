@@ -1,7 +1,7 @@
 import IORedis from 'ioredis';
 import crypto from 'crypto';
+import EventEndpoint from '../../services/EventEndpoint/EventEndpoint';
 import { MicroserviceSetup } from './Microservice.types';
-import { EventEndpoint } from '../../services';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const publisher = new IORedis(REDIS_URL);
