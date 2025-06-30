@@ -1,6 +1,6 @@
 import IORedis from 'ioredis';
 import { AI, Cluster, Core, InstanceBase, Microservice, Thread } from '..';
-import { EndpointSetup } from '../ClusterManager/types/EventEndpoint.types';
+import { EndpointSetup } from './EventEndpoint.types';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const ioRedis = new IORedis(REDIS_URL);

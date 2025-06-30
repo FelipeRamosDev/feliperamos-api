@@ -1,5 +1,5 @@
 import Thread from '../Thread';
-import { EndpointSetup } from './EventEndpoint.types';
+import { EndpointSetup } from '../../EventEndpoint/EventEndpoint.types';
 
 export interface InstanceBaseSetup {
    id?: string;
