@@ -38,6 +38,7 @@ export class SocketServer extends Microservice {
    private _isStarted: boolean;
    private _startTime: Date;
    private _stats: ConnectionStats;
+   private _statsIntervalId?: NodeJS.Timeout;
 
    constructor(setup: SocketServerSetup) {
       super(setup);
@@ -203,6 +204,11 @@ export class SocketServer extends Microservice {
          this._clients.forEach(client => {
             client.disconnect('Server shutdown');
          });
+
+         // Clear statistics interval
+         if (this._statsIntervalId) {
+            clearInterval(this._statsIntervalId);
+         }
 
          // Close Socket.IO server
          this._io.close(() => {
@@ -511,7 +517,7 @@ export class SocketServer extends Microservice {
     * Start statistics tracking
     */
    private startStatisticsTracking(): void {
-      setInterval(() => {
+      this._statsIntervalId = setInterval(() => {
          this.updateStatistics();
       }, 5000); // Update every 5 seconds
    }
