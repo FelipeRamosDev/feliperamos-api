@@ -10,7 +10,9 @@ import {
    NamespaceConfig, 
    NamespaceMiddleware, 
    NamespaceEvent,
-   ExtendedSocket 
+   ExtendedSocket, 
+   RoomConfig,
+   RoomDetails
 } from './SocketServer.types';
 import SocketClient from './SocketClient';
 import SocketRoom from './SocketRoom';
@@ -124,7 +126,7 @@ export class SocketNamespace {
    use(middleware: NamespaceMiddleware): void {
       this._middlewares.push(middleware);
       this._namespace.use((socket: Socket, next) => {
-         middleware.handler(socket, next);
+         middleware.handler.call(this, socket, next);
       });
    }
 
@@ -164,7 +166,7 @@ export class SocketNamespace {
    /**
     * Create a new room
     */
-   createRoom(roomConfig: { id: string; name?: string; maxClients?: number; isPrivate?: boolean; password?: string }): SocketRoom {
+   createRoom(roomConfig: RoomConfig): SocketRoom {
       if (this._rooms.has(roomConfig.id)) {
          throw new Error(`Room ${roomConfig.id} already exists in namespace ${this.name}`);
       }
@@ -334,7 +336,7 @@ export class SocketNamespace {
       // Apply middlewares
       this._middlewares.forEach(middleware => {
          this._namespace.use((socket: Socket, next) => {
-            middleware.handler(socket, next);
+            middleware.handler.call(this, socket, next);
          });
       });
 
@@ -371,6 +373,8 @@ export class SocketNamespace {
     */
    private handleConnection(socket: Socket): void {
       const client = new SocketClient(socket, this.path);
+      const self = this;
+
       this._clients.set(socket.id, client);
       this._stats.totalConnections++;
       this._stats.currentConnections++;
@@ -385,7 +389,7 @@ export class SocketNamespace {
       // Register custom events for this client
       this._events.forEach((event, eventName) => {
          socket.on(eventName, (...args: any[]) => {
-            event.handler(socket, ...args);
+            event.handler.call(self, socket, ...args);
          });
       });
 
@@ -457,15 +461,7 @@ export class SocketNamespace {
    /**
     * Get room details
     */
-   getRoomDetails(): Array<{
-      id: string;
-      name: string;
-      clientCount: number;
-      maxClients: number;
-      isPrivate: boolean;
-      createdAt: Date;
-      lastActivity: Date;
-   }> {
+   getRoomDetails(): Array<RoomDetails> {
       return this.rooms.map(room => ({
          id: room.id,
          name: room.name,

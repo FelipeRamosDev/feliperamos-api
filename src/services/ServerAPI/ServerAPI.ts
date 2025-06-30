@@ -38,7 +38,9 @@ class ServerAPI extends Microservice {
    public jsonLimit: string;
    public sessionResave: boolean;
    public sessionSaveUninitialized: boolean;
-   public onReady: Callback;
+   public onConstructed: Callback;
+   public onInitialized: Callback;
+   public onListen: Callback;
    public FE_ORIGIN?: string;
    public PORT: number;
    public autoInitialize: boolean;
@@ -72,7 +74,9 @@ class ServerAPI extends Microservice {
          PORT = 80,
          jsonLimit = '10mb',
          autoInitialize = false,
-         onReady = () => { },
+         onConstructed = () => {},
+         onInitialized = () => {},
+         onListen = () => {},
          httpEndpoints = [],
          defaultMaxListeners = 20,
          sessionCookiesMaxAge = 86400000,
@@ -102,7 +106,9 @@ class ServerAPI extends Microservice {
       this.sessionResave = (sessionResave !== undefined) ? sessionResave : true;
       this.sessionSaveUninitialized = (sessionSaveUninitialized !== undefined) ? sessionSaveUninitialized : true;
       this.autoInitialize = autoInitialize;
-      this.onReady = onReady;
+      this.onConstructed = onConstructed;
+      this.onInitialized = onInitialized;
+      this.onListen = onListen;
       this.FE_ORIGIN = FE_ORIGIN;
       this.PORT = PORT || 80;
       this.httpEndpoints = httpEndpoints;
@@ -114,16 +120,12 @@ class ServerAPI extends Microservice {
          events.EventEmitter.defaultMaxListeners = this.defaultMaxListeners;
       }
 
-      this.isSuccess = (customCallback?: Callback) => {
+      this.isSuccess = () => {
          try {
             this.runAppQueue();
             this.isListen = true;
             this.serverState = 'online';
-            this.onReady.call(this);
-
-            if (typeof customCallback === 'function') {
-               customCallback.call(this);
-            }
+            this.onListen.call(this);
          } catch (err) {
             throw err;
          }
@@ -144,6 +146,8 @@ class ServerAPI extends Microservice {
             throw err;
          });
       }
+
+      this.onConstructed.call(this);
    }
 
    // /**
@@ -238,31 +242,25 @@ class ServerAPI extends Microservice {
       }
 
       if (this.useSSL) {
-         this.listenSSL(this.PORT, () => this.isSuccess());
+         this.listenSSL();
       } else {
-         this.app.listen(this.PORT, () => this.isSuccess());
+         this.listen();
       }
+
+      this.onInitialized.call(this);
    }
 
    /**
     * Starts the server to listen on the specified port.
     */
-   listen(PORT: number, callback?: Callback): void {
-      if (!callback) {
-         callback = this.isSuccess;
-      }
-
-      if (!this.isListen && PORT) {
-         this.app?.listen(PORT, () => {
-            this.isSuccess(callback);
-         });
-      }
+   listen(): void {
+      this.app.listen(this.PORT, () => this.isSuccess());
    }
 
    /**
     * Starts the server with SSL encryption to listen on the specified port.
     */
-   listenSSL(PORT: number, callback?: Callback): void {
+   listenSSL(): void {
       try {
          // Verificação segura antes de usar
          if (!this.sslConfig?.keySSLPath || !this.sslConfig?.certSSLPath) {
@@ -281,17 +279,7 @@ class ServerAPI extends Microservice {
             cert: SSL_CERT
          };
 
-         if (!callback) {
-            callback = this.isSuccess;
-         }
-
-         if (PORT && !isNaN(PORT)) {
-            this.PORT = Number(PORT);
-         }
-
-         https.createServer(options, this.app!).listen(this.PORT, () => {
-            if (typeof callback === 'function') callback();
-         });
+         https.createServer(options, this.app!).listen(this.PORT, () => this.isSuccess());
       } catch (error) {
          throw error;
       }

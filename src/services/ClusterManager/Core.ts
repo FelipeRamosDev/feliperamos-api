@@ -4,8 +4,8 @@ import Thread from './Thread';
 import Cluster from './Cluster';
 
 // Types
-import { CoreSetup, ThreadSetup } from './ClusterManager.types';
-import { EndpointSetup } from '../../models/types/EventEndpoint.types';
+import { CoreSetup, ThreadSetup } from './types/ClusterManager.types';
+import { EndpointSetup } from './types/EventEndpoint.types';
 
 /**
  * Represents a core process managed by InstanceBase, handling threads and worker processes.

@@ -1,7 +1,7 @@
 import IORedis from 'ioredis';
 import crypto from 'crypto';
 import { MicroserviceSetup } from './Microservice.types';
-import EventEndpoint from '../../models/EventEndpoint';
+import { EventEndpoint } from '../../services';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const publisher = new IORedis(REDIS_URL);
@@ -15,23 +15,24 @@ export default class Microservice {
    public id: string;
    public containerName?: string;
    public ioRedis: IORedis;
-   public onReady: () => void;
-   public onError: (error: Error) => void;
+   public onServiceReady: () => void;
+   public onError: (error: any) => void;
 
    constructor(setup: MicroserviceSetup) {
-      const { id, containerName, endpoints = [], onReady = () => {}, onError = () => {} } = setup || {};
+      const { id, containerName, endpoints = [], onServiceReady = () => {}, onError = () => {} } = setup || {};
 
       this._routes = new Map();
       this.id = id || containerName || this.genRandomBytes();
       this.containerName = containerName || this.id;
       this.ioRedis = new IORedis(REDIS_URL);
-      this.onReady = onReady;
+      this.onServiceReady = onServiceReady;
       this.onError = onError;
 
       // Setting event endpoints
       endpoints.map(endpoint => this.setRoute(endpoint));
 
       this.createCallbackEvents();
+      this.onServiceReady.call(this);
    }
 
    getRoute(path: string): EventEndpoint | undefined {

@@ -1,9 +1,9 @@
-import EventEndpoint from "../../models/EventEndpoint";
+import { EventEndpoint } from '../../services';
 
 export interface MicroserviceSetup {
    id?: string | undefined;
    containerName?: string | undefined;
    endpoints?: EventEndpoint[] | undefined;
-   onReady?: (() => void) | undefined;
-   onError?: ((error: Error) => void) | undefined;
+   onServiceReady?: (() => void) | undefined;
+   onError?: ((error: any) => void) | undefined;
 }
