@@ -344,7 +344,11 @@ export class SocketServer extends Microservice {
     * Broadcast message to all connected clients
     */
    broadcast(event: string, data?: any, excludeClientId?: string): void {
-      this._io.emit(event, data);
+      if (excludeClientId) {
+         this._io.except(excludeClientId).emit(event, data);
+      } else {
+         this._io.emit(event, data);
+      }
    }
 
    /**
