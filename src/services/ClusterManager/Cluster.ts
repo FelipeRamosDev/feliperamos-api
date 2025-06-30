@@ -118,6 +118,8 @@ class Cluster extends InstanceBase {
       if (this.isMaster) {
          return this._cores.get(tagName);
       }
+
+      return;
    }
 
    /**

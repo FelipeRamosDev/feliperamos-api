@@ -43,6 +43,8 @@ slack.onMessage(async ({ message, say }: StringIndexed) => {
 
       slack.setAiThread(message.user, threadID);
       say(output).catch((err: any) => toError(`Something went wrong after "askAssistent" request when triggering the "say" method! Error caught.`));
+
+      return;
    });
 });
 

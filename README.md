@@ -134,6 +134,91 @@ slack.onMessage(async ({ message, say }) => {
 
 ---
 
+## Development
+
+This project uses a modern TypeScript development workflow with ts-node for fast compilation and hot-reloading during development.
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm 9+
+- Redis server (for event routing)
+- PostgreSQL (for data persistence)
+
+### Setup
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Environment configuration:**
+   Create a `.env` file with your configuration (copy from `.env.example` if available)
+
+### Development Scripts
+
+The project includes several npm scripts optimized for ts-node development:
+
+#### Main Application
+- `npm run dev` - Run the main app with ts-node (single execution)
+- `npm run dev:watch` - Run the main app with nodemon and ts-node (auto-restart on changes)
+- `npm run dev:inspect` - Run with Node.js debugger enabled
+
+#### Individual Services
+- `npm run service:ai` - Run AI service directly with ts-node
+- `npm run service:slack` - Run Slack service directly with ts-node  
+- `npm run service:api-server` - Run API server service directly with ts-node
+
+#### Development Services (with auto-restart)
+- `npm run service:ai:watch` - Run AI service with nodemon
+- `npm run service:slack:watch` - Run Slack service with nodemon
+- `npm run service:api-server:watch` - Run API server service with nodemon
+
+#### Build Scripts
+- `npm run build` - Compile TypeScript to JavaScript (dist folder)
+- `npm run clean` - Remove dist folder
+- `npm start` - Run the compiled JavaScript version
+
+### Development Features
+
+- **Hot Reloading**: Changes to TypeScript files automatically restart the service
+- **Source Maps**: Full debugging support with source maps
+- **Fast Compilation**: ts-node transpiles files on-the-fly without disk writes
+- **Error Reporting**: TypeScript errors displayed in real-time during development
+
+### VS Code Integration
+
+The project includes configured VS Code tasks and debug configurations:
+
+#### Tasks (Ctrl+Shift+P → "Tasks: Run Task")
+- **Build TypeScript** - Compile the project
+- **Start Development Server** - Start with hot-reloading
+- **Start [Service] (Watch)** - Start individual services with hot-reloading
+- **Clean Build Directory** - Remove compiled files
+
+#### Debug Configurations (F5)
+- **Debug Main App** - Debug the main application
+- **Debug AI Service** - Debug the AI service
+- **Debug API Server Service** - Debug the API server
+- **Debug Slack Service** - Debug the Slack service
+
+### Configuration Files
+
+- `tsconfig.json` - TypeScript compiler configuration optimized for ts-node
+- `nodemon.json` - Nodemon configuration for file watching
+- `.vscode/tasks.json` - VS Code task definitions
+- `.vscode/launch.json` - VS Code debug configurations
+
+### Architecture Notes
+
+The ts-node setup uses:
+- **CommonJS modules** for maximum compatibility
+- **Transpile-only mode** for faster compilation
+- **Source maps** for debugging support
+- **Path mapping** with `@/*` aliases pointing to `src/*`
+
+---
+
 ## License
 
 MIT License

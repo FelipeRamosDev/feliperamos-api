@@ -2,9 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
 
-import type { AISetup, CreateResponseOpt, ResponseInput } from './AI.types.js';
-import { Thread } from 'openai/resources/beta/index.mjs';
-import Microservice from '../Microservice/Microservice.js';
+import type { AISetup, CreateResponseOpt, ResponseInput } from './AI.types';
+import type { Thread } from 'openai/resources/beta/threads/threads';
+import Microservice from '../Microservice/Microservice';
+import ErrorModel from '../../models/ErrorModel';
 
 /**
  * AI class for managing OpenAI assistant interactions, thread management, and message handling.
@@ -118,7 +119,7 @@ export default class AI extends Microservice {
    
          return response.output_text;
       } catch (err) {
-         throw toError('Error caught during GPT response creating.');
+         throw ErrorModel.toError('Error caught during GPT response creating.');
       }
    }
 

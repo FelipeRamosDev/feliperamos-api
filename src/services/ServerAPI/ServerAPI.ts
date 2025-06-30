@@ -173,7 +173,7 @@ class ServerAPI extends Microservice {
    }
 
    get projectPath(): string {
-      return path.normalize(__dirname.replace(path.normalize('/dist/src/services/ServerAPI'), '/'));
+      return path.normalize(__dirname.replace(path.normalize('/src/services/ServerAPI'), '/'));
    }
 
    normalizePath(filePath: string): string {
@@ -195,7 +195,7 @@ class ServerAPI extends Microservice {
    }
 
    async init(): Promise<void> {
-      this.rootPath = path.normalize(__dirname.replace(path.normalize('/dist/src/services'), '/'));
+      this.rootPath = path.normalize(__dirname.replace(path.normalize('/src/services'), '/'));
       this.serverState = 'loading';
 
       this.app.use(express.json({ limit: this.jsonLimit }));
