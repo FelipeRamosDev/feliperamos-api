@@ -41,6 +41,7 @@ class ServerAPI extends Microservice {
    public onReady: Callback;
    public FE_ORIGIN?: string;
    public PORT: number;
+   public autoInitialize: boolean;
    public httpEndpoints: Route[];
    public defaultMaxListeners: number;
    public sslConfig?: SSLConfig;
@@ -61,7 +62,7 @@ class ServerAPI extends Microservice {
       super(setup);
 
       const {
-         projectName,
+         projectName = 'default-server',
          API_SECRET,
          staticPath,
          sslConfig,
@@ -70,6 +71,7 @@ class ServerAPI extends Microservice {
          // Defaults
          PORT = 80,
          jsonLimit = '10mb',
+         autoInitialize = false,
          onReady = () => { },
          httpEndpoints = [],
          defaultMaxListeners = 20,
@@ -99,6 +101,7 @@ class ServerAPI extends Microservice {
       this.sslConfig = sslConfig;
       this.sessionResave = (sessionResave !== undefined) ? sessionResave : true;
       this.sessionSaveUninitialized = (sessionSaveUninitialized !== undefined) ? sessionSaveUninitialized : true;
+      this.autoInitialize = autoInitialize;
       this.onReady = onReady;
       this.FE_ORIGIN = FE_ORIGIN;
       this.PORT = PORT || 80;
@@ -135,9 +138,12 @@ class ServerAPI extends Microservice {
       }
 
       this.httpEndpoints.forEach(endpoint => this.createEndpoint(endpoint));
-      this.init().catch(err => {
-         throw err;
-      });
+
+      if (this.autoInitialize) {
+         this.init().catch(err => {
+            throw err;
+         });
+      }
    }
 
    // /**
@@ -182,7 +188,7 @@ class ServerAPI extends Microservice {
 
    normalizeSSLPath(): void {
       if (!this.sslConfig || typeof this.sslConfig !== 'object') {
-         throw new Error('The "sslConfig" param must be an object with keySSLPath and certSSLPath properties!');
+         return;
       }
 
       if (this.sslConfig.keySSLPath) {

@@ -23,7 +23,7 @@ export interface SSLConfig {
  * Extends MicroserviceSetup to inherit base microservice configuration
  */
 export interface ServerAPISetup extends MicroserviceSetup {
-   projectName: string;
+   projectName?: string;
    API_SECRET: string;
    staticPath?: string;
    sslConfig?: SSLConfig;
@@ -31,6 +31,7 @@ export interface ServerAPISetup extends MicroserviceSetup {
    PORT?: number;
    jsonLimit?: string;
    onReady?: Callback;
+   autoInitialize?: boolean;
    httpEndpoints?: Route[];
    defaultMaxListeners?: number;
    sessionCookiesMaxAge?: number;
