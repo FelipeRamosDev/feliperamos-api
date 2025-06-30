@@ -9,14 +9,17 @@
     "dev": "ts-node app.ts",
     "dev:watch": "nodemon --exec ts-node app.ts",
     "dev:inspect": "nodemon --exec ts-node --inspect app.ts",
-    "dev:check": "ts-node dev-check.ts",
     "service:ai": "ts-node src/containers/ai.service.ts",
     "service:slack": "ts-node src/containers/slack.service.ts",
     "service:api-server": "ts-node src/containers/api-server.service.ts",
+    "service:socket-server": "ts-node src/containers/socket-server.service.ts",
     "service:ai:watch": "nodemon --exec ts-node src/containers/ai.service.ts",
     "service:slack:watch": "nodemon --exec ts-node src/containers/slack.service.ts",
     "service:api-server:watch": "nodemon --exec ts-node src/containers/api-server.service.ts",
+    "service:socket-server:watch": "nodemon --exec ts-node src/containers/socket-server.service.ts",
     "clean": "rimraf dist",
+    "clean:cache": "rimraf .ts-node node_modules/.cache",
+    "debug:socket-fresh": "powershell -ExecutionPolicy Bypass -File debug-socket-fresh.ps1",
     "prebuild": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -45,6 +48,7 @@
   },
   "dependencies": {
     "@slack/bolt": "^4.4.0",
+    "@types/socket.io": "^3.0.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -52,6 +56,7 @@
     "express-session": "^1.18.1",
     "ioredis": "^5.6.1",
     "openai": "^4.103.0",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "socket.io": "^4.8.1"
   }
 }

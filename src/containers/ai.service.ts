@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { AI } from '../services';
-import assistentMessageRoute from './routes/ai-service/assistant-message.route';
+import assistentMessageRoute from './routes/ai/assistant-message.route';
 
 const { OPENAI_API_KEY, OPENAI_ASSISTANT_ID } = process.env;
 if (!OPENAI_API_KEY) {

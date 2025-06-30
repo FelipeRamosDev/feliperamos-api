@@ -1,119 +1,215 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build TypeScript",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "build"],
-            "group": {
-                "kind": "build",
-                "isDefault": true
+   "version": "2.0.0",
+   "tasks": [
+      {
+         "label": "Build TypeScript",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "build"
+         ],
+         "group": {
+            "kind": "build",
+            "isDefault": true
+         },
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": true,
+            "clear": false
+         },
+         "problemMatcher": [
+            "$tsc"
+         ]
+      },
+      {
+         "label": "Start Development Server",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "dev:watch"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": true,
+            "clear": false
+         },
+         "isBackground": true,
+         "problemMatcher": {
+            "owner": "typescript",
+            "pattern": {
+               "regexp": "^([^\\s].*)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
+               "file": 1,
+               "location": 2,
+               "severity": 3,
+               "code": 4,
+               "message": 5
             },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": ["$tsc"]
-        },
-        {
-            "label": "Start Development Server",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "dev:watch"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-            "problemMatcher": {
-                "owner": "typescript",
-                "pattern": {
-                    "regexp": "^([^\\s].*)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
-                    "file": 1,
-                    "location": 2,
-                    "severity": 3,
-                    "code": 4,
-                    "message": 5
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^\\[nodemon\\] starting",
-                    "endsPattern": "^\\[nodemon\\] clean exit"
-                }
+            "background": {
+               "activeOnStart": true,
+               "beginsPattern": "^\\[nodemon\\] starting",
+               "endsPattern": "^\\[nodemon\\] clean exit"
             }
-        },
-        {
-            "label": "Start AI Service (Watch)",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "service:ai:watch"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true
-        },
-        {
-            "label": "Start Slack Service (Watch)",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "service:slack:watch"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true
-        },
-        {
-            "label": "Start API Server (Watch)",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "service:api-server:watch"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true
-        },
-        {
-            "label": "Clean Build Directory",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "clean"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            }
-        }
-    ]
+         }
+      },
+      {
+         "label": "Start AI Service (Watch)",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "service:ai:watch"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "dedicated",
+            "showReuseMessage": true,
+            "clear": false
+         },
+         "isBackground": true
+      },
+      {
+         "label": "Start Slack Service (Watch)",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "service:slack:watch"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "dedicated",
+            "showReuseMessage": true,
+            "clear": false
+         },
+         "isBackground": true
+      },
+      {
+         "label": "Start API Server (Watch)",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "service:api-server:watch"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "dedicated",
+            "showReuseMessage": true,
+            "clear": false
+         },
+         "isBackground": true
+      },
+      {
+         "label": "Start Socket Server (Watch)",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "service:socket-server:watch"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "dedicated",
+            "showReuseMessage": true,
+            "clear": false
+         },
+         "isBackground": true
+      },
+      {
+         "label": "Clean Build Directory",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "clean"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": true,
+            "clear": false
+         }
+      },
+      {
+         "label": "clean-ts-node-cache",
+         "type": "shell",
+         "command": "rimraf",
+         "args": [
+            ".ts-node",
+            "node_modules/.cache"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": false,
+            "reveal": "never",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": false,
+            "clear": false
+         },
+         "problemMatcher": []
+      },
+      {
+         "label": "force-recompile-socket-service",
+         "type": "shell",
+         "command": "powershell",
+         "args": [
+            "-Command",
+            "Stop-Process -Name node -Force -ErrorAction SilentlyContinue; Remove-Item -Path '.ts-node' -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Path 'node_modules/.cache' -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Path 'dist' -Recurse -Force -ErrorAction SilentlyContinue; Write-Host 'All caches and processes cleared for fresh compilation'"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": false,
+            "clear": true
+         },
+         "problemMatcher": []
+      },
+      {
+         "label": "clean-and-build",
+         "type": "shell",
+         "command": "npm",
+         "args": [
+            "run",
+            "clean"
+         ],
+         "group": "build",
+         "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared",
+            "showReuseMessage": false,
+            "clear": true
+         },
+         "problemMatcher": []
+      }
+   ]
 }
