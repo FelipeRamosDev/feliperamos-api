@@ -10,3 +10,4 @@ export { default as Cluster } from './ClusterManager/Cluster';
 export { default as Core } from './ClusterManager/Core';
 export { default as Thread } from './ClusterManager/Thread';
 export { default as InstanceBase } from './ClusterManager/InstanceBase';
+export { default as EventEndpoint } from './ClusterManager/EventEndpoint';

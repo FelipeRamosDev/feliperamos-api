@@ -16,8 +16,7 @@ import {
    NamespaceConfig,
    RoomConfig,
    ConnectionStats,
-   SocketMessage,
-   ExtendedSocket
+   OnInitializedCallback
 } from './SocketServer.types';
 import SocketNamespace from './SocketNamespace';
 import SocketRoom from './SocketRoom';
@@ -39,12 +38,19 @@ export class SocketServer extends Microservice {
    private _startTime: Date;
    private _stats: ConnectionStats;
    private _statsIntervalId?: NodeJS.Timeout;
+   private _onInitialized: OnInitializedCallback;
 
-   constructor(setup: SocketServerSetup) {
+   constructor(setup: SocketServerSetup = {} as SocketServerSetup) {
       super(setup);
-      
+
+      const { serverAPI, onInitialized = () => {} } = setup;
+      if (!serverAPI || !(serverAPI instanceof ServerAPI)) {
+         throw new Error('SocketServer requires a valid ServerAPI instance');
+      }
+
       this._config = setup;
-      this._serverAPI = setup.serverAPI;
+      this._serverAPI = serverAPI;
+      this._onInitialized = onInitialized;
       this._namespaces = new Map();
       this._globalRooms = new Map();
       this._clients = new Map();
@@ -147,8 +153,10 @@ export class SocketServer extends Microservice {
          });
 
          this.setupDefaultNamespace();
+         this.setupCustomNamespaces();
          this.setupEventHandlers();
          this.startStatisticsTracking();
+         this._onInitialized(this);
       } catch (error) {
          console.error('Error initializing SocketServer:', error);
          throw error;
@@ -166,6 +174,7 @@ export class SocketServer extends Microservice {
             this._httpServer.listen(serverPort, () => {
                this._isStarted = true;
                this._startTime = new Date();
+
                console.log(`SocketServer started on port ${serverPort}`);
                resolve();
             });
@@ -450,6 +459,13 @@ export class SocketServer extends Microservice {
       };
 
       this.createNamespace(defaultConfig);
+   }
+
+   /**
+    * Load all configured namespaces
+    */
+   private setupCustomNamespaces(): void {
+      this._config.namespaces?.forEach(namespaceConfig => this.createNamespace(namespaceConfig));
    }
 
    /**

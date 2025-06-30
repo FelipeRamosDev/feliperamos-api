@@ -30,7 +30,9 @@ export interface ServerAPISetup extends MicroserviceSetup {
    FE_ORIGIN?: string;
    PORT?: number;
    jsonLimit?: string;
-   onReady?: Callback;
+   onConstructed?: Callback;
+   onInitialized?: Callback;
+   onListen?: Callback;
    autoInitialize?: boolean;
    httpEndpoints?: Route[];
    defaultMaxListeners?: number;

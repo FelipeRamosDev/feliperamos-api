@@ -4,9 +4,11 @@
  * This file contains all TypeScript interfaces and types used in the SocketServer service.
  */
 
-import { Server as IOServer, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { MicroserviceSetup } from '../Microservice/Microservice.types';
 import ServerAPI from '../ServerAPI/ServerAPI';
+import SocketNamespace from './SocketNamespace';
+import SocketServer from './SocketServer';
 
 /**
  * Callback function types
@@ -14,12 +16,14 @@ import ServerAPI from '../ServerAPI/ServerAPI';
 export type SocketCallback = (...args: any[]) => void;
 export type RoomCallback = (roomId: string, ...args: any[]) => void;
 export type ClientCallback = (clientId: string, ...args: any[]) => void;
+export type OnInitializedCallback = (socketServer: SocketServer) => void;
 
 /**
  * Socket Server configuration interface
  */
 export interface SocketServerSetup extends MicroserviceSetup {
    serverAPI: ServerAPI;
+   namespaces?: NamespaceConfig[];
    corsOrigin?: string[];
    allowEIO3?: boolean;
    transports?: string[];
@@ -27,6 +31,7 @@ export interface SocketServerSetup extends MicroserviceSetup {
    pingInterval?: number;
    upgradeTimeout?: number;
    maxHttpBufferSize?: number;
+   onInitialized?: OnInitializedCallback;
    allowRequest?: (req: any, callback: (err: string | null | undefined, success: boolean) => void) => void;
 }
 
@@ -48,7 +53,7 @@ export interface NamespaceConfig {
  */
 export interface NamespaceMiddleware {
    name: string;
-   handler: (socket: Socket, next: (err?: Error) => void) => void;
+   handler: (this: SocketNamespace, socket: Socket, next: (err?: Error) => void) => void;
 }
 
 /**
@@ -56,7 +61,7 @@ export interface NamespaceMiddleware {
  */
 export interface NamespaceEvent {
    name: string;
-   handler: (socket: Socket, ...args: any[]) => void;
+   handler: (this: SocketNamespace, socket: Socket, ...args: any[]) => void;
 }
 
 /**
@@ -141,4 +146,14 @@ export interface ExtendedSocket extends Socket {
    userId?: string;
    username?: string;
    joinedRooms?: Set<string>;
+}
+
+export interface RoomDetails {
+   id: string;
+   name: string;
+   clientCount: number;
+   maxClients: number;
+   isPrivate: boolean;
+   createdAt: Date;
+   lastActivity: Date;
 }
