@@ -40,7 +40,7 @@ export class SocketServer extends Microservice {
    private _statsIntervalId?: NodeJS.Timeout;
    private _onInitialized: OnInitializedCallback;
 
-   constructor(setup: SocketServerSetup = {} as SocketServerSetup) {
+   constructor(setup: SocketServerSetup) {
       super(setup);
 
       const { serverAPI, onInitialized = () => {} } = setup;
