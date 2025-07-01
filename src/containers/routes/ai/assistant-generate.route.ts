@@ -1,11 +1,11 @@
 import { AI, EventEndpoint } from '../../../services';
-import { AssistantMessageDataResponse, AssistantMessageDoneResponse } from '../../types/routes/ai/assistant-generate.types';
+import { AssistantGenerateDataResponse, AssistantGenerateDoneResponse } from '../../types/routes/ai/assistant-generate.types';
 
 export default new EventEndpoint({
    path: '/ai/assistant-generate',
    controller: (
-      data: AssistantMessageDataResponse = {},
-      done: (res: AssistantMessageDoneResponse) => void = () => {}
+      data: AssistantGenerateDataResponse = {},
+      done: (res: AssistantGenerateDoneResponse) => void = () => {}
    ) => {
       const { input, threadID } = data;
 
