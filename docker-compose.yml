@@ -17,7 +17,7 @@ services:
     build: .
     container_name: slack-service
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
       - NODE_ENV=production
     depends_on:
