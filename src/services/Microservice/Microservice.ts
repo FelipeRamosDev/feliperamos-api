@@ -107,6 +107,7 @@ export default class Microservice {
       try {
          dataString = JSON.stringify(data);
       } catch (err) {
+         console.error(`Error stringifying data for event "${eventName}":`, err);
          return;
       }
 
