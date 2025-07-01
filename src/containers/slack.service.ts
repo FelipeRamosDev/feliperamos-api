@@ -16,7 +16,8 @@ global.slack = new SlackApp({
    appToken: SLACK_APP_TOKEN,
    botToken: SLACK_BOT_TOKEN,
    signingSecret: SLACK_SIGNING_SECRET,
-   onReady: function () {
+   port: 4000,
+   onServiceReady: function () {
       console.log('Slack app is running!');
    },
    onError: (error: Error) => {

@@ -26,6 +26,9 @@ async function executeCommands() {
       console.log('Starting Server API service...');
       executeCommand('npm', ['run', 'service:api-server']);
 
+      console.log('Starting Socket Server service...');
+      executeCommand('npm', ['run', 'service:socket-server']);
+
       console.log('All commands completed!');
    } catch (error) {
       console.error('Error executing commands:', error);

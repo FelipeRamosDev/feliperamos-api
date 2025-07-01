@@ -15,60 +15,120 @@
          "type": "node",
          "request": "launch",
          "program": "${workspaceFolder}/app.ts",
-         "runtimeArgs": ["-r", "ts-node/register"],
+         "runtimeArgs": [
+            "-r",
+            "ts-node/register"
+         ],
          "env": {
-            "NODE_ENV": "development"
+            "NODE_ENV": "development",
+            "TS_NODE_CACHE": "0",
+            "TS_NODE_TRANSPILE_ONLY": "true"
          },
          "console": "integratedTerminal",
          "restart": true,
          "sourceMaps": true,
-         "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-         "skipFiles": ["<node_internals>/**"]
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+         "preLaunchTask": "force-recompile-socket-service"
       },
       {
          "name": "Debug AI Service",
          "type": "node",
          "request": "launch",
          "program": "${workspaceFolder}/src/containers/ai.service.ts",
-         "runtimeArgs": ["-r", "ts-node/register"],
+         "runtimeArgs": [
+            "-r",
+            "ts-node/register"
+         ],
          "env": {
-            "NODE_ENV": "development"
+            "NODE_ENV": "development",
+            "TS_NODE_CACHE": "0",
+            "TS_NODE_TRANSPILE_ONLY": "true"
          },
          "console": "integratedTerminal",
          "restart": true,
          "sourceMaps": true,
-         "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-         "skipFiles": ["<node_internals>/**"]
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+         "preLaunchTask": "force-recompile-socket-service"
       },
       {
          "name": "Debug API Server Service",
          "type": "node",
          "request": "launch",
          "program": "${workspaceFolder}/src/containers/api-server.service.ts",
-         "runtimeArgs": ["-r", "ts-node/register"],
+         "runtimeArgs": [
+            "-r",
+            "ts-node/register"
+         ],
          "env": {
-            "NODE_ENV": "development"
+            "NODE_ENV": "development",
+            "TS_NODE_CACHE": "0",
+            "TS_NODE_TRANSPILE_ONLY": "true"
          },
          "console": "integratedTerminal",
          "restart": true,
          "sourceMaps": true,
-         "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-         "skipFiles": ["<node_internals>/**"]
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+         "preLaunchTask": "force-recompile-socket-service"
       },
       {
          "name": "Debug Slack Service",
          "type": "node",
          "request": "launch",
          "program": "${workspaceFolder}/src/containers/slack.service.ts",
-         "runtimeArgs": ["-r", "ts-node/register"],
+         "runtimeArgs": [
+            "-r",
+            "ts-node/register"
+         ],
          "env": {
-            "NODE_ENV": "development"
+            "NODE_ENV": "development",
+            "TS_NODE_CACHE": "0",
+            "TS_NODE_TRANSPILE_ONLY": "true"
          },
          "console": "integratedTerminal",
          "restart": true,
          "sourceMaps": true,
-         "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-         "skipFiles": ["<node_internals>/**"]
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+         "preLaunchTask": "force-recompile-socket-service"
+      },
+      {
+         "name": "Debug Socket Service",
+         "type": "node",
+         "request": "launch",
+         "program": "${workspaceFolder}/src/containers/socket-server.service.ts",
+         "runtimeArgs": [
+            "-r",
+            "ts-node/register"
+         ],
+         "env": {
+            "NODE_ENV": "development",
+            "TS_NODE_CACHE": "0"
+         },
+         "console": "integratedTerminal",
+         "restart": true,
+         "sourceMaps": true,
+         "skipFiles": [
+            "<node_internals>/**"
+         ]
+      },
+      {
+         "name": "Attach to Socket Service Debug",
+         "type": "node",
+         "request": "attach",
+         "port": 9229,
+         "skipFiles": [
+            "<node_internals>/**"
+         ],
+         "sourceMaps": true,
+         "localRoot": "${workspaceFolder}",
+         "remoteRoot": "${workspaceFolder}"
       }
    ]
 }

@@ -4,8 +4,8 @@ import Core from './Core';
 import Cluster from './Cluster';
 
 // Types
-import { ThreadSetup } from './ClusterManager.types';
-import { EndpointSetup } from '../../models/types/EventEndpoint.types';
+import { ThreadSetup } from './types/ClusterManager.types';
+import { EndpointSetup } from '../EventEndpoint/EventEndpoint.types';
 
 /**
  * Represents a thread in a multi-threaded environment, extending the capabilities of InstanceBase.
