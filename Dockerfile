@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the TypeScript code
-RUN rm -r dist
+RUN rm -r dist || true
 RUN npm run build
 
 # Expose the port your app runs on (adjust if different)

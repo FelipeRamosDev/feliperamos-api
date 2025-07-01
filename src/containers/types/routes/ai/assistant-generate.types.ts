@@ -1,9 +1,9 @@
-export interface AssistantMessageDataResponse {
+export interface AssistantGenerateDataResponse {
    input?: string;
    threadID?: string;
 }
 
-export type AssistantMessageDoneResponse = {
+export type AssistantGenerateDoneResponse = {
    success?: boolean;
    threadID?: string;
    output?: string;

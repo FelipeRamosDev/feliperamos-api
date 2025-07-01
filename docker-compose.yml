@@ -12,7 +12,7 @@ services:
     env_file:
       - .env.local
     command: ['npm', 'run', 'service:ai']
-    
+
   slack-service:
     build: .
     container_name: slack-service
@@ -28,6 +28,38 @@ services:
     env_file:
       - .env.local
     command: ['npm', 'run', 'service:slack']
+
+  api-server:
+    build: .
+    container_name: api-server
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'service:api-server']
+
+  socket-server:
+    build: .
+    container_name: socket-server
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'service:socket-server']
 
   redis:
     image: redis:7-alpine
