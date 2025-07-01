@@ -23,9 +23,10 @@ const assistantInboxEvent: NamespaceEvent = {
             console.error('Error occurred while sending message to AI:', message || error);
             this.sendToRoom(roomID, 'assistant-message', {
                error: true,
-               message: message,
-               ...error
+               message: 'Error occurred while sending message to AI.'
             });
+
+            return;
          }
 
          if (success && output) {
