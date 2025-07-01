@@ -31,9 +31,6 @@ const startChatEvent: NamespaceEvent = {
                message: `Welcome to the chat room ${room.name}, ${client.id}!`
             });
          },
-         onLeave: (client) => {
-            console.log(`Client ${client.id} left the room ${clientID}`);
-         },
          onMessage: (client, message) => {
             console.log(`Message from ${client.id} in room ${clientID}:`, message);
          }

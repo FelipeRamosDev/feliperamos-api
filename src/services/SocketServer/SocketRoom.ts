@@ -191,9 +191,9 @@ export class SocketRoom {
          // Call leave callback if defined
          if (this._config.onLeave) {
             this._config.onLeave(this, client.info);
+         } else {
+            console.log(`Client ${clientId} left room ${this.id}`);
          }
-
-         console.log(`Client ${clientId} left room ${this.id}`);
 
          // Check if room should be closed
          if (this._clients.size === 0) {
