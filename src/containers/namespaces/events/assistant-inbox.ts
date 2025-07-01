@@ -1,18 +1,29 @@
 import { NamespaceEvent } from '@/services/SocketServer';
 import socketServer from '../../socket-server.service';
 
+const typingStatus: Map<string, boolean> = new Map();
+
 const assistantInboxEvent: NamespaceEvent = {
    name: 'assistant-inbox',
    handler(socket, data = {}) {
       const roomID = socket.id;
       const { content, threadID } = data;
+      const sendTyping = (typing: boolean) => {
+         if (typingStatus.get(roomID) !== typing) {
+            typingStatus.set(roomID, typing);
+            this.sendToRoom(roomID, 'assistant-typing', typing);
+         }
+      };
 
+      sendTyping(true);
       if (!content) {
          console.error('Received assistant inbox event without content:', data);
          this.sendToRoom(roomID, 'assistant-message', {
             error: true,
             message: 'Message content is empty or missing.'
          });
+
+         sendTyping(false);
          return;
       }
 
@@ -37,6 +48,8 @@ const assistantInboxEvent: NamespaceEvent = {
                threadID: threadID
             });
          }
+
+         sendTyping(false);
       });
    }
 };
