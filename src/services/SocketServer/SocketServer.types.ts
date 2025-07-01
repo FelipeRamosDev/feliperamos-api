@@ -9,6 +9,7 @@ import { MicroserviceSetup } from '../Microservice/Microservice.types';
 import ServerAPI from '../ServerAPI/ServerAPI';
 import SocketNamespace from './SocketNamespace';
 import SocketServer from './SocketServer';
+import SocketRoom from './SocketRoom';
 
 /**
  * Callback function types
@@ -75,8 +76,9 @@ export interface RoomConfig {
    isPrivate?: boolean;
    password?: string;
    metadata?: Record<string, any>;
-   onJoin?: (client: ClientInfo) => void;
-   onLeave?: (client: ClientInfo) => void;
+   onCreate?: (room: SocketRoom) => void;
+   onJoin?: (room: SocketRoom, client: ClientInfo) => void;
+   onLeave?: (room: SocketRoom, client: ClientInfo) => void;
    onMessage?: (client: ClientInfo, message: any) => void;
 }
 
