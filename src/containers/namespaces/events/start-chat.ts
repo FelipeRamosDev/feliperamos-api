@@ -1,5 +1,11 @@
 import { NamespaceEvent } from '@/services/SocketServer';
 
+const WELCOME_MESSAGE = [
+   `Welcome to the Felipe's CV chat!`,
+   `I'm Felipe's AI assistant and I will assist you with any questions or information you need regarding my CV.`,
+   `Feel free to ask anything about his career and experiences.`
+].join('\n');
+
 const startChatEvent: NamespaceEvent = {
    name: 'start-chat',
    handler(socket, data, callback) {
@@ -25,14 +31,14 @@ const startChatEvent: NamespaceEvent = {
             });
          },
          onJoin: (room, client) => {
-            this.sendToRoom(room.id, 'bot-message', {
+            callback({ success: true });
+
+            this.sendToRoom(room.id, 'assistant-message', {
+               success: true,
                room: room.id,
                timestamp: Date.now(),
-               message: `Welcome to the chat room ${room.name}, ${client.id}!`
+               content: WELCOME_MESSAGE
             });
-         },
-         onMessage: (client, message) => {
-            console.log(`Message from ${client.id} in room ${clientID}:`, message);
          }
       });
    }

@@ -110,6 +110,6 @@ export default class SlackApp extends Microservice {
       const input = message.text;
       const threadID = this.getAiThread(message.user);
 
-      this.sendTo('/ai-service/assistant-message', { input, threadID }, callback);
+      this.sendTo('/ai/assistant-generate', { input, threadID }, callback);
    }
 }
