@@ -174,6 +174,10 @@ class ServerAPI extends Microservice {
    //    return this.parent?.IO;
    // }
 
+   get prodPath(): string {
+      return process.env.NODE_ENV === 'production' ? '/dist' : '';
+   }
+
    get redisService(): RedisService | undefined {
       return this.parent?.Redis;
    }
@@ -183,7 +187,7 @@ class ServerAPI extends Microservice {
    }
 
    get projectPath(): string {
-      return path.normalize(__dirname.replace(path.normalize('/src/services/ServerAPI'), '/'));
+      return path.normalize(__dirname.replace(path.normalize(`${this.prodPath}/src/services/ServerAPI`), '/'));
    }
 
    normalizePath(filePath: string): string {
@@ -205,7 +209,7 @@ class ServerAPI extends Microservice {
    }
 
    async init(): Promise<void> {
-      this.rootPath = path.normalize(__dirname.replace(path.normalize('/src/services'), '/'));
+      this.rootPath = path.normalize(__dirname.replace(path.normalize(`${this.prodPath}/src/services`), '/'));
       this.serverState = 'loading';
 
       this.app.use(express.json({ limit: this.jsonLimit }));

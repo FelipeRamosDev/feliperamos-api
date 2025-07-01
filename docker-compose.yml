@@ -11,7 +11,7 @@ services:
       - feliperamos-net
     env_file:
       - .env.local
-    command: ['npm', 'run', 'service:ai']
+    command: ['npm', 'run', 'start:ai']
 
   slack-service:
     build: .
@@ -27,7 +27,7 @@ services:
       - feliperamos-net
     env_file:
       - .env.local
-    command: ['npm', 'run', 'service:slack']
+    command: ['npm', 'run', 'start:slack']
 
   api-server:
     build: .
@@ -43,7 +43,7 @@ services:
       - feliperamos-net
     env_file:
       - .env.local
-    command: ['npm', 'run', 'service:api-server']
+    command: ['npm', 'run', 'start:api-server']
 
   socket-server:
     build: .
@@ -59,7 +59,7 @@ services:
       - feliperamos-net
     env_file:
       - .env.local
-    command: ['npm', 'run', 'service:socket-server']
+    command: ['npm', 'run', 'start:socket-server']
 
   redis:
     image: redis:7-alpine

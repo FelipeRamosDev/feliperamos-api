@@ -18,16 +18,16 @@ function executeCommand(command: string, args: string[] = []): void {
 async function executeCommands() {
    try {
       console.log('Starting AI service...');
-      executeCommand('npm', ['run', 'service:ai']);
+      executeCommand('npm', ['run', 'dev:ai']);
 
       console.log('Starting Slack service...');
-      executeCommand('npm', ['run', 'service:slack']);
+      executeCommand('npm', ['run', 'dev:slack']);
 
       console.log('Starting Server API service...');
-      executeCommand('npm', ['run', 'service:api-server']);
+      executeCommand('npm', ['run', 'dev:api-server']);
 
       console.log('Starting Socket Server service...');
-      executeCommand('npm', ['run', 'service:socket-server']);
+      executeCommand('npm', ['run', 'dev:socket-server']);
 
       console.log('All commands completed!');
    } catch (error) {
