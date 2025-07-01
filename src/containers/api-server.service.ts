@@ -3,6 +3,7 @@ import { Route } from "../services";
 import ServerAPI from "../services/ServerAPI/ServerAPI";
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
+const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
 const {
    SSL_KEY_PATH,
    SSL_CERT_PATH,
@@ -27,6 +28,7 @@ global.service = new ServerAPI({
    redisURL: REDIS_URL,
    sessionCookiesMaxAge: cookiesMaxAge,
    PORT: SERVER_API_PORT,
+   corsOrigin: CORS_ORIGIN,
    sslConfig: sslConfig,
    httpEndpoints: [
       new Route({

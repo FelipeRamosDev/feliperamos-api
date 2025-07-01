@@ -159,10 +159,11 @@ export class SocketRoom {
 
          // Call join callback if defined
          if (this._config.onJoin) {
-            this._config.onJoin(client.info);
+            this._config.onJoin(this, client.info);
+         } else {
+            console.log(`Client ${client.id} joined room ${this.id}`);
          }
 
-         console.log(`Client ${client.id} joined room ${this.id}`);
          return true;
       } catch (error) {
          console.error(`Error adding client ${client.id} to room ${this.id}:`, error);
@@ -189,7 +190,7 @@ export class SocketRoom {
 
          // Call leave callback if defined
          if (this._config.onLeave) {
-            this._config.onLeave(client.info);
+            this._config.onLeave(this, client.info);
          }
 
          console.log(`Client ${clientId} left room ${this.id}`);

@@ -179,7 +179,12 @@ export class SocketNamespace {
       this._rooms.set(roomConfig.id, room);
       this._stats.totalRooms++;
 
-      console.log(`Room ${roomConfig.id} created in namespace ${this.name}`);
+      if (roomConfig.onCreate) {
+         roomConfig.onCreate(room);
+      } else {
+         console.log(`Room ${roomConfig.id} created in namespace ${this.name}`);
+      }
+
       return room;
    }
 
