@@ -65,13 +65,13 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - "6000:6000"
     restart: unless-stopped
     networks:
       - feliperamos-net
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    command: redis-server --port 6000 --appendonly yes
 
 volumes:
   redis_data:
