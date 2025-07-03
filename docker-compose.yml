@@ -33,7 +33,7 @@ services:
     build: .
     container_name: api-server
     ports:
-      - "8000:8000"
+      - "7000:7000"
     environment:
       - NODE_ENV=production
     depends_on:
