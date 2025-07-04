@@ -110,6 +110,75 @@ feliperamos-api/
 
 ### Installation
 
+#### Option 1: Docker Installation (Recommended)
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/FelipeRamosDev/feliperamos-cv.git
+   cd feliperamos-api
+   ```
+
+2. **Environment Configuration**
+   Create a `.env.local` file:
+   ```env
+   # OpenAI Configuration
+   OPENAI_API_KEY=your_openai_api_key
+   OPENAI_ASSISTANT_ID=your_assistant_id
+   
+   # Server Configuration
+   SOCKET_SERVER_PORT=5000
+   API_SERVER_PORT=3001
+   SLACK_SERVER_PORT=4000
+   API_SECRET=your_api_secret
+   
+   # Database Configuration (Docker)
+   DB_HOST=postgres
+   DB_PORT=5432
+   DB_NAME=feliperamos_db
+   DB_USER=feliperamos
+   DB_PASSWORD=your_db_password
+   
+   # Redis Configuration (Docker)
+   REDIS_HOST=redis
+   REDIS_PORT=6000
+   REDIS_PASSWORD=your_redis_password
+   
+   # SSL Configuration (Optional)
+   SSL_KEY_PATH=./cert/ssl.key
+   SSL_CERT_PATH=./cert/ssl.crt
+   
+   # CORS Configuration
+   CORS_ORIGIN=http://localhost:3000,https://yourdomain.com
+   
+   # Slack Configuration (Optional)
+   SLACK_BOT_TOKEN=xoxb-your-bot-token
+   SLACK_SIGNING_SECRET=your_signing_secret
+   ```
+
+3. **Start all services with Docker Compose**
+   ```bash
+   # Build and start all services
+   docker-compose up -d --build
+   
+   # View logs
+   docker-compose logs -f
+   
+   # Stop all services
+   docker-compose down
+   ```
+
+4. **Verify services are running**
+   ```bash
+   # Check service status
+   docker-compose ps
+   
+   # Check specific service logs
+   docker-compose logs ai-service
+   docker-compose logs socket-server
+   ```
+
+#### Option 2: Local Development Installation
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/FelipeRamosDev/feliperamos-cv.git
@@ -134,14 +203,14 @@ feliperamos-api/
    SLACK_SERVER_PORT=4000
    API_SECRET=your_api_secret
    
-   # Database Configuration
+   # Database Configuration (Local)
    DB_HOST=localhost
    DB_PORT=5432
    DB_NAME=feliperamos_db
    DB_USER=your_db_user
    DB_PASSWORD=your_db_password
    
-   # Redis Configuration
+   # Redis Configuration (Local)
    REDIS_HOST=localhost
    REDIS_PORT=6000
    REDIS_PASSWORD=your_redis_password
@@ -161,6 +230,19 @@ feliperamos-api/
 4. **Build the application**
    ```bash
    npm run build
+   ```
+
+5. **Set up local databases (if not using Docker)**
+   ```bash
+   # Start PostgreSQL (example for macOS with Homebrew)
+   brew services start postgresql
+   
+   # Start Redis (example for macOS with Homebrew)
+   brew services start redis
+   
+   # Or use Docker for databases only
+   docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=your_password postgres:16
+   docker run -d --name redis -p 6000:6000 redis:7-alpine redis-server --requirepass your_password
    ```
 
 ## 🚀 Running the Application
