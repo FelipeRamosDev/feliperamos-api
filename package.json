@@ -2,11 +2,29 @@
   "name": "feliperamos-cv",
   "version": "1.0.0",
   "description": "Chat bot integrated with an OpenAI GPT agent that replies anything about me, if you are a recruiter, please try to chat with him.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node dist/cluster",
+    "start": "node dist/app",
     "build": "npx tsc",
-    "dev": "npx tsc && node dist/cluster",
+    "dev": "ts-node app.ts",
+    "start:ai": "node dist/src/containers/ai.service.js",
+    "start:slack": "node dist/src/containers/slack.service.js",
+    "start:api-server": "node dist/src/containers/api-server.service.js",
+    "start:socket-server": "node dist/src/containers/socket-server.service.js",
+    "dev:watch": "nodemon --exec ts-node app.ts",
+    "dev:inspect": "nodemon --exec ts-node --inspect app.ts",
+    "dev:ai": "ts-node src/containers/ai.service.ts",
+    "dev:slack": "ts-node src/containers/slack.service.ts",
+    "dev:api-server": "ts-node src/containers/api-server.service.ts",
+    "dev:socket-server": "ts-node src/containers/socket-server.service.ts",
+    "watch:ai": "nodemon --exec ts-node src/containers/ai.service.ts",
+    "watch:slack": "nodemon --exec ts-node src/containers/slack.service.ts",
+    "watch:api-server": "nodemon --exec ts-node src/containers/api-server.service.ts",
+    "watch:socket-server": "nodemon --exec ts-node src/containers/socket-server.service.ts",
+    "clean": "rimraf dist",
+    "clean:cache": "rimraf .ts-node node_modules/.cache",
+    "debug:socket-fresh": "powershell -ExecutionPolicy Bypass -File debug-socket-fresh.ps1",
+    "prebuild": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,12 +38,29 @@
   },
   "homepage": "https://github.com/FelipeRamosDev/feliperamos-cv#readme",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/express-session": "^1.18.2",
+    "@types/node": "^22.15.34",
+    "@types/pg": "^8.15.4",
+    "concurrently": "^9.2.0",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@slack/bolt": "^4.4.0",
+    "@types/socket.io": "^3.0.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "ioredis": "^5.6.1",
-    "openai": "^4.103.0"
+    "openai": "^4.103.0",
+    "pg": "^8.16.3",
+    "socket.io": "^4.8.1"
   }
 }

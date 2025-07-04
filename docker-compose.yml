@@ -1,0 +1,81 @@
+services:
+  ai-service:
+    build: .
+    container_name: ai-service
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'start:ai']
+
+  slack-service:
+    build: .
+    container_name: slack-service
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'start:slack']
+
+  api-server:
+    build: .
+    container_name: api-server
+    ports:
+      - "7000:7000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'start:api-server']
+
+  socket-server:
+    build: .
+    container_name: socket-server
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    command: ['npm', 'run', 'start:socket-server']
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6000:6000"
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    volumes:
+      - redis_data:/data
+    command: redis-server --port 6000 --appendonly yes
+
+volumes:
+  redis_data:
+
+networks:
+  feliperamos-net:
+    driver: bridge

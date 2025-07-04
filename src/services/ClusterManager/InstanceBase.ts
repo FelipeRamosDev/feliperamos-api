@@ -1,15 +1,16 @@
 import crypto from 'crypto';
 import IORedis from 'ioredis';
-import EventEndpoint from '../../models/EventEndpoint';
+import EventEndpoint from '../EventEndpoint/EventEndpoint';
 import Cluster from './Cluster';
 import Core from './Core';
 import Thread from './Thread';
 
 // Types
-import { InstanceBaseSetup } from '../../types/ClusterManager.types';
-import { EndpointSetup } from '../../types/EventEndpoint.types';
+import { InstanceBaseSetup } from './types/ClusterManager.types';
+import { EndpointSetup } from '../EventEndpoint/EventEndpoint.types';
 
-const publisher = new IORedis();
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const publisher = new IORedis(REDIS_URL);
 if (!global.callbacks) {
    global.callbacks = new Map();
 }
@@ -62,7 +63,7 @@ class InstanceBase {
       this._dataStore = new Map();
       this._routes = new Map();
 
-      this.ioRedis = new IORedis();
+      this.ioRedis = new IORedis(REDIS_URL);
       this.id = id || this.genRandomBytes();
       this.tagName = tagName || this.id;
       this.filePath = filePath;
@@ -81,7 +82,7 @@ class InstanceBase {
          if (err) {
             toError('Error on subscribing the event endpoint: ' + this.id);
          } else {
-            console.log(`Subscribed to event endpoint: ${this.id}`);
+            console.log(`[InstanceBase] Subscribed to event endpoint: ${this.id}`);
          }
       });
 

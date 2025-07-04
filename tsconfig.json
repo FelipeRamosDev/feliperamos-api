@@ -2,11 +2,36 @@
    "compilerOptions": {
       "strict": true,
       "forceConsistentCasingInFileNames": true,
+      "skipLibCheck": true,
       "outDir": "dist",
-      "target": "ES2015", // Ensures private fields are supported
-      "module": "NodeNext", // Modern module system
-      "moduleResolution": "nodenext"
+      "target": "ES2020",
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "declaration": false,
+      "sourceMap": true,
+      "removeComments": false,
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "strictNullChecks": true,
+      "allowJs": true,
+      "baseUrl": "./",
+      "paths": {
+         "@/*": ["src/*"]
+      }
    },
-   "include": ["*.ts", "src/**/*.ts"],
-   "exclude": ["dist"]
+   "ts-node": {
+      "esm": false,
+      "experimentalSpecifierResolution": "node",
+      "transpileOnly": true,
+      "files": true,
+      "compilerOptions": {
+         "module": "CommonJS"
+      }
+   },
+   "include": ["*.ts", "*.service.ts", "*.route.ts", "src/**/*.ts"],
+   "exclude": ["dist", "node_modules", "**/*.test.ts"]
 }
