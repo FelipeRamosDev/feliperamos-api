@@ -1,11 +1,5 @@
 import { NamespaceEvent } from '@/services/SocketServer';
 
-const WELCOME_MESSAGE = [
-   `Welcome to the Felipe's CV chat!`,
-   `I'm Felipe's AI assistant and I will assist you with any questions or information you need regarding my CV.`,
-   `Feel free to ask anything about his career and experiences.`
-].join('\n');
-
 const startChatEvent: NamespaceEvent = {
    name: 'start-chat',
    handler(socket, data, callback) {
@@ -31,14 +25,7 @@ const startChatEvent: NamespaceEvent = {
             });
          },
          onJoin: (room, client) => {
-            callback({ success: true });
-
-            this.sendToRoom(room.id, 'assistant-message', {
-               success: true,
-               room: room.id,
-               timestamp: Date.now(),
-               content: WELCOME_MESSAGE
-            });
+            callback({ success: true, room: room.id });
          }
       });
    }

@@ -164,15 +164,23 @@ The project includes several npm scripts optimized for ts-node development:
 - `npm run dev:watch` - Run the main app with nodemon and ts-node (auto-restart on changes)
 - `npm run dev:inspect` - Run with Node.js debugger enabled
 
-#### Individual Services
-- `npm run service:ai` - Run AI service directly with ts-node
-- `npm run service:slack` - Run Slack service directly with ts-node  
-- `npm run service:api-server` - Run API server service directly with ts-node
+#### Production Services (Individual)
+- `npm run start:ai` - Run AI service directly with ts-node
+- `npm run start:slack` - Run Slack service directly with ts-node  
+- `npm run start:api-server` - Run API server service directly with ts-node
+- `npm run start:socket-server` - Run Socket server service directly with ts-node
+
+#### Development Services (Individual)
+- `npm run dev:ai` - Run AI service directly with ts-node
+- `npm run dev:slack` - Run Slack service directly with ts-node  
+- `npm run dev:api-server` - Run API server service directly with ts-node
+- `npm run dev:socket-server` - Run Socket server service directly with ts-node
 
 #### Development Services (with auto-restart)
-- `npm run service:ai:watch` - Run AI service with nodemon
-- `npm run service:slack:watch` - Run Slack service with nodemon
-- `npm run service:api-server:watch` - Run API server service with nodemon
+- `npm run watch:ai` - Run AI service with nodemon
+- `npm run watch:slack` - Run Slack service with nodemon
+- `npm run watch:api-server` - Run API server service with nodemon
+- `npm run watch:socket-server` - Run Socket server service with nodemon
 
 #### Build Scripts
 - `npm run build` - Compile TypeScript to JavaScript (dist folder)

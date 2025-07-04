@@ -66,7 +66,7 @@
          "command": "npm",
          "args": [
             "run",
-            "service:ai:watch"
+            "watch:ai"
          ],
          "group": "build",
          "presentation": {
@@ -85,7 +85,7 @@
          "command": "npm",
          "args": [
             "run",
-            "service:slack:watch"
+            "watch:slack"
          ],
          "group": "build",
          "presentation": {
@@ -104,7 +104,7 @@
          "command": "npm",
          "args": [
             "run",
-            "service:api-server:watch"
+            "watch:api-server"
          ],
          "group": "build",
          "presentation": {
@@ -123,7 +123,7 @@
          "command": "npm",
          "args": [
             "run",
-            "service:socket-server:watch"
+            "watch:socket-server"
          ],
          "group": "build",
          "presentation": {
