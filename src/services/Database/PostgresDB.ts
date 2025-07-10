@@ -50,7 +50,8 @@ class PostgresDB extends DataBase {
 
       const {
          user = 'postgres',
-         port = 5432
+         port = 5432,
+         password = '',
       } = setup;
 
       this.type = 'postgres';
@@ -61,7 +62,7 @@ class PostgresDB extends DataBase {
          user: this.user,
          database: this.dbName,
          host: this.host,
-         password: this.password,
+         password: password,
          port: this.port
       });
    }
@@ -86,9 +87,7 @@ class PostgresDB extends DataBase {
             await this.createSchema(schema)
          }
 
-         await this.createTestUser();
          await this.onReady(this);
-
          console.log('PostgresDB connected successfully');
          return this;
       } catch (error: any) {

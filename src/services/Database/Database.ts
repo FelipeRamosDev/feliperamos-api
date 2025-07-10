@@ -15,7 +15,6 @@ import ErrorDatabase from './ErrorDatabase';
 class DataBase {
    public dbName: string;
    public host: string;
-   public password: string;
    public schemas: Map<string, Schema>;
    public onReady: (database: any) => void;
    public onError: (database: ErrorDatabase) => void;
@@ -43,7 +42,6 @@ class DataBase {
 
       this.dbName = dbName;
       this.host = host;
-      this.password = password;
       this.schemas = new Map();
       this.onReady = onReady;
       this.onError = onError;
