@@ -87,9 +87,7 @@ class PostgresDB extends DataBase {
             await this.createSchema(schema)
          }
 
-         // await this.createTestUser();
          await this.onReady(this);
-
          console.log('PostgresDB connected successfully');
          return this;
       } catch (error: any) {

@@ -43,7 +43,5 @@ global.service = new ServerAPI({
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
-
-      console.log(database)
    }
 });

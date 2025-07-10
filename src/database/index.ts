@@ -28,7 +28,8 @@ database.init().then(async (DB) => {
          }).exec();
       }
    } catch (error: any) {
-      throw new Error('Verifying master user failed!');
+      console.error('Error verifying master user:', error);
+      throw new Error(`Verifying master user failed: ${error.message}`);
    }
 }).catch((error) => {
    console.error('Error initializing database:', error);
