@@ -1,9 +1,10 @@
 import 'dotenv/config';
 
 import '../database';
-import { Route } from '../services';
 import ServerAPI from '../services/ServerAPI/ServerAPI';
 import loginRoute from '../routes/auth/login.route';
+import healthRoute from '../routes/health.route';
+import authStatusRoute from '../routes/auth/auth-status.route';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
@@ -36,13 +37,8 @@ export default new ServerAPI({
    autoInitialize: true,
    httpEndpoints: [
       loginRoute,
-      new Route({
-         routePath: '/health',
-         method: 'GET',
-         controller: (req, res) => {
-            res.status(200).send({ success: true, message: 'Server is running' });
-         }
-      })
+      authStatusRoute,
+      healthRoute
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
