@@ -41,7 +41,7 @@ export interface AuthenticatedRequest extends Request {
 export interface RouteSetup {
    method?: HTTPMethod;
    routePath: string;
-   rules?: string[];
+   allowedRoles?: string[];
    controller: RequestHandler;
    bodySchema?: BodySchema;
    useAuth?: boolean;

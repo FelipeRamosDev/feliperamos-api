@@ -17,7 +17,7 @@ import validateRole from '../ServerAPI/middlewares/validateRole';
 class Route {
    public method: HTTPMethod;
    public routePath: string;
-   public rules?: string[];
+   public allowedRoles: string[];
    public controller: RequestHandler;
    public middlewares: RequestHandler[];
    public bodySchema?: BodySchema;
@@ -27,7 +27,7 @@ class Route {
       const {
          method,
          routePath,
-         rules = [],
+         allowedRoles = [],
          controller,
          useAuth,
          authRule,
@@ -42,8 +42,8 @@ class Route {
       }
 
       // Validation checks for required parameters
-      if (!Array.isArray(rules)) {
-         throw new ErrorRoute('The "rules" param must be an array when declaring a new endpoint!', 'ROUTE_RULES_INVALID');
+      if (!Array.isArray(allowedRoles)) {
+         throw new ErrorRoute('The "allowedRoles" param must be an array when declaring a new endpoint!', 'ROUTE_RULES_INVALID');
       }
 
       if (typeof controller !== 'function') {
@@ -52,7 +52,7 @@ class Route {
 
       this.method = method || 'GET';
       this.routePath = routePath;
-      this.rules = rules;
+      this.allowedRoles = allowedRoles;
       this.controller = controller;
       this.middlewares = [];
 
@@ -61,9 +61,9 @@ class Route {
          this.authRule = authRule;
          this.middlewares.push(authenticateToken);
 
-         // Validation the user rules
-         if (this.rules.length) {
-            this.middlewares.push(validateRole);
+         // Validating user allowedRoles
+         if (this.allowedRoles.length) {
+            this.middlewares.push(validateRole(this));
          }
       }
 
