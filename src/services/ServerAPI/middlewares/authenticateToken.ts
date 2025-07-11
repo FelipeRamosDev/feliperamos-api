@@ -8,7 +8,7 @@ const {
 } = process.env;
 
 interface JWTPayload {
-   id: string;
+   id: number;
    exp: number;
    iat?: number;
    [key: string]: any;
@@ -43,7 +43,7 @@ export default (req: Request, res: Response, next: NextFunction): void => {
          return;
       }
 
-      if (payload.id !== req.session.user?.id?.toString()) {
+      if (payload.id !== req.session.user?.id) {
          new ErrorResponseServerAPI('User ID does not match the token', 403, 'FORBIDDEN').send(res);
          return;
       }
