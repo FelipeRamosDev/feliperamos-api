@@ -6,7 +6,7 @@ export default new Route({
    method: 'GET',
    routePath: '/auth/user',
    useAuth: true,
-   allowedRoles: ['master'],
+   allowedRoles: [ 'master', 'admin' ],
    controller: async (req: Request, res: Response) => {
       if (!req.session.user) {
          new ErrorResponseServerAPI('User not authenticated', 401, 'UNAUTHORIZED').send(res);
