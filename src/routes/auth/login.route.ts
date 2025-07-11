@@ -2,6 +2,7 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 import { AdminUser } from '../../database/models/users_schema';
 import { Route } from '../../services';
 import { AdminUserPublic } from '@/database/models/users_schema/AdminUser/AdminUser.types';
+import jwt, { SignOptions } from 'jsonwebtoken';
 
 declare module 'express-session' {
    interface SessionData {
@@ -27,11 +28,28 @@ export default new Route({
             return;
          }
 
+         if (!process.env.JWT_SECRET) {
+            throw new ErrorResponseServerAPI('JWT_SECRET is not defined in the environment variables');
+         }
+
+         const JWT_SECRET = process.env.JWT_SECRET;
+
+         // Create a safe payload for JWT (only include serializable data)
+         const expirationTime = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours from now
+         const jwtPayload = {
+            id: isAuthenticated.id,
+            email: isAuthenticated.email,
+            name: isAuthenticated.name,
+            role: isAuthenticated.role,
+            iat: Math.floor(Date.now() / 1000),
+            exp: expirationTime
+         };
+
+         const token = jwt.sign(jwtPayload, JWT_SECRET);
          req.session.user = isAuthenticated;
-         res.status(200).send({
-            success: true,
-            user: isAuthenticated
-         });
+
+         res.cookie('token', token, { httpOnly: true, secure: false });
+         res.status(200).send(isAuthenticated);
       } catch (error) {
          new ErrorResponseServerAPI().send(res);
       }
