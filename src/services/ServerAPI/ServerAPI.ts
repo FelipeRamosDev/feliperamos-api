@@ -237,7 +237,7 @@ class ServerAPI extends Microservice {
             cookie: {
                secure: this.useSSL, // Set secure to true if using HTTPS
                maxAge: this.sessionCookiesMaxAge,
-               httpOnly: false, // Allow JavaScript access if needed
+               httpOnly: true, // Allow JavaScript access if needed
                sameSite: this.useSSL ? 'none' : 'lax' // Adjust based on your setup
             }
          }));
