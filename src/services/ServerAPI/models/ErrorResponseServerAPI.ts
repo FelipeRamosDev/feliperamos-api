@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import ErrorAPIServer from './ErrorServerAPI';
+import ErrorServerAPI from './ErrorServerAPI';
 
 export default class ErrorResponseServerAPI extends Error {
    public error: boolean;
@@ -19,7 +19,7 @@ export default class ErrorResponseServerAPI extends Error {
 
    send(res: Response): Response {
       if (!res) {
-         throw new ErrorAPIServer('Response object is required to send an error response.', 'RESPONSE_OBJECT_REQUIRED');
+         throw new ErrorServerAPI('Response object is required to send an error response.', 'RESPONSE_OBJECT_REQUIRED');
       }
 
       return res.status(this.status).send({

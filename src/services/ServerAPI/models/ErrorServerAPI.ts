@@ -9,7 +9,7 @@ export default class ErrorServerAPI extends Error {
 
       this.error = true;
       this.code = code;
-      this.name = '[ErrorAPIServer]';
+      this.name = '[ErrorServerAPI]';
       this.data = data || null;
    }
 }
