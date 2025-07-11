@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import database from '../database';
+
+import '../database';
 import { Route } from '../services';
 import ServerAPI from '../services/ServerAPI/ServerAPI';
 
@@ -22,7 +23,7 @@ const sslConfig = SSL_KEY_PATH && SSL_CERT_PATH ? {
    certSSLPath: SSL_CERT_PATH
 } : undefined;
 
-global.service = new ServerAPI({
+export default new ServerAPI({
    id: 'server-api',
    API_SECRET: API_SECRET,
    projectName: 'feliperamos-api',

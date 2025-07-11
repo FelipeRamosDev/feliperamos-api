@@ -1,4 +1,5 @@
 import { PostgresDB } from '../services';
+import { AdminUser } from './models/users_schema';
 import users_schema from './schemas/users_schema';
 
 const database = new PostgresDB({
@@ -12,20 +13,34 @@ const database = new PostgresDB({
    ]
 });
 
-database.init().then(async (DB) => {
+database.init().then(async () => {
+   const {
+      MASTER_USER_EMAIL,
+      MASTER_USER_PASSWORD,
+      MASTER_USER_FIRST_NAME,
+      MASTER_USER_LAST_NAME
+   } = process.env;
+
    try {
-      const masterQuery = DB.select('users_schema', 'admin_users').where({ role: 'master' }).limit(1);
-      const { data = [] } = await masterQuery.exec();
-      const [ masterUser ] = data;
-      
+      const masterUser = await AdminUser.getMaster();
+
       if (!masterUser) {
-         await DB.insert('users_schema', 'admin_users').data({
-            email: process.env.MASTER_USER_EMAIL,
-            password: process.env.MASTER_USER_PASSWORD,
-            first_name: process.env.MASTER_USER_FIRST_NAME,
-            last_name: process.env.MASTER_USER_LAST_NAME,
-            role: 'master'
-         }).exec();
+         if (!MASTER_USER_EMAIL || !MASTER_USER_PASSWORD || !MASTER_USER_FIRST_NAME || !MASTER_USER_LAST_NAME) {
+            throw new Error('Missing environment variables for master user creation.');
+         }
+
+         const created = await AdminUser.createMaster({
+            email: MASTER_USER_EMAIL,
+            password: MASTER_USER_PASSWORD,
+            first_name: MASTER_USER_FIRST_NAME,
+            last_name: MASTER_USER_LAST_NAME
+         });
+
+         if (!created.success) {
+            throw new Error('Failed to create master user.');
+         }
+
+         console.log('Master user created successfully.');
       }
    } catch (error: any) {
       console.error('Error verifying master user:', error);

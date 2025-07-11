@@ -34,7 +34,6 @@ class DataBase {
       const {
          dbName = 'default-db',
          host = '0.0.0.0',
-         password = '',
          schemas = [],
          onReady = () => {},
          onError = () => {}
