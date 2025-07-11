@@ -74,7 +74,7 @@ export default class AdminUser extends TableRow {
       }
    }
 
-   static async getMaster(): Promise<AdminUser | null> {
+   static async getMaster(): Promise<AdminUserPublic | null> {
       try {
          const query = database.select('users_schema', 'admin_users');
 
