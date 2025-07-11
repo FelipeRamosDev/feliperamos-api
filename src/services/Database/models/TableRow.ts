@@ -19,7 +19,7 @@ export default class TableRow {
          created_at
       } = rawData || {};
 
-      this.id = id;
+      this.id = Number(id);
       this.created_at = created_at;
       this.schemaName = schemaName;
       this.tableName = tableName;

@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt';
 import TableRow from '../../../../services/Database/models/TableRow';
 import database from '../../..';
-import { CreateUserProps } from './AdminUser.types';
+import { AdminUserPublic, CreateUserProps } from './AdminUser.types';
+
+const PUBLIC_FIELDS = [ 'id', 'email', 'first_name', 'last_name', 'role' ];
 
 export default class AdminUser extends TableRow {
    public email: string;
@@ -32,6 +34,21 @@ export default class AdminUser extends TableRow {
       this.role = role;
    }
 
+   get name() {
+      return `${this.first_name} ${this.last_name}`;
+   }
+
+   toPublic(): AdminUserPublic {
+      return {
+         id: this.id,
+         email: this.email,
+         name: this.name,
+         first_name: this.first_name,
+         last_name: this.last_name,
+         role: this.role
+      };
+   }
+
    static async createMaster(masterData: {
       email: string;
       password: string;
@@ -59,7 +76,12 @@ export default class AdminUser extends TableRow {
 
    static async getMaster(): Promise<AdminUser | null> {
       try {
-         const query = database.select('users_schema', 'admin_users').where({ role: 'master' }).limit(1);
+         const query = database.select('users_schema', 'admin_users');
+
+         query.selectFields(PUBLIC_FIELDS);
+         query.where({ role: 'master' });
+         query.limit(1);
+
          const { data = [] } = await query.exec();
          const [ user ] = data;
 
@@ -113,7 +135,11 @@ export default class AdminUser extends TableRow {
       }
 
       try {
-         const query = database.select('users_schema', 'admin_users').where({ email }).limit(1);
+         const query = database.select('users_schema', 'admin_users');
+
+         query.selectFields(PUBLIC_FIELDS);
+         query.where({ email });
+         query.limit(1);
          const { data = [] } = await query.exec();
          const [ user ] = data;
 
@@ -127,13 +153,20 @@ export default class AdminUser extends TableRow {
       }
    }
 
-   static async validateUser(email: string, password: string): Promise<AdminUser | null> {
+   static async validateUser(email: string, password: string): Promise<AdminUserPublic | null> {
       if (!email || !password) {
          throw new Error('Email and password are required for validation.');
       }
 
       try {
-         const user = await this.getByEmail(email);
+         const query = database.select('users_schema', 'admin_users');
+
+         query.where({ email });
+         query.limit(1);
+
+         const { data = [] } = await query.exec();
+         const [ user ] = data;
+
          if (!user) {
             return null;
          }
@@ -143,7 +176,7 @@ export default class AdminUser extends TableRow {
             return null;
          }
 
-         return user;
+         return new AdminUser(user).toPublic();
       } catch (error: any) {
          throw new Error(`Validating user failed: ${error.message}`);
       }
