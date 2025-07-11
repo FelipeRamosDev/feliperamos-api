@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Route } from '../../services';
-import ErrorResponseServerAPI from '@/services/ServerAPI/models/ErrorResponseServerAPI';
+import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
    method: 'GET',
