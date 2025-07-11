@@ -2,7 +2,8 @@
 // Declaring globals
 import '../../global/globals';
 
-import express, { Express, RequestHandler } from 'express';
+import express, { Express } from 'express';
+import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import cors from 'cors';
 import https from 'https';
@@ -75,9 +76,9 @@ class ServerAPI extends Microservice {
          PORT = 80,
          jsonLimit = '10mb',
          autoInitialize = false,
-         onConstructed = () => {},
-         onInitialized = () => {},
-         onListen = () => {},
+         onConstructed = () => { },
+         onInitialized = () => { },
+         onListen = () => { },
          httpEndpoints = [],
          defaultMaxListeners = 20,
          sessionCookiesMaxAge = 86400000,
@@ -92,7 +93,7 @@ class ServerAPI extends Microservice {
        * @type {Object}
        */
       this._4handsInstance = () => _4handsInstance;
-      
+
       this.app = express();
       this.projectName = projectName;
       this.app_queue = [];
@@ -213,6 +214,7 @@ class ServerAPI extends Microservice {
       this.serverState = 'loading';
 
       this.app.use(express.json({ limit: this.jsonLimit }));
+      this.app.use(cookieParser());
       this.app.use(cors({
          origin: this.corsOrigin,
          credentials: true
@@ -234,7 +236,9 @@ class ServerAPI extends Microservice {
             saveUninitialized: this.sessionSaveUninitialized,
             cookie: {
                secure: this.useSSL, // Set secure to true if using HTTPS
-               maxAge: this.sessionCookiesMaxAge
+               maxAge: this.sessionCookiesMaxAge,
+               httpOnly: false, // Allow JavaScript access if needed
+               sameSite: this.useSSL ? 'none' : 'lax' // Adjust based on your setup
             }
          }));
       } else {

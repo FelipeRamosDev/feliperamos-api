@@ -48,7 +48,7 @@ export default new Route({
          const token = jwt.sign(jwtPayload, JWT_SECRET);
          req.session.user = isAuthenticated;
 
-         res.cookie('token', token, { httpOnly: true, secure: false });
+         res.cookie('token', token, { httpOnly: false, secure: true, sameSite: 'none' });
          res.status(200).send(isAuthenticated);
       } catch (error) {
          new ErrorResponseServerAPI().send(res);

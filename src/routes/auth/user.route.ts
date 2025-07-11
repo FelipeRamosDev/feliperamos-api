@@ -4,14 +4,15 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 
 export default new Route({
    method: 'GET',
-   routePath: '/auth/status',
+   routePath: '/auth/user',
    useAuth: true,
+   allowedRoles: ['master'],
    controller: async (req: Request, res: Response) => {
       if (!req.session.user) {
          new ErrorResponseServerAPI('User not authenticated', 401, 'UNAUTHORIZED').send(res);
          return;
       }
 
-      res.status(200).send({ success: true, user: req.session.user });
+      res.status(200).send(req.session.user);
    }
 });
