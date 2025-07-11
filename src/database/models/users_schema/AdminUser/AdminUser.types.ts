@@ -5,3 +5,12 @@ export interface CreateUserProps {
    last_name: string;
    role?: 'master' | 'admin' | 'user';
 }
+
+export interface AdminUserPublic {
+   id: number;
+   email: string;
+   name: string;
+   first_name: string;
+   last_name: string;
+   role: 'master' | 'admin' | 'user';
+};

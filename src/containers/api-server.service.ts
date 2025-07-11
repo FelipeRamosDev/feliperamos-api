@@ -3,6 +3,7 @@ import 'dotenv/config';
 import '../database';
 import { Route } from '../services';
 import ServerAPI from '../services/ServerAPI/ServerAPI';
+import loginRoute from '../routes/auth/login.route';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
@@ -34,6 +35,7 @@ export default new ServerAPI({
    sslConfig: sslConfig,
    autoInitialize: true,
    httpEndpoints: [
+      loginRoute,
       new Route({
          routePath: '/health',
          method: 'GET',

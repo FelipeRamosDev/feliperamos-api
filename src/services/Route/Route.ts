@@ -13,6 +13,7 @@ import type {
    // BodyValidationMiddleware,
    // AuthVerifyMiddleware
 } from './Route.types';
+import ErrorRoute from './ErrorRoute';
 
 // Note: These would typically be imported as ES modules, but keeping as require for now
 // to maintain compatibility with existing middleware structure
@@ -43,41 +44,22 @@ class Route {
 
       // Validation checks for required parameters
       if (!routePath) {
-         throw new Error('The "routePath" param is required to declare a new endpoint!');
+         throw new ErrorRoute('The "routePath" param is required when declaring a new endpoint!', 'ROUTE_PATH_REQUIRED')
       }
 
       // Validation checks for required parameters
       if (rules && !Array.isArray(rules)) {
-         throw new Error('The "rules" param must be an array!');
+         throw new ErrorRoute('The "rules" param must be an array when declaring a new endpoint!', 'ROUTE_RULES_INVALID');
       }
 
       if (typeof controller !== 'function') {
-         throw new Error('The "controller" param is required to be a function when declaring a new endpoint!');
+         throw new ErrorRoute('The "controller" param is required to be a function when declaring a new endpoint!', 'ROUTE_CONTROLLER_INVALID');
       }
 
-      /**
-       * The HTTP method for the endpoint.
-       */
       this.method = method || 'GET';
-
-      /**
-       * The path of the endpoint's route.
-       */
       this.routePath = routePath;
-
-      /**
-       * The allowed user rules for the endpoint.
-       */
       this.rules = rules;
-
-      /**
-       * The controller function handling the endpoint logic.
-       */
       this.controller = controller;
-
-      /**
-       * Middleware functions to be applied to the endpoint.
-       */
       this.middlewares = [];
 
       // // Adding authentication middleware if required
@@ -132,10 +114,16 @@ class Route {
       });
 
       if (!searchRules) {
-         res.status(401).send(global.toError(
+         const error = new ErrorRoute(
             `User's rules is not allowed for this endpoint!`,
             'USER_RULE_NOT_AUTHORIZED'
-         ));
+         );
+
+         res.status(401).send({
+            error: 'AuthorizationError',
+            code: error.code,
+            message: error.message,
+         });
          return;
       }
 
