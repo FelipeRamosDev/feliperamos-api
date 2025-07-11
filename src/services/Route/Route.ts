@@ -119,7 +119,11 @@ class Route {
             'USER_RULE_NOT_AUTHORIZED'
          );
 
-         res.status(401).send(error);
+         res.status(401).send({
+            error: 'AuthorizationError',
+            code: error.code,
+            message: error.message,
+         });
          return;
       }
 
