@@ -44,7 +44,7 @@ export interface RouteSetup {
    rules?: string[];
    controller: RequestHandler;
    bodySchema?: BodySchema;
-   isAuthRoute?: boolean;
+   useAuth?: boolean;
    authRule?: string;
    middlewares?: RequestHandler[];
    noValidateBody?: boolean;
