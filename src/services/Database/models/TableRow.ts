@@ -19,7 +19,11 @@ export default class TableRow {
          created_at
       } = rawData || {};
 
-      this.id = Number(id);
+      const parsedId = parseInt(id, 10);
+      if (isNaN(parsedId)) {
+         throw new Error('Invalid id: must be a valid number.');
+      }
+      this.id = parsedId;
       this.created_at = created_at;
       this.schemaName = schemaName;
       this.tableName = tableName;
