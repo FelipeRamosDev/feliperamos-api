@@ -1,12 +1,13 @@
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
-   name: 'companie_sets',
+   name: 'company_sets',
    fields: [
       { name: 'id', primaryKey: true, autoIncrement: true },
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
-      { name: 'language_set', type: 'VARCHAR(255)', notNull: true },
+      { name: 'language_set', type: 'VARCHAR(2)', defaultValue: 'en' },
       { name: 'description', type: 'TEXT' },
+      { name: 'field_activity', type: 'VARCHAR(255)' },
       { name: 'company_id',
          type: 'INTEGER',
          notNull: true,

@@ -13,9 +13,9 @@ const database = new PostgresDB({
    password: process.env.DB_PASSWORD,
    schemas: [
       users_schema,
-      experiences_schema,
+      skills_schema,
       companies_schema,
-      skills_schema
+      experiences_schema
    ]
 });
 
