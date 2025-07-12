@@ -1,5 +1,6 @@
 import { PostgresDB } from '../services';
 import { AdminUser } from './models/users_schema';
+import experiences_schema from './schemas/experiences_schema';
 import users_schema from './schemas/users_schema';
 
 const database = new PostgresDB({
@@ -9,7 +10,8 @@ const database = new PostgresDB({
    user: process.env.DB_USER,
    password: process.env.DB_PASSWORD,
    schemas: [
-      users_schema
+      users_schema,
+      experiences_schema
    ]
 });
 

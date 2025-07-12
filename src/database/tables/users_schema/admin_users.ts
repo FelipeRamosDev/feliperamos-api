@@ -1,4 +1,4 @@
-import Table from '../../../services/Database/builders/Table';
+import Table from '../../../services/Database/models/Table';
 
 export default new Table({
    name: 'admin_users',
