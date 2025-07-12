@@ -5,7 +5,7 @@ import database from '../../../../database';
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
    public status: ExperienceStatus;
-   public name: string;
+   public title: string;
    public start_date: Date | null;
    public end_date: Date | null;
    public company_id: number;
@@ -21,7 +21,7 @@ export default class Experience extends ExperienceSet {
       const {
          type,
          status = 'draft',
-         name,
+         title,
          start_date,
          end_date = null,
          company_id,
@@ -30,7 +30,7 @@ export default class Experience extends ExperienceSet {
 
       this.type = type;
       this.status = status;
-      this.name = name;
+      this.title = title;
       this.start_date = start_date ? new Date(start_date) : null;
       this.end_date = end_date ? new Date(end_date) : null;
       this.company_id = company_id;
@@ -41,7 +41,7 @@ export default class Experience extends ExperienceSet {
       try {
          const savedQuery = await database.insert('experiences_schema', 'experiences').data({
             type: data.type,
-            name: data.name,
+            title: data.title,
             start_date: data.start_date,
             end_date: data.end_date,
             skills: data.skills

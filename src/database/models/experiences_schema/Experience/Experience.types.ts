@@ -6,7 +6,7 @@ export type ExperienceStatus = 'draft' | 'published' | 'archived';
 export interface ExperienceSetup extends ExperienceSetSetup {
    type: ExperienceType;
    status: ExperienceStatus;
-   name: string;
+   title: string;
    start_date: string;
    end_date: string;
    company_id: number;
@@ -16,7 +16,7 @@ export interface ExperienceSetup extends ExperienceSetSetup {
 export interface ExperienceCreateSetup {
    type: ExperienceType;
    status?: ExperienceStatus;
-   name: string;
+   title: string;
    start_date: string;
    end_date?: string | null;
    company_id: number;
