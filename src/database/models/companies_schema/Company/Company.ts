@@ -8,7 +8,7 @@ export default class Company extends CompanySet {
    public logo_url: string;
    public site_url: string;
 
-   constructor(setup: CompanySetup, schemaName: string = 'companies_schema', tableName: string = 'company') {
+   constructor(setup: CompanySetup, schemaName: string = 'companies_schema', tableName: string = 'companies') {
       super(setup, schemaName, tableName);
 
       const {

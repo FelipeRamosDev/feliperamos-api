@@ -44,7 +44,6 @@ export default class Experience extends ExperienceSet {
             name: data.name,
             start_date: data.start_date,
             end_date: data.end_date,
-            // company_id: data.company_id,
             skills: data.skills
          }).returning().exec();
 

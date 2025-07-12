@@ -1,6 +1,4 @@
-import TableRow from '@/services/Database/models/TableRow';
-
-export interface ExperienceSetSetup extends TableRow {
+export interface ExperienceSetSetup {
    slug?: string;
    position?: string;
    language_set?: string;

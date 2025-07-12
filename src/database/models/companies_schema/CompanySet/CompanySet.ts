@@ -6,7 +6,7 @@ export default class CompanySet extends TableRow {
    public description: string;
    public field_activity: string;
 
-   constructor (setup: CompanySetSetup, schemaName: string = 'companies_schema', tableName: string = 'company_set') {
+   constructor (setup: CompanySetSetup, schemaName: string = 'companies_schema', tableName: string = 'company_sets') {
       super(schemaName, tableName, setup);
 
       const {
