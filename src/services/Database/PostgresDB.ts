@@ -6,7 +6,7 @@ import InsertSQL from './builders/InsertSQL';
 import UpdateSQL from './builders/UpdateSQL';
 import DeleteSQL from './builders/DeleteSQL';
 import Schema from './builders/Schema';
-import Table from './builders/Table';
+import Table from './models/Table';
 import Field from './builders/Field';
 import ErrorDatabase from './ErrorDatabase';
 
