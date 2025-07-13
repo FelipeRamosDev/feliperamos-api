@@ -4,7 +4,8 @@ import '../database';
 import ServerAPI from '../services/ServerAPI/ServerAPI';
 import loginRoute from '../routes/auth/login.route';
 import healthRoute from '../routes/health.route';
-import authUserRoute from '../routes/auth/user.route'
+import authUserRoute from '../routes/auth/user.route';
+import experienceCreate from '../routes/experience/create';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
@@ -38,7 +39,8 @@ export default new ServerAPI({
    httpEndpoints: [
       loginRoute,
       authUserRoute,
-      healthRoute
+      healthRoute,
+      experienceCreate
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);

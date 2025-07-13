@@ -7,7 +7,7 @@ export default new Table({
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'type', type: 'VARCHAR(255)', notNull: true },
       { name: 'status', type: 'VARCHAR(255)', defaultValue: 'draft' },
-      { name: 'name', type: 'VARCHAR(255)', notNull: true },
+      { name: 'title', type: 'VARCHAR(255)', notNull: true },
       { name: 'start_date', type: 'DATE' },
       { name: 'end_date', type: 'DATE' },
       {
