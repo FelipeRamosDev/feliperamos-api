@@ -25,7 +25,12 @@ export default new Route({
          res.status(200).send(created);
       } catch (error) {
          console.error('Error creating experience:', error);
-         new ErrorResponseServerAPI().send(res);
+
+         if (error instanceof ErrorResponseServerAPI) {
+            error.send(res);
+         } else {
+            new ErrorResponseServerAPI('An unexpected error occurred', 500, 'UNEXPECTED_ERROR').send(res);
+         }
       }
    }
 });
