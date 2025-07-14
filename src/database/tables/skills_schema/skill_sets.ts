@@ -1,32 +1,29 @@
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
-   name: 'experience_sets',
+   name: 'skill_sets',
    fields: [
       { name: 'id', primaryKey: true, autoIncrement: true },
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
-      { name: 'slug', type: 'VARCHAR(255)', notNull: true },
-      { name: 'position', type: 'VARCHAR(50)', notNull: true },
       { name: 'language_set', type: 'VARCHAR(2)', defaultValue: 'en' },
-      { name: 'summary', type: 'TEXT', notNull: true },
-      { name: 'description', type: 'TEXT' },
-      { name: 'responsibilities', type: 'TEXT' },
-      {
-         name: 'experience_id',
+      { name: 'journey', type: 'VARCHAR(255)' },
+      { 
+         name: 'user_id',
          type: 'INTEGER',
          notNull: true,
          relatedField: {
-            schema: 'experiences_schema',
-            table: 'experiences',
+            schema: 'users_schema',
+            table: 'admin_users',
             field: 'id'
          }
       },
-      {
-         name: 'user_id',
+      { 
+         name: 'skill_id',
          type: 'INTEGER',
+         notNull: true,
          relatedField: {
-            schema: 'users_schema',
-            table: 'admin_users',
+            schema: 'skills_schema',
+            table: 'skills',
             field: 'id'
          }
       }
