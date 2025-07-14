@@ -8,6 +8,7 @@ import authUserRoute from '../routes/auth/user.route';
 import experienceCreate from '../routes/experience/create';
 import experienceQuery from '../routes/experience/query';
 import skillCreate from '../routes/skill/create';
+import skillQuery from '../routes/skill/query';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
@@ -44,7 +45,8 @@ export default new ServerAPI({
       healthRoute,
       experienceCreate,
       experienceQuery,
-      skillCreate
+      skillCreate,
+      skillQuery
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
