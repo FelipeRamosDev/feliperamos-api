@@ -9,6 +9,7 @@ export default class ExperienceSet extends TableRow {
    public summary: string;
    public description: string;
    public responsibilities: string;
+   public user_id: number;
 
    constructor (setup: ExperienceSetSetup, schemaName: string = 'experiences_schema', tableName: string = 'experience_sets') {
       super(schemaName, tableName, setup);
@@ -23,8 +24,13 @@ export default class ExperienceSet extends TableRow {
          language_set = '',
          summary = '',
          description = '',
-         responsibilities = ''
+         responsibilities = '',
+         user_id
       } = setup || {};
+
+      if (user_id === undefined || user_id === null) {
+         throw new Error('user_id is required to create an ExperienceSet instance.');
+      }
 
       this.slug = slug;
       this.position = position;
@@ -32,6 +38,7 @@ export default class ExperienceSet extends TableRow {
       this.summary = summary;
       this.description = description;
       this.responsibilities = responsibilities;
+      this.user_id = user_id;
    }
 
    static async set(data: Partial<ExperienceSetSetup>): Promise<ExperienceSet> {
@@ -42,7 +49,8 @@ export default class ExperienceSet extends TableRow {
             summary: data.summary,
             description: data.description,
             responsibilities: data.responsibilities,
-            experience_id: data.experience_id
+            experience_id: data.experience_id,
+            user_id: data.user_id
          }).returning().exec();
 
          if (savedQuery.error) {

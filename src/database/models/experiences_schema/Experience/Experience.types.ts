@@ -27,4 +27,5 @@ export interface ExperienceCreateSetup {
    summary?: string;
    description?: string;
    responsibilities?: string;
+   user_id: number;
 }

@@ -70,4 +70,27 @@ export default class Experience extends ExperienceSet {
          throw new Error('Failed to create Experience: ' + error.message);
       }
    }
+
+   static async getByUserId(userId: number, language_set: string): Promise<Experience[]> {
+      try {
+         const query = database.select('experiences_schema', 'experience_sets');
+
+         query.where({ user_id: userId, language_set });
+         query.populate('experience_id', [ 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+
+         const { data, error } = await query.exec();
+
+         if (error) {
+            throw new Error('Failed to fetch Experiences: ' + error.message);
+         }
+         
+         if (!data || !Array.isArray(data)) {
+            return [];
+         }
+
+         return data.map(exp => new Experience(exp));
+      } catch (error) {
+         throw error;
+      }
+   }
 }
