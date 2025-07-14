@@ -17,5 +17,15 @@ export default new Table({
             field: 'id'
          }
       },
+      {
+         name: 'user_id',
+         type: 'INTEGER',
+         notNull: true,
+         relatedField: {
+            schema: 'users_schema',
+            table: 'users',
+            field: 'id'
+         }
+      },
    ]
 });
