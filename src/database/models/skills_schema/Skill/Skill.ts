@@ -49,7 +49,7 @@ export default class Skill extends SkillSet {
 
    static async getSkillsByUserId(userId: number, language_set: string = 'en'): Promise<Skill[]> {
       try {
-         const query = database.select('skills_schema', 'skill_sets')
+         const query = database.select('skills_schema', 'skill_sets');
          query.where({ user_id: userId, language_set });
          query.populate('skill_id', ['name', 'category', 'level']);
 

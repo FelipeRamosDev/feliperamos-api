@@ -9,7 +9,7 @@ export default new Route({
    useAuth: true,
    allowedRoles: [ 'master', 'admin' ],
    controller: async (req: Request, res: Response): Promise<void> => {
-      const { language_set } = req.body || {};
+      const { language_set } = Object(req.query);
       const userId = req.session.user?.id;
 
       if (!userId) {
@@ -21,7 +21,7 @@ export default new Route({
          const loadedSkills = await Skill.getSkillsByUserId(userId, language_set);
          res.status(200).send(loadedSkills);
       } catch (error) {
-         console.error('Error creating skill:', error);
+         console.error('Error querying skill:', error);
          new ErrorResponseServerAPI().send(res);
       }
    }
