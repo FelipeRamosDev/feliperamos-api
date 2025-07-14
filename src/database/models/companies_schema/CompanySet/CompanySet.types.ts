@@ -1,5 +1,6 @@
 export interface CompanySetSetup {
    description?: string;
-   field_activity?: string;
+   industry?: string;
    company_id?: number;
+   user_id?: number;
 }

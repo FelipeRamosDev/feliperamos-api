@@ -7,7 +7,7 @@ export default new Table({
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'language_set', type: 'VARCHAR(2)', defaultValue: 'en' },
       { name: 'description', type: 'TEXT' },
-      { name: 'field_activity', type: 'VARCHAR(255)' },
+      { name: 'industry', type: 'VARCHAR(255)' },
       { name: 'company_id',
          type: 'INTEGER',
          notNull: true,

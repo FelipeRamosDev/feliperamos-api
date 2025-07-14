@@ -4,27 +4,27 @@ import database from '../../../../database';
 
 export default class CompanySet extends TableRow {
    public description: string;
-   public field_activity: string;
+   public industry: string;
 
    constructor (setup: CompanySetSetup, schemaName: string = 'companies_schema', tableName: string = 'company_sets') {
       super(schemaName, tableName, setup);
 
       const {
          description = '',
-         field_activity = ''
+         industry = ''
       } = setup || {};
 
       this.description = description;
-      this.field_activity = field_activity;
+      this.industry = industry;
    }
 
    static async set(data: CompanySetSetup): Promise<CompanySet> {
-      const { company_id, description, field_activity } = data;
+      const { company_id, description, industry } = data;
 
       const created = await database.insert('companies_schema', 'company_sets').data({
          company_id,
          description,
-         field_activity
+         industry
       }).returning().exec();
 
       if (created.error) {
