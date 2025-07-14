@@ -10,7 +10,6 @@ export interface ExperienceSetup extends ExperienceSetSetup {
    start_date: string;
    end_date: string;
    company_id: number;
-   user_id: number;
    skills: number[];
 }
 

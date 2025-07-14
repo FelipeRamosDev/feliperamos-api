@@ -21,14 +21,14 @@ export default new Table({
             field: 'id'
          }
       },
-      // {
-      //    name: 'user_id',
-      //    type: 'INTEGER',
-      //    relatedField: {
-      //       schema: 'users_schema',
-      //       table: 'admin_users',
-      //       field: 'id'
-      //    }
-      // }
+      {
+         name: 'user_id',
+         type: 'INTEGER',
+         relatedField: {
+            schema: 'users_schema',
+            table: 'admin_users',
+            field: 'id'
+         }
+      }
    ]
 });

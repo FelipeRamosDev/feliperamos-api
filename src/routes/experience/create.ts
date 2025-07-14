@@ -12,6 +12,11 @@ export default new Route({
       const data = req.body;
       const userId = req.session.user?.id;
 
+      if (!userId) {
+         new ErrorResponseServerAPI('User is not authenticated', 401, 'USER_NOT_AUTHENTICATED').send(res);
+         return;
+      }
+
       if (!data || !Object.keys(data).length) {
          new ErrorResponseServerAPI('Param "data" is required', 400, 'EXPERIENCE_DATA_REQUIRED').send(res);
          return;
