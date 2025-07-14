@@ -6,6 +6,7 @@ export default new Table({
       { name: 'id', primaryKey: true, autoIncrement: true },
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'name', type: 'VARCHAR(255)', notNull: true },
-      { name: 'category', type: 'VARCHAR(255)', notNull: true }
+      { name: 'category', type: 'VARCHAR(255)', notNull: true },
+      { name: 'level', type: 'INTEGER', notNull: true }
    ]
 });

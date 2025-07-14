@@ -1,18 +1,48 @@
-import TableRow from '@/services/Database/models/TableRow';
 import { SkillSetup } from './Skill.types';
+import database from '../../../../database';
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
+import SkillSet from '../SkillSet/SkillSet';
 
-export default class Skill extends TableRow {
+export default class Skill extends SkillSet {
    public name: string;
-   public level?: 'beginner' | 'intermediate' | 'advanced';
-   public description?: string;
+   public category: string;
+   public level: number;
 
    constructor (setup: SkillSetup) {
-      super('skills_schema', 'skills', setup);
+      super(setup);
 
-      const { name, level, description } = setup || {};
+      const { name, level, category } = setup || {};
 
       this.name = name;
       this.level = level;
-      this.description = description;
+      this.category = category;
+   }
+
+   static async create(skillData: SkillSetup): Promise<Skill> {
+      try {
+         const { data = [], error } = await database.insert('skills_schema', 'skills').data({
+            name: skillData.name,
+            category: skillData.category,
+            level: skillData.level,
+         }).returning().exec();
+         const [ createdSkill ] = data;
+
+         if (error) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         if (!createdSkill) {
+            throw new ErrorDatabase(`Skill creation failed!`, 'SKILL_CREATION_FAILED');
+         }
+
+         const skillSetCreated = await this.set({
+            skill_id: createdSkill.id,
+            journey: skillData.journey
+         });
+
+         return new Skill({ ...createdSkill, ...skillSetCreated });
+      } catch (error) {
+         throw error;
+      }
    }
 }

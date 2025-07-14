@@ -1,5 +1,7 @@
-export interface SkillSetup {
+import { SkillSetSetup } from "../SkillSet/SkillSet.types";
+
+export interface SkillSetup extends SkillSetSetup {
    name: string;
-   level?: 'beginner' | 'intermediate' | 'advanced';
-   description?: string;
+   level: number;
+   category: string;
 }
