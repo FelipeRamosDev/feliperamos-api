@@ -7,7 +7,18 @@ export default new Table({
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'language_set', type: 'VARCHAR(2)', defaultValue: 'en' },
       { name: 'journey', type: 'VARCHAR(255)' },
-      { name: 'skill_id',
+      { 
+         name: 'user_id',
+         type: 'INTEGER',
+         notNull: true,
+         relatedField: {
+            schema: 'users_schema',
+            table: 'admin_users',
+            field: 'id'
+         }
+      },
+      { 
+         name: 'skill_id',
          type: 'INTEGER',
          notNull: true,
          relatedField: {

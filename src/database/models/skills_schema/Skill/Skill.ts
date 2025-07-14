@@ -1,4 +1,4 @@
-import { SkillSetup } from './Skill.types';
+import { SkillCreateSetup, SkillSetup } from './Skill.types';
 import database from '../../../../database';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import SkillSet from '../SkillSet/SkillSet';
@@ -18,7 +18,7 @@ export default class Skill extends SkillSet {
       this.category = category;
    }
 
-   static async create(skillData: SkillSetup): Promise<Skill> {
+   static async create(skillData: SkillCreateSetup): Promise<Skill> {
       try {
          const { data = [], error } = await database.insert('skills_schema', 'skills').data({
             name: skillData.name,
@@ -37,7 +37,8 @@ export default class Skill extends SkillSet {
 
          const skillSetCreated = await this.set({
             skill_id: createdSkill.id,
-            journey: skillData.journey
+            journey: skillData.journey,
+            user_id: skillData.user_id
          });
 
          return new Skill({ ...createdSkill, ...skillSetCreated });

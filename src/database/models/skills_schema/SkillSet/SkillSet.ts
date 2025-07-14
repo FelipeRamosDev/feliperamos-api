@@ -7,11 +7,12 @@ export default class SkillSet extends TableRow {
    public skill_id: number;
    public language_set: string;
    public journey?: string;
+   public user_id?: number;
 
    constructor (setup: SkillSetSetup) {
-      super('skills_schema', 'skills', setup);
+      super('skills_schema', 'skill_sets', setup);
 
-      const { skill_id, language_set = 'en', journey } = setup || {};
+      const { user_id, skill_id, language_set = 'en', journey } = setup || {};
 
       if (!skill_id) {
          throw new ErrorDatabase(`SkillSet requires skill_id`, 'SKILL_SET_SETUP_ERROR');
@@ -20,6 +21,7 @@ export default class SkillSet extends TableRow {
       this.skill_id = skill_id;
       this.language_set = language_set;
       this.journey = journey;
+      this.user_id = user_id;
    }
 
    static async set(skillSetData: SkillSetSetup): Promise<SkillSet> {
