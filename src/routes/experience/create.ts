@@ -10,6 +10,7 @@ export default new Route({
    allowedRoles: ['master', 'admin'],
    controller: async (req: Request, res: Response) => {
       const data = req.body;
+      const userId = req.session.user?.id;
 
       if (!data || !Object.keys(data).length) {
          new ErrorResponseServerAPI('Param "data" is required', 400, 'EXPERIENCE_DATA_REQUIRED').send(res);
@@ -17,7 +18,7 @@ export default new Route({
       }
 
       try {
-         const created = await Experience.create(data);
+         const created = await Experience.create({ ...data, user_id: userId });
          if (!created) {
             throw new ErrorResponseServerAPI('Failed to create experience', 500, 'EXPERIENCE_CREATION_FAILED');
          }

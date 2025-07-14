@@ -20,6 +20,15 @@ export default new Table({
          }
       },
       {
+         name: 'user_id',
+         type: 'INTEGER',
+         relatedField: {
+            schema: 'users_schema',
+            table: 'admin_users',
+            field: 'id'
+         }
+      },
+      {
          name: 'skills',
          type: 'INTEGER[]'
       }

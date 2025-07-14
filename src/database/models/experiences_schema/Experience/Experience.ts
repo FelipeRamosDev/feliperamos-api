@@ -9,6 +9,7 @@ export default class Experience extends ExperienceSet {
    public start_date: Date | null;
    public end_date: Date | null;
    public company_id: number;
+   public user_id: number;
    public skills: number[];
 
    constructor(setup: ExperienceSetup) {
@@ -25,6 +26,7 @@ export default class Experience extends ExperienceSet {
          start_date,
          end_date = null,
          company_id,
+         user_id,
          skills = []
       } = setup;
 
@@ -34,6 +36,7 @@ export default class Experience extends ExperienceSet {
       this.start_date = start_date ? new Date(start_date) : null;
       this.end_date = end_date ? new Date(end_date) : null;
       this.company_id = company_id;
+      this.user_id = user_id;
       this.skills = skills;
    }
 
@@ -44,7 +47,8 @@ export default class Experience extends ExperienceSet {
             title: data.title,
             start_date: data.start_date,
             end_date: data.end_date,
-            skills: data.skills
+            skills: data.skills,
+            user_id: data.user_id
          }).returning().exec();
 
          if (savedQuery.error) {
@@ -68,6 +72,29 @@ export default class Experience extends ExperienceSet {
          return new Experience({ ...createdExperience, ...createdDefaultSet });
       } catch (error: any) {
          throw new Error('Failed to create Experience: ' + error.message);
+      }
+   }
+
+   static async getByUserId(userId: number, language_set: string): Promise<Experience[]> {
+      try {
+         const query = database.select('experiences_schema', 'experience_sets');
+
+         query.where({ user_id: userId, language_set });
+         query.populate('experience_id', [ 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+
+         const { data, error } = await query.exec();
+
+         if (error) {
+            throw new Error('Failed to fetch Experiences: ' + error.message);
+         }
+         
+         if (!data || !Array.isArray(data)) {
+            return [];
+         }
+
+         return data.map(exp => new Experience(exp));
+      } catch (error) {
+         throw error;
       }
    }
 }

@@ -6,4 +6,5 @@ export interface ExperienceSetSetup {
    description?: string;
    responsibilities?: string;
    experience_id?: number;
+   // user_id: number;
 }
