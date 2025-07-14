@@ -28,6 +28,10 @@ export default class ExperienceSet extends TableRow {
          user_id
       } = setup || {};
 
+      if (user_id === undefined || user_id === null) {
+         throw new Error('user_id is required to create an ExperienceSet instance.');
+      }
+
       this.slug = slug;
       this.position = position;
       this.language_set = language_set;
