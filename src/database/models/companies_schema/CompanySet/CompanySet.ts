@@ -4,27 +4,38 @@ import database from '../../../../database';
 
 export default class CompanySet extends TableRow {
    public description: string;
-   public field_activity: string;
+   public industry: string;
+   public user_id: number;
+   public company_id: number;
 
    constructor (setup: CompanySetSetup, schemaName: string = 'companies_schema', tableName: string = 'company_sets') {
       super(schemaName, tableName, setup);
 
       const {
+         company_id,
+         user_id,
          description = '',
-         field_activity = ''
+         industry = ''
       } = setup || {};
 
+      if (!company_id || !user_id) {
+         throw new Error('Company ID and User ID are required to create a company set.');
+      }
+
+      this.company_id = company_id;
+      this.user_id = user_id;
       this.description = description;
-      this.field_activity = field_activity;
+      this.industry = industry;
    }
 
    static async set(data: CompanySetSetup): Promise<CompanySet> {
-      const { company_id, description, field_activity } = data;
+      const { company_id, description, industry, user_id } = data;
 
       const created = await database.insert('companies_schema', 'company_sets').data({
          company_id,
          description,
-         field_activity
+         industry,
+         user_id
       }).returning().exec();
 
       if (created.error) {

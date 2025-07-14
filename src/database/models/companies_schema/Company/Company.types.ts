@@ -1,17 +1,18 @@
 import { CompanySetSetup } from "../CompanySet/CompanySet.types";
 
 export interface CompanySetup extends CompanySetSetup {
-   name: string;
+   company_name: string;
    location: string;
    logo_url: string;
    site_url: string;
 }
 
 export interface CreateCompanyData {
-   name: string;
+   company_name: string;
    location: string;
    logo_url?: string;
    site_url?: string;
    description?: string;
-   field_activity?: string;
+   industry?: string;
+   user_id?: number;
 }

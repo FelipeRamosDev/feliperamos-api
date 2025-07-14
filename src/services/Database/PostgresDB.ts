@@ -84,14 +84,14 @@ class PostgresDB extends DataBase {
       try {
          await this.pool.connect();
          for (const schema of this.getSchemasArray()) {
-            await this.createSchema(schema)
+            await this.createSchema(schema);
          }
 
          await this.onReady(this);
          console.log('PostgresDB connected successfully');
          return this;
       } catch (error: any) {
-         throw new ErrorDatabase('Failed to connect to PostgresDB: ' + error.message, 'DB_CONNECTION_ERROR');
+         throw new ErrorDatabase(error.message, 'DB_CONNECTION_ERROR');
       }
    }
 
