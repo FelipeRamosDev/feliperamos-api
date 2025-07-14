@@ -6,6 +6,8 @@ import { Request, Response } from 'express';
 export default new Route({
    method: 'POST',
    routePath: '/company/create',
+   useAuth: true,
+   allowedRoles: ['admin', 'master'],
    controller: async (req: Request, res: Response) => {
       const { company_name, site_url, industry, description, logo_url, location } = req.body;
       const userId = req.session?.user?.id;

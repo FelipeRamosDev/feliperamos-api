@@ -1,6 +1,7 @@
 import TableRow from '../../../../services/Database/models/TableRow';
 import { CompanySetSetup } from './CompanySet.types';
 import database from '../../../../database';
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 
 export default class CompanySet extends TableRow {
    public description: string;
@@ -19,7 +20,7 @@ export default class CompanySet extends TableRow {
       } = setup || {};
 
       if (!company_id || !user_id) {
-         throw new Error('Company ID and User ID are required to create a company set.');
+         throw new ErrorDatabase('Company ID and User ID are required to create a company set.', 'COMPANY_SET_CREATION_ERROR');
       }
 
       this.company_id = company_id;
@@ -39,12 +40,12 @@ export default class CompanySet extends TableRow {
       }).returning().exec();
 
       if (created.error) {
-         throw new Error('Failed to update company set');
+         throw new ErrorDatabase('Failed to update company set', 'COMPANY_SET_CREATION_ERROR');
       }
 
       const [ createdSet ] = created.data || [];
       if (!createdSet) {
-         throw new Error('No company set created');
+         throw new ErrorDatabase('No company set created', 'COMPANY_SET_CREATION_ERROR');
       }
 
       return new CompanySet(createdSet);

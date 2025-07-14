@@ -1,6 +1,7 @@
 import ExperienceSet from '../ExperienceSet/ExperienceSet';
 import { ExperienceCreateSetup, ExperienceSetup, ExperienceStatus, ExperienceType } from './Experience.types';
 import database from '../../../../database';
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -15,7 +16,7 @@ export default class Experience extends ExperienceSet {
       super(setup, 'experiences_schema', 'experiences');
 
       if (!setup) {
-         throw new Error('Setup is required to create an Experience instance.');
+         throw new ErrorDatabase('Setup is required to create an Experience instance.', 'EXPERIENCE_CREATION_ERROR');
       }
 
       const {
@@ -48,16 +49,16 @@ export default class Experience extends ExperienceSet {
          }).returning().exec();
 
          if (savedQuery.error) {
-            throw new Error('Failed to create Experience');
+            throw new ErrorDatabase('Failed to create Experience', 'EXPERIENCE_CREATION_ERROR');
          }
          
          if (!savedQuery.data || !Array.isArray(savedQuery.data)) {
-            throw new Error('Invalid data returned when creating Experience');
+            throw new ErrorDatabase('Invalid data returned when creating Experience', 'EXPERIENCE_CREATION_ERROR');
          }
 
          const [ createdExperience ] = savedQuery.data;
          if (!createdExperience) {
-            throw new Error('No Experience created');
+            throw new ErrorDatabase('No Experience created', 'EXPERIENCE_CREATION_ERROR');
          }
 
          const createdDefaultSet = await ExperienceSet.set({
@@ -67,7 +68,7 @@ export default class Experience extends ExperienceSet {
 
          return new Experience({ ...createdExperience, ...createdDefaultSet });
       } catch (error: any) {
-         throw new Error('Failed to create Experience: ' + error.message);
+         throw new ErrorDatabase('Failed to create Experience: ' + error.message, 'EXPERIENCE_CREATION_ERROR');
       }
    }
 
@@ -81,7 +82,7 @@ export default class Experience extends ExperienceSet {
          const { data, error } = await query.exec();
 
          if (error) {
-            throw new Error('Failed to fetch Experiences: ' + error.message);
+            throw new ErrorDatabase('Failed to fetch Experiences: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
          }
          
          if (!data || !Array.isArray(data)) {

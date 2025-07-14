@@ -1,6 +1,7 @@
-import database from "../../../../database";
-import CompanySet from "../CompanySet/CompanySet";
-import { CompanySetup, CreateCompanyData } from "./Company.types";
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
+import database from '../../../../database';
+import CompanySet from '../CompanySet/CompanySet';
+import { CompanySetup, CreateCompanyData } from './Company.types';
 
 export default class Company extends CompanySet {
    public company_name: string;
@@ -28,7 +29,7 @@ export default class Company extends CompanySet {
       const { company_name, location, logo_url, site_url, ...companySetData } = Object(data);
 
       if (!company_name || !location) {
-         throw new Error('Company name and location are required to create a new company.');
+         throw new ErrorDatabase('Company name and location are required to create a new company.', 'COMPANY_CREATION_ERROR');
       }
 
       const created = await database.insert('companies_schema', 'companies').data({
@@ -39,12 +40,12 @@ export default class Company extends CompanySet {
       }).returning().exec();
 
       if (created.error) {
-         throw new Error('Failed to create company');
+         throw new ErrorDatabase('Failed to create company', 'COMPANY_CREATION_ERROR');
       }
 
       const [ createdCompany ] = created.data || [];
       if (!createdCompany) {
-         throw new Error('No company created');
+         throw new ErrorDatabase('No company created', 'COMPANY_CREATION_ERROR');
       }
 
       const isSet = await CompanySet.set({
@@ -56,5 +57,20 @@ export default class Company extends CompanySet {
          ...createdCompany,
          ...isSet,
       });
+   }
+
+   static async query(user_id: number, language_set: string): Promise<Company[]> {
+      const companiesQuery = database.select('companies_schema', 'company_sets');
+
+      companiesQuery.where({ user_id, language_set });
+      companiesQuery.populate('company_id', [ 'company_name', 'location', 'logo_url', 'site_url' ]);
+
+      const { error, data = [] } = await companiesQuery.exec();
+
+      if (error) {
+         throw new ErrorDatabase('Failed to fetch companies', 'COMPANY_QUERY_ERROR');
+      }
+
+      return data.map((companyData) => new Company(companyData));
    }
 }

@@ -1,3 +1,4 @@
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import database from '../../../../database';
 import TableRow from '../../../../services/Database/models/TableRow';
 import { ExperienceSetSetup } from './ExperienceSet.types';
@@ -15,7 +16,7 @@ export default class ExperienceSet extends TableRow {
       super(schemaName, tableName, setup);
 
       if (!setup) {
-         throw new Error('Setup is required to create an ExperienceSet instance.');
+         throw new ErrorDatabase('Setup is required to create an ExperienceSet instance.');
       }
 
       const {
@@ -29,7 +30,7 @@ export default class ExperienceSet extends TableRow {
       } = setup || {};
 
       if (user_id === undefined || user_id === null) {
-         throw new Error('user_id is required to create an ExperienceSet instance.');
+         throw new ErrorDatabase('user_id is required to create an ExperienceSet instance.');
       }
 
       this.slug = slug;
@@ -54,22 +55,22 @@ export default class ExperienceSet extends TableRow {
          }).returning().exec();
 
          if (savedQuery.error) {
-            throw new Error('Failed to create ExperienceSet');
+            throw new ErrorDatabase('Failed to create ExperienceSet', 'EXPERIENCE_SET_CREATION_ERROR');
          }
 
          if (!savedQuery.data || !Array.isArray(savedQuery.data)) {
-            throw new Error('Invalid data returned when creating ExperienceSet');
+            throw new ErrorDatabase('Invalid data returned when creating ExperienceSet', 'EXPERIENCE_SET_CREATION_ERROR');
          }
 
          const [ createdExperienceSet ] = savedQuery.data;
          if (!createdExperienceSet) {
-            throw new Error('No ExperienceSet created');
+            throw new ErrorDatabase('No ExperienceSet created', 'EXPERIENCE_SET_CREATION_ERROR');
          }
 
          return new ExperienceSet(createdExperienceSet);
       } catch (error) {
          console.error('Error creating ExperienceSet:', error);
-         throw new Error('Failed to create ExperienceSet');
+         throw new ErrorDatabase('Failed to create ExperienceSet', 'EXPERIENCE_SET_CREATION_ERROR');
       }
    }
 }
