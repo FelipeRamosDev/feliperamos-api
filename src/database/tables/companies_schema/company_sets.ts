@@ -23,7 +23,7 @@ export default new Table({
          notNull: true,
          relatedField: {
             schema: 'users_schema',
-            table: 'users',
+            table: 'admin_users',
             field: 'id'
          }
       },

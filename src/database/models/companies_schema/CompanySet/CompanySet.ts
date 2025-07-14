@@ -29,12 +29,13 @@ export default class CompanySet extends TableRow {
    }
 
    static async set(data: CompanySetSetup): Promise<CompanySet> {
-      const { company_id, description, industry } = data;
+      const { company_id, description, industry, user_id } = data;
 
       const created = await database.insert('companies_schema', 'company_sets').data({
          company_id,
          description,
-         industry
+         industry,
+         user_id
       }).returning().exec();
 
       if (created.error) {
