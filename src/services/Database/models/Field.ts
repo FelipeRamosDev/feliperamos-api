@@ -121,4 +121,4 @@ class Field {
    }
 }
 
-export = Field;
+export default Field;

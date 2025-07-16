@@ -66,4 +66,4 @@ class Table {
    }
 }
 
-export = Table;
+export default Table;

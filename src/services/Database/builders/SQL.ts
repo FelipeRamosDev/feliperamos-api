@@ -403,4 +403,4 @@ class SQL {
    }
 }
 
-export = SQL;
+export default SQL;

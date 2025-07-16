@@ -134,4 +134,4 @@ class SelectSQL extends SQL {
    }
 }
 
-export = SelectSQL;
+export default SelectSQL;
