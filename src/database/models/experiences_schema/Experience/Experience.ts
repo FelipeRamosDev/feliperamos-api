@@ -4,6 +4,7 @@ import database from '../../../../database';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import { AdminUser } from '../../users_schema';
 import { Company } from '../../companies_schema';
+import { Skill } from '../../skills_schema';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -100,6 +101,11 @@ export default class Experience extends ExperienceSet {
          // Populating company data for each experience
          for (const exp of data) {
             exp.company = await Company.getById(exp.company_id, language_set);
+
+            // Populate skills data
+            if (Array.isArray(exp.skills) && exp.skills.length) {
+               exp.skills = await Skill.getManyByIds(exp.skills, language_set);
+            }
          }
 
          return data.map(exp => new Experience(exp));

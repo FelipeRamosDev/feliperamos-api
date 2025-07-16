@@ -63,4 +63,46 @@ export default class Skill extends SkillSet {
          throw error;
       }
    }
+
+   static async getById(skill_id: number, language_set: string = 'en'): Promise<Skill | null> {
+      try {
+         const query = database.select('skills_schema', 'skill_sets');
+
+         query.where({ skill_id, language_set });
+         query.populate('skill_id', ['name', 'category', 'level']);
+
+         const { data = [], error } = await query.exec();
+         const [ dataSkill ] = data;
+         if (error) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         if (!dataSkill) {
+            return null;
+         }
+
+         return new Skill(dataSkill);
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   static async getManyByIds(skillIds: number[], language_set: string = 'en'): Promise<Skill[]> {
+      try {
+         const query = database.select('skills_schema', 'skill_sets');
+         const skillIdsSet = skillIds.map(id => ({ skill_id: id, language_set }));
+
+         query.where(skillIdsSet);
+         query.populate('skill_id', ['name', 'category', 'level']);
+
+         const { data = [], error } = await query.exec();
+         if (error) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         return data.map(skill => new Skill(skill));
+      } catch (error) {
+         throw error;
+      }
+   }
 }
