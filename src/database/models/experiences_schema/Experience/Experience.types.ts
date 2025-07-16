@@ -1,3 +1,5 @@
+import { Company } from '../../companies_schema';
+import { AdminUser } from '../../users_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 
 export type ExperienceType = 'full-time' | 'part-time' | 'internship' | 'contract' | 'freelance' | undefined;
@@ -10,6 +12,8 @@ export interface ExperienceSetup extends ExperienceSetSetup {
    start_date: string;
    end_date: string;
    company_id: number;
+   company?: Company;
+   user?: AdminUser;
    skills: number[];
 }
 

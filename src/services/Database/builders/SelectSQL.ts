@@ -74,7 +74,11 @@ class SelectSQL extends SQL {
             return '';
          });
 
-         this.selectClause = `SELECT ${validatedFields.join(', ')}`;
+         if (this.selectClause) {
+            this.selectClause = `${this.selectClause}, ${validatedFields.join(', ')}`;
+         } else {
+            this.selectClause = `SELECT ${validatedFields.join(', ')}`;
+         }
       }
 
       return this;
@@ -124,7 +128,7 @@ class SelectSQL extends SQL {
       }
 
       this.join(relatedField.tablePath);
-      this.on(`${this.tableName}.${fieldName}`, `${relatedField.table}.${relatedField.field}`);
+      this.joinOn(fieldName, relatedField);
 
       return this;  
    }

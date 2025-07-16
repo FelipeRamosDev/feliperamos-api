@@ -2,6 +2,8 @@ import ExperienceSet from '../ExperienceSet/ExperienceSet';
 import { ExperienceCreateSetup, ExperienceSetup, ExperienceStatus, ExperienceType } from './Experience.types';
 import database from '../../../../database';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
+import { AdminUser } from '../../users_schema';
+import { Company } from '../../companies_schema';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -10,7 +12,9 @@ export default class Experience extends ExperienceSet {
    public start_date: Date | null;
    public end_date: Date | null;
    public company_id: number;
+   public company?: Company;
    public skills: number[];
+   public user: AdminUser;
 
    constructor(setup: ExperienceSetup) {
       super(setup, 'experiences_schema', 'experiences');
@@ -24,18 +28,22 @@ export default class Experience extends ExperienceSet {
          status = 'draft',
          title,
          start_date,
-         end_date = null,
+         end_date,
          company_id,
+         company,
          skills = []
       } = setup;
 
       this.type = type;
       this.status = status;
       this.title = title;
-      this.start_date = start_date ? new Date(start_date) : null;
-      this.end_date = end_date ? new Date(end_date) : null;
+      this.start_date = new Date(start_date);
+      this.end_date = end_date ? new Date(end_date) : new Date();
       this.company_id = company_id;
+      this.company = company ? new Company(company) : undefined;
       this.skills = skills;
+
+      this.user = new AdminUser({ ...setup, id: setup.user_id, created_at: undefined });
    }
 
    static async create(data: ExperienceCreateSetup): Promise<Experience> {
@@ -78,15 +86,20 @@ export default class Experience extends ExperienceSet {
 
          query.where({ user_id: userId, language_set });
          query.populate('experience_id', [ 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+         query.populate('user_id', [ 'first_name', 'last_name', 'email', 'role' ]);
 
          const { data, error } = await query.exec();
-
          if (error) {
             throw new ErrorDatabase('Failed to fetch Experiences: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
          }
          
          if (!data || !Array.isArray(data)) {
             return [];
+         }
+
+         // Populating company data for each experience
+         for (const exp of data) {
+            exp.company = await Company.getById(exp.company_id, language_set);
          }
 
          return data.map(exp => new Experience(exp));

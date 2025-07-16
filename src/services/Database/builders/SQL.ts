@@ -1,6 +1,7 @@
 import { JoinConfig, WhereCondition, QueryResult } from '../types/builders/SQL.types';
 import ErrorDatabase from '../ErrorDatabase';
 import DataBase from '../Database';
+import { RelatedFieldSetup } from '../types/builders/RelatedField.types';
 
 interface WhereConditionValue {
   operator?: string;
@@ -180,7 +181,29 @@ class SQL {
       }
 
       const joinClause = alias ? `${verifiedPath} AS ${this.charsVerifier(alias)}` : verifiedPath;
-      this.joinClause = `${joinType.toUpperCase()} JOIN ${joinClause}`;
+
+      if (this.joinClause) {
+         this.joinClause += ` ${joinType.toUpperCase()} JOIN ${joinClause}`;
+      } else {
+         this.joinClause = `${joinType.toUpperCase()} JOIN ${joinClause}`;
+      }
+
+      return this;
+   }
+
+   /**
+    * Adds an ON clause to the query for joining tables.
+    * @param fieldOut - The field from the outer (joined) table, e.g., "table1.id".
+    * @param fieldIn - The field from the inner (base) table, e.g., "table2.foreign_id".
+    * @returns {SQL} The query builder instance for chaining.
+    * @throws {ErrorDatabase} If either fieldOut or fieldIn is not provided.
+    */
+   joinOn(fieldName: string, relatedField: RelatedFieldSetup): this {
+      if (!fieldName || !relatedField) {
+         throw new ErrorDatabase('Both fields for ON clause must be provided.', 'ON_CLAUSE_FIELDS_REQUIRED');
+      }
+
+      this.joinClause += ` ON ${this.tableName}.${fieldName} = ${relatedField.table}.${relatedField.field}`;
       return this;
    }
 
