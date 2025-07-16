@@ -59,6 +59,22 @@ export default class Company extends CompanySet {
       });
    }
 
+   static async getById(company_id: number, language_set: string = 'en'): Promise<Company[]> {
+      const companyQuery = database.select('companies_schema', 'company_sets');
+
+      companyQuery.where({ company_id, language_set });
+      companyQuery.populate('company_id', [ 'company_name', 'location', 'logo_url', 'site_url' ]);
+
+      const { error, data = [] } = await companyQuery.exec();
+
+      if (error) {
+         throw new ErrorDatabase('Failed to fetch company', 'COMPANY_QUERY_ERROR');
+      }
+
+      const [ companyData ] = data;
+      return companyData;
+   }
+
    static async query(user_id: number, language_set: string): Promise<Company[]> {
       const companiesQuery = database.select('companies_schema', 'company_sets');
 

@@ -68,4 +68,4 @@ class InsertSQL extends SQL {
    }
 }
 
-export = InsertSQL;
+export default InsertSQL;

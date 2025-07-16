@@ -1,3 +1,5 @@
+import ErrorDatabase from "../ErrorDatabase";
+
 export default class TableRow {
    private _rawData: any;
 
@@ -11,7 +13,7 @@ export default class TableRow {
       this._rawData = () => rawData;
 
       if (!schemaName || !tableName) {
-         throw new Error('Schema name and table name are required to create a TableRow instance.');
+         throw new ErrorDatabase('Schema name and table name are required to create a TableRow instance.', 'TABLEROW_CREATION_ERROR');
       }
 
       const {
@@ -20,9 +22,11 @@ export default class TableRow {
       } = rawData || {};
 
       const parsedId = parseInt(id, 10);
+
       if (isNaN(parsedId)) {
-         throw new Error('Invalid id: must be a valid number.');
+         throw new ErrorDatabase('Invalid id: must be a valid number.', 'TABLEROW_CREATION_ERROR');
       }
+
       this.id = parsedId;
       this.created_at = created_at;
       this.schemaName = schemaName;

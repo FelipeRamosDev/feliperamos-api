@@ -46,4 +46,4 @@ class RelatedField {
    }
 }
 
-export = RelatedField;
+export default RelatedField;
