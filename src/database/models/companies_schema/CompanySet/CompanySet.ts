@@ -6,8 +6,8 @@ import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 export default class CompanySet extends TableRow {
    public description: string;
    public industry: string;
-   public user_id: number;
-   public company_id: number;
+   public user_id?: number;
+   public company_id?: number;
 
    constructor (setup: CompanySetSetup, schemaName: string = 'companies_schema', tableName: string = 'company_sets') {
       super(schemaName, tableName, setup);
@@ -18,10 +18,6 @@ export default class CompanySet extends TableRow {
          description = '',
          industry = ''
       } = setup || {};
-
-      if (!company_id || !user_id) {
-         throw new ErrorDatabase('Company ID and User ID are required to create a company set.', 'COMPANY_SET_CREATION_ERROR');
-      }
 
       this.company_id = company_id;
       this.user_id = user_id;
