@@ -5,6 +5,7 @@ import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import { AdminUser } from '../../users_schema';
 import { Company } from '../../companies_schema';
 import { Skill } from '../../skills_schema';
+import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -15,7 +16,8 @@ export default class Experience extends ExperienceSet {
    public company_id: number;
    public company?: Company;
    public skills: number[];
-   public user: AdminUser;
+   public user?: AdminUser;
+   public languageSets: ExperienceSet[];
 
    constructor(setup: ExperienceSetup) {
       super(setup, 'experiences_schema', 'experiences');
@@ -32,7 +34,9 @@ export default class Experience extends ExperienceSet {
          end_date,
          company_id,
          company,
-         skills = []
+         skills = [],
+         languageSets = [],
+         user_id
       } = setup;
 
       this.type = type;
@@ -43,8 +47,11 @@ export default class Experience extends ExperienceSet {
       this.company_id = company_id;
       this.company = company ? new Company(company) : undefined;
       this.skills = skills;
+      this.languageSets = languageSets.map((xpSet: ExperienceSetSetup) => new ExperienceSet(xpSet));
 
-      this.user = new AdminUser({ ...setup, id: setup.user_id, created_at: undefined });
+      if (user_id) {
+         this.user = new AdminUser({ ...setup, id: user_id, created_at: undefined });
+      }
    }
 
    static async create(data: ExperienceCreateSetup): Promise<Experience> {
@@ -79,6 +86,35 @@ export default class Experience extends ExperienceSet {
          return new Experience({ ...createdExperience, ...createdDefaultSet });
       } catch (error: any) {
          throw new ErrorDatabase('Failed to create Experience: ' + error.message, 'EXPERIENCE_CREATION_ERROR');
+      }
+   }
+
+   static async getFullSet(experienceId: number): Promise<Experience | null> {
+      try {
+         const expBaseQuery = database.select('experiences_schema', 'experiences');
+         expBaseQuery.where({ 'experiences.id': experienceId });
+         expBaseQuery.populate('company_id', [ 'company_name', 'logo_url', 'site_url', 'location' ]);
+
+         const { data = [], error } = await expBaseQuery.exec();
+         const [ experienceData ] = data;
+
+         if (error || !experienceData) {
+            throw new ErrorDatabase('Experience not found', 'EXPERIENCE_NOT_FOUND');
+         }
+
+         const experienceSetQuery = database.select('experiences_schema', 'experience_sets');
+         experienceSetQuery.where({ experience_id: experienceId });
+
+         const { data: experienceSetData = [] } = await experienceSetQuery.exec();
+         const company = new Company(experienceData);
+
+         experienceData.company = company;
+         experienceData.languageSets = experienceSetData;
+         experienceData.skills = await Skill.getManyByIds(experienceData.skills);
+
+         return new Experience(experienceData);
+      } catch (error: any) {
+         throw new ErrorDatabase('Failed to fetch Experience: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
       }
    }
 

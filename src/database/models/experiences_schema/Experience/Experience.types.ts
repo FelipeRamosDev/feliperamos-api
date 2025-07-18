@@ -15,6 +15,7 @@ export interface ExperienceSetup extends ExperienceSetSetup {
    company?: Company;
    user?: AdminUser;
    skills: number[];
+   languageSets?: ExperienceSetSetup[];
 }
 
 export interface ExperienceCreateSetup {
