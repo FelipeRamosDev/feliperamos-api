@@ -3,4 +3,5 @@ export interface CompanySetSetup {
    industry?: string;
    company_id?: number;
    user_id?: number;
+   language_set?: string;
 }

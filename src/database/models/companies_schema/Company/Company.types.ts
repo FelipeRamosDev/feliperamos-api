@@ -5,6 +5,7 @@ export interface CompanySetup extends CompanySetSetup {
    location: string;
    logo_url: string;
    site_url: string;
+   languageSets: CompanySetSetup[];
 }
 
 export interface CreateCompanyData {

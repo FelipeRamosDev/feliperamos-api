@@ -123,8 +123,8 @@ export default class Experience extends ExperienceSet {
          const query = database.select('experiences_schema', 'experience_sets');
 
          query.where({ user_id: userId, language_set });
-         query.populate('experience_id', [ 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
-         query.populate('user_id', [ 'first_name', 'last_name', 'email', 'role' ]);
+         query.populate('experience_id', [ 'experiences.id', 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+         query.populate('user_id', [ 'experiences.id', 'first_name', 'last_name', 'email', 'role' ]);
 
          const { data, error } = await query.exec();
          if (error) {
