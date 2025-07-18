@@ -113,8 +113,8 @@ export default class Experience extends ExperienceSet {
          experienceData.skills = await Skill.getManyByIds(experienceData.skills);
 
          return new Experience(experienceData);
-      } catch (error) {
-         throw error;
+      } catch (error: any) {
+         throw new ErrorDatabase('Failed to fetch Experience: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
       }
    }
 
