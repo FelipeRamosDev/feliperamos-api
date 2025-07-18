@@ -69,4 +69,37 @@ export default class ExperienceSet extends TableRow {
          throw new ErrorDatabase('Failed to create ExperienceSet', 'EXPERIENCE_SET_CREATION_ERROR');
       }
    }
+
+   static async update(id: number, updates: Partial<ExperienceSetSetup>): Promise<ExperienceSet> {
+      try {
+         const updatedQuery = database.update('experiences_schema', 'experience_sets');
+
+         updatedQuery.set(updates);
+         updatedQuery.where({ id });
+         updatedQuery.returning();
+
+         const { data = [], error } = await updatedQuery.exec();
+         const [ updatedExperienceSet ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to update ExperienceSet', 'EXPERIENCE_SET_UPDATE_ERROR');
+         }
+
+         if (!data || !Array.isArray(data)) {
+            throw new ErrorDatabase('Invalid data returned when updating ExperienceSet', 'EXPERIENCE_SET_UPDATE_ERROR');
+         }
+
+         if (!updatedExperienceSet) {
+            throw new ErrorDatabase('No ExperienceSet updated', 'EXPERIENCE_SET_UPDATE_ERROR');
+         }
+
+         return new ExperienceSet(updatedExperienceSet);
+      } catch (error) {
+         if (error instanceof ErrorDatabase) {
+            throw error;
+         }
+
+         throw new ErrorDatabase('Failed to update ExperienceSet', 'EXPERIENCE_SET_UPDATE_ERROR');
+      }
+   }
 }

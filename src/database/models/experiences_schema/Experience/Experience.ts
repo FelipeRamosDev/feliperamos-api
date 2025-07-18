@@ -151,7 +151,7 @@ export default class Experience extends ExperienceSet {
       }
    }
 
-   static async update(id: number, updates: Partial<Experience>): Promise<Experience | null> {
+   static async update(id: number, updates: Partial<Experience>): Promise<Experience> {
       try {
          const updateQuery = database.update('experiences_schema', 'experiences');
 
@@ -168,6 +168,10 @@ export default class Experience extends ExperienceSet {
 
          return new Experience(updatedExperience);
       } catch (error: any) {
+         if (error instanceof ErrorDatabase) {
+            throw error;
+         }
+
          throw new ErrorDatabase('Failed to update experience.', 'EXPERIENCE_UPDATE_ERROR');
       }
    }
