@@ -5,8 +5,6 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 export default new Route({
    method: 'GET',
    routePath: '/experience/:experience_id',
-   useAuth: true,
-   allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { experience_id } = req.params;
       const experienceId = parseInt(experience_id, 10);

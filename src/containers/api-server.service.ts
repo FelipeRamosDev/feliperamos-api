@@ -7,6 +7,7 @@ import healthRoute from '../routes/health.route';
 import authUserRoute from '../routes/auth/user.route';
 import experienceCreate from '../routes/experience/create';
 import experienceQuery from '../routes/experience/query';
+import experienceUpdate from '../routes/experience/update';
 import experienceGet from '../routes/experience/experience_id';
 import skillCreate from '../routes/skill/create';
 import skillQuery from '../routes/skill/query';
@@ -52,7 +53,8 @@ export default new ServerAPI({
       skillQuery,
       companyCreate,
       companyQuery,
-      experienceGet
+      experienceGet,
+      experienceUpdate
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);

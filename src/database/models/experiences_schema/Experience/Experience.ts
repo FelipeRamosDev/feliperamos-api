@@ -150,4 +150,25 @@ export default class Experience extends ExperienceSet {
          throw error;
       }
    }
+
+   static async update(id: number, updates: Partial<Experience>): Promise<Experience | null> {
+      try {
+         const updateQuery = database.update('experiences_schema', 'experiences');
+
+         updateQuery.set(updates);
+         updateQuery.where({ id });
+         updateQuery.returning();
+
+         const { data = [], error } = await updateQuery.exec();
+         const [ updatedExperience ] = data;
+
+         if (error || !updatedExperience) {
+            throw new ErrorDatabase('Experience not found or update failed.', 'EXPERIENCE_UPDATE_ERROR');
+         }
+
+         return new Experience(updatedExperience);
+      } catch (error) {
+         throw new ErrorDatabase('Failed to update experience.', 'EXPERIENCE_UPDATE_ERROR');
+      }
+   }
 }
