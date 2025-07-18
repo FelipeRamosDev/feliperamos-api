@@ -9,7 +9,12 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { experience_id } = req.params;
-      const experienceId = Number(experience_id);
+      const experienceId = parseInt(experience_id, 10);
+
+      if (isNaN(experienceId)) {
+         new ErrorResponseServerAPI('Invalid experience ID', 400, 'INVALID_EXPERIENCE_ID').send(res);
+         return;
+      }
 
       try {
          const experience = await Experience.getFullSet(experienceId);
@@ -20,7 +25,7 @@ export default new Route({
 
          res.status(200).send(experience);
       } catch (error) {
-         new ErrorResponseServerAPI('Failed to fetch Experience!', 404, 'EXPERIENCE_QUERY_ERROR').send(res);
+         new ErrorResponseServerAPI('Failed to fetch Experience!', 500, 'EXPERIENCE_QUERY_ERROR').send(res);
       }
    }
 });
