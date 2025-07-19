@@ -27,7 +27,7 @@ export default new Route({
          res.status(200).send({ message: 'Skill set updated successfully' });
       } catch (error) {
          console.error('Error updating skill set:', error);
-         new ErrorResponseServerAPI('Error updating skill set').send(res);
+         new ErrorResponseServerAPI('Error updating skill set', 500, 'SERVER_ERROR').send(res);
       }
    }
 });

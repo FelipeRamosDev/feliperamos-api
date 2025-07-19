@@ -10,20 +10,20 @@ export default new Route({
       const { skill_id } = req.params;
       const skillId = Number(skill_id);
 
-      if (!skillId) {
+      if (isNaN(skillId) || skillId < 0) {
          new ErrorResponseServerAPI('Skill ID is required', 400, 'SKILL_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const skill = await Skill.getFullSet(Number(skillId));
+         const skill = await Skill.getFullSet(skillId);
          
          if (!skill) {
             new ErrorResponseServerAPI('Skill not found', 404, 'SKILL_NOT_FOUND').send(res);
             return;
          }
 
-         res.status(200).send(skill)
+         res.status(200).send(skill);
       } catch (error) {
          console.error("Error in skill details route:", error);
          new ErrorResponseServerAPI('Internal Server Error', 500, '').send(res);
