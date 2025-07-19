@@ -7,15 +7,17 @@ export default class Skill extends SkillSet {
    public name: string;
    public category: string;
    public level: number;
+   public languageSets?: any[];
 
    constructor (setup: SkillSetup) {
       super(setup);
 
-      const { name, level, category } = setup || {};
+      const { name, level, category, languageSets } = setup || {};
 
       this.name = name;
       this.level = level;
       this.category = category;
+      this.languageSets = languageSets;
    }
 
    static async create(skillData: SkillCreateSetup): Promise<Skill> {
@@ -101,6 +103,52 @@ export default class Skill extends SkillSet {
          }
 
          return data.map(skill => new Skill(skill));
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   static async getFullSet(id: number): Promise<Skill | null> {
+      try {
+         const query = database.select('skills_schema', 'skills').where({ id });
+
+         const { data = [], error } = await query.exec();
+         const [ dataSkill ] = data;
+
+         if (error) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         if (!dataSkill) {
+            return null;
+         }
+
+         const { data: skillSetsData } = await database.select('skills_schema', 'skill_sets').where({ skill_id: id }).exec();
+         if (!skillSetsData || !skillSetsData.length) {
+            return null;
+         }
+
+         dataSkill.languageSets = skillSetsData;
+         return new Skill(dataSkill);
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   static async update(id: number, updates: Partial<SkillSetup>): Promise<Skill | null> {
+      try {
+         const { data = [], error } = await database.update('skills_schema', 'skills').set(updates).where({ id }).returning().exec();
+         const [ updatedSkill ] = data;
+
+         if (error) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         if (!updatedSkill) {
+            return null;
+         }
+
+         return new Skill(updatedSkill);
       } catch (error) {
          throw error;
       }

@@ -2,17 +2,26 @@ import 'dotenv/config';
 
 import '../database';
 import ServerAPI from '../services/ServerAPI/ServerAPI';
-import loginRoute from '../routes/auth/login.route';
+
 import healthRoute from '../routes/health.route';
+
+import loginRoute from '../routes/auth/login.route';
 import authUserRoute from '../routes/auth/user.route';
+
 import experienceCreate from '../routes/experience/create';
 import experienceCreateSet from '../routes/experience/create-set';
 import experienceQuery from '../routes/experience/query';
 import experienceUpdate from '../routes/experience/update';
 import experienceUpdateSet from '../routes/experience/update-set';
 import experienceGet from '../routes/experience/experience_id';
+
 import skillCreate from '../routes/skill/create';
+import skillCreateSet from '../routes/skill/create-set';
 import skillQuery from '../routes/skill/query';
+import skillGet from '../routes/skill/skill_id';
+import skillUpdate from '../routes/skill/update';
+import skillUpdateSet from '../routes/skill/update-set';
+
 import companyCreate from '../routes/company/create';
 import companyCreateSet from '../routes/company/create-set';
 import companyQuery from '../routes/company/query';
@@ -60,7 +69,11 @@ export default new ServerAPI({
       experienceUpdate,
       experienceUpdateSet,
       skillCreate,
+      skillCreateSet,
       skillQuery,
+      skillGet,
+      skillUpdate,
+      skillUpdateSet,
       companyCreate,
       companyCreateSet,
       companyUpdate,
