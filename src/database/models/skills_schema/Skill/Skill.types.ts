@@ -7,13 +7,14 @@ export interface SkillCreateSetup {
    skill_id?: number;
    language_set?: string;
    journey?: string;
-   user_id?: number; 
+   user_id?: number;
 }
 
 export interface SkillSetup extends SkillSetSetup {
    name: string;
    level: number;
    category: string;
+   languageSets?: SkillSetSetup[];
 }
 
 // export interface SkillCreateSetup extends SkillSetup {}

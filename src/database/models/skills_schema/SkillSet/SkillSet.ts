@@ -14,10 +14,6 @@ export default class SkillSet extends TableRow {
 
       const { user_id, skill_id, language_set = 'en', journey } = setup || {};
 
-      if (!skill_id) {
-         throw new ErrorDatabase(`SkillSet requires skill_id`, 'SKILL_SET_SETUP_ERROR');
-      }
-
       this.skill_id = skill_id;
       this.language_set = language_set;
       this.journey = journey;
@@ -36,6 +32,27 @@ export default class SkillSet extends TableRow {
          return new SkillSet(skillSetCreated);
       } catch (error) {
          throw error;
+      }
+   }
+
+   static async updateSet(id: number, updates: Partial<SkillSetSetup>): Promise<SkillSet | null> {
+      try {
+         const query = database.update('skills_schema', 'skill_sets');
+
+         query.set(updates);
+         query.where({ id });
+         query.returning();
+
+         const { data = [] } = await query.exec();
+         const [ updatedSkillSet ] = data;
+
+         if (!updatedSkillSet) {
+            return null;
+         }
+
+         return new SkillSet(updatedSkillSet);
+      } catch (error) {
+         throw new ErrorDatabase(`Skill set update failed!`, 'SKILL_SET_UPDATE_FAILED');
       }
    }
 }
