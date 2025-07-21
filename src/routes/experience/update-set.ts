@@ -5,6 +5,8 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 export default new Route({
    method: 'POST',
    routePath: '/experience/update-set',
+   useAuth: true,
+   allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { id, updates } = req.body;
 

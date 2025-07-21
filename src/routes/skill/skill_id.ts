@@ -10,8 +10,8 @@ export default new Route({
       const { skill_id } = req.params;
       const skillId = Number(skill_id);
 
-      if (isNaN(skillId) || skillId < 0) {
-         new ErrorResponseServerAPI('Skill ID is required', 400, 'SKILL_ID_REQUIRED').send(res);
+      if (isNaN(skillId)) {
+         new ErrorResponseServerAPI('Invalid Skill ID', 400, 'INVALID_SKILL_ID').send(res);
          return;
       }
 

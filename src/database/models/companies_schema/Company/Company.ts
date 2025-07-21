@@ -108,6 +108,10 @@ export default class Company extends CompanySet {
             throw new ErrorDatabase('Failed to fetch company', 'COMPANY_QUERY_ERROR');
          }
 
+         if (!companyData) {
+            return null;
+         }
+
          const companySetQuery = database.select('companies_schema', 'company_sets');
          companySetQuery.where({ company_id });
 
