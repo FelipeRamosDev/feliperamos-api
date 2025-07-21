@@ -9,7 +9,7 @@ export default new Route({
       const { experience_id } = req.params;
       const experienceId = parseInt(experience_id, 10);
 
-      if (isNaN(experienceId)) {
+      if (isNaN(experienceId) || experienceId < 0) {
          new ErrorResponseServerAPI('Invalid experience ID', 400, 'INVALID_EXPERIENCE_ID').send(res);
          return;
       }
