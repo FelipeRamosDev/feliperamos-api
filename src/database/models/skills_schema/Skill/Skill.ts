@@ -90,6 +90,10 @@ export default class Skill extends SkillSet {
    }
 
    static async getManyByIds(skillIds: number[], language_set: string = 'en'): Promise<Skill[]> {
+      if (!Array.isArray(skillIds)) {
+         return [];
+      }
+
       try {
          const query = database.select('skills_schema', 'skill_sets');
          const skillIdsSet = skillIds.map(id => ({ skill_id: id, language_set }));
