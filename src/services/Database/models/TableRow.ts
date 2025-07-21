@@ -21,7 +21,7 @@ export default class TableRow {
          created_at
       } = rawData || {};
 
-      const parsedId = id ? parseInt(id, 10) : undefined;
+      const parsedId = id ? (isNaN(parseInt(id, 10)) ? undefined : parseInt(id, 10)) : undefined;
 
       this.id = parsedId;
       this.created_at = created_at;
