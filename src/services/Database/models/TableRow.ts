@@ -6,7 +6,7 @@ export default class TableRow {
    public schemaName: string;
    public tableName: string;
 
-   public id: number;
+   public id?: number;
    public created_at: Date;
 
    constructor(schemaName: string, tableName: string, rawData: any) {
@@ -21,11 +21,7 @@ export default class TableRow {
          created_at
       } = rawData || {};
 
-      const parsedId = parseInt(id, 10);
-
-      if (isNaN(parsedId)) {
-         throw new ErrorDatabase('Invalid id: must be a valid number.', 'TABLEROW_CREATION_ERROR');
-      }
+      const parsedId = id ? (isNaN(parseInt(id, 10)) ? undefined : parseInt(id, 10)) : undefined;
 
       this.id = parsedId;
       this.created_at = created_at;

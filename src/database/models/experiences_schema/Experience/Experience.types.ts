@@ -1,4 +1,5 @@
 import { Company } from '../../companies_schema';
+import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
 import { AdminUser } from '../../users_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 
@@ -14,7 +15,7 @@ export interface ExperienceSetup extends ExperienceSetSetup {
    company_id: number;
    company?: Company;
    user?: AdminUser;
-   skills: number[];
+   skills: SkillSetup[];
    languageSets?: ExperienceSetSetup[];
 }
 

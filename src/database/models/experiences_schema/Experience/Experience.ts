@@ -6,6 +6,7 @@ import { AdminUser } from '../../users_schema';
 import { Company } from '../../companies_schema';
 import { Skill } from '../../skills_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
+import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -15,7 +16,7 @@ export default class Experience extends ExperienceSet {
    public end_date: Date | null;
    public company_id: number;
    public company?: Company;
-   public skills: number[];
+   public skills: Skill[];
    public user?: AdminUser;
    public languageSets: ExperienceSet[];
 
@@ -46,7 +47,7 @@ export default class Experience extends ExperienceSet {
       this.end_date = end_date ? new Date(end_date) : new Date();
       this.company_id = company_id;
       this.company = company ? new Company(company) : undefined;
-      this.skills = skills;
+      this.skills = skills?.map((skill: SkillSetup) => new Skill(skill)) || [];
       this.languageSets = languageSets.map((xpSet: ExperienceSetSetup) => new ExperienceSet(xpSet));
 
       if (user_id) {
