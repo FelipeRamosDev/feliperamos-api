@@ -9,7 +9,7 @@ export default new Route({
       const { company_id } = req.params;
       const companyId = parseInt(company_id, 10);
 
-      if (isNaN(companyId)) {
+      if (isNaN(companyId) || companyId < 0) {
          new ErrorResponseServerAPI('Invalid company ID', 400, 'INVALID_COMPANY_ID').send(res);
          return;
       }

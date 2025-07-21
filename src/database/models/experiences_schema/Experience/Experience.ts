@@ -99,8 +99,12 @@ export default class Experience extends ExperienceSet {
          const { data = [], error } = await expBaseQuery.exec();
          const [ experienceData ] = data;
 
-         if (error || !experienceData) {
-            throw new ErrorDatabase('Experience not found', 'EXPERIENCE_NOT_FOUND');
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         if (!experienceData) {
+            return null;
          }
 
          const experienceSetQuery = database.select('experiences_schema', 'experience_sets');
