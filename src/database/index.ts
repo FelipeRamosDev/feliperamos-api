@@ -6,11 +6,11 @@ import skills_schema from './schemas/skills_schema';
 import users_schema from './schemas/users_schema';
 
 const database = new PostgresDB({
-   dbName: process.env.DB_NAME,
+   dbName: process.env.POSTGRES_DB,
    host: process.env.DB_HOST,
    port: Number(process.env.DB_PORT),
-   user: process.env.DB_USER,
-   password: process.env.DB_PASSWORD,
+   user: process.env.POSTGRES_USER,
+   password: process.env.POSTGRES_PASSWORD,
    schemas: [
       users_schema,
       skills_schema,

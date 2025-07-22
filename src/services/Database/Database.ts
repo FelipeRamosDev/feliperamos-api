@@ -1,7 +1,7 @@
 import { DatabaseSetup } from './types/Database.types';
-import Schema from './builders/Schema';
+import Schema from './models/Schema';
 import Table from './models/Table';
-import Field from './builders/Field';
+import Field from './models/Field';
 import ErrorDatabase from './ErrorDatabase';
 
 /**

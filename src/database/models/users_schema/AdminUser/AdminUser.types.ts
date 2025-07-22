@@ -7,7 +7,7 @@ export interface CreateUserProps {
 }
 
 export interface AdminUserPublic {
-   id: number;
+   id?: number;
    email: string;
    name: string;
    first_name: string;
