@@ -7,6 +7,7 @@ import { Company } from '../../companies_schema';
 import { Skill } from '../../skills_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
+import ErrorResponseServerAPI from '@/services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -90,6 +91,27 @@ export default class Experience extends ExperienceSet {
       }
    }
 
+   static async getMasterUserPublic(language_set: string) {
+      try {
+         const { data: userData = [], error: userError } = await database.select('users_schema', 'admin_users').where({ role: 'master' }).exec();
+         const [ masterUser ] = userData;
+
+         if (userError) {
+            throw new ErrorDatabase('Failed to fetch master user: ' + userError.message, 'USER_FETCH_ERROR');
+         }
+
+         if (!masterUser) {
+            throw new ErrorDatabase('No master user found', 'USER_NOT_FOUND');
+         }
+
+         // Fetch experiences for the master user
+         const experiences = await Experience.getByUserId(masterUser.id, language_set, { status: 'published' });
+         return experiences;
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
+      }
+   }
+
    static async getFullSet(experienceId: number): Promise<Experience | null> {
       try {
          const expBaseQuery = database.select('experiences_schema', 'experiences');
@@ -123,7 +145,7 @@ export default class Experience extends ExperienceSet {
       }
    }
 
-   static async getByUserId(userId: number, language_set: string): Promise<Experience[]> {
+   static async getByUserId(userId: number, language_set: string, options?: { status: string }): Promise<Experience[]> {
       try {
          const query = database.select('experiences_schema', 'experience_sets');
 
@@ -148,6 +170,11 @@ export default class Experience extends ExperienceSet {
             if (Array.isArray(exp.skills) && exp.skills.length) {
                exp.skills = await Skill.getManyByIds(exp.skills, language_set);
             }
+         }
+
+         if (options?.status) {
+            const filtered = data.filter(exp => exp.status === options.status);
+            return filtered.map(exp => new Experience(exp));
          }
 
          return data.map(exp => new Experience(exp));

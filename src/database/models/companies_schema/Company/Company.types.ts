@@ -16,6 +16,7 @@ export interface CreateCompanyData {
    description?: string;
    industry?: string;
    user_id?: number;
+   language_set?: string;
 }
 
 export interface QueryCompanyParams {

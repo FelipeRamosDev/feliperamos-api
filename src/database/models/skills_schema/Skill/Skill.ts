@@ -49,6 +49,27 @@ export default class Skill extends SkillSet {
       }
    }
 
+   static async getMasterUserPublic(language_set: string) {
+      try {
+         const { data: userData = [], error: userError } = await database.select('users_schema', 'admin_users').where({ role: 'master' }).exec();
+         const [ masterUser ] = userData;
+
+         if (userError) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         const skillsData = await this.getSkillsByUserId(masterUser.id, language_set);
+
+         if (!skillsData) {
+            throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
+         }
+
+         return skillsData;
+      } catch (error) {
+         throw new ErrorDatabase('', '');
+      }
+   }
+
    static async getSkillsByUserId(userId: number, language_set: string = 'en'): Promise<Skill[]> {
       try {
          const query = database.select('skills_schema', 'skill_sets');
@@ -60,7 +81,7 @@ export default class Skill extends SkillSet {
             throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
          }
 
-         return data.map(skill => new Skill(skill));
+         return data.map(skill => new Skill(skill)).sort((a, b) => b.level - a.level);
       } catch (error) {
          throw error;
       }
@@ -71,7 +92,7 @@ export default class Skill extends SkillSet {
          const query = database.select('skills_schema', 'skill_sets');
 
          query.where({ skill_id, language_set });
-         query.populate('skill_id', ['name', 'category', 'level']);
+         query.populate('skill_id', ['skills.id', 'name', 'category', 'level']);
 
          const { data = [], error } = await query.exec();
          const [ dataSkill ] = data;
@@ -89,7 +110,7 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getManyByIds(skillIds: number[], language_set: string = 'en'): Promise<Skill[]> {
+   static async getManyByIds(skillIds: number[], language_set?: string): Promise<Skill[]> {
       if (!Array.isArray(skillIds)) {
          return [];
       }
@@ -99,14 +120,14 @@ export default class Skill extends SkillSet {
          const skillIdsSet = skillIds.map(id => ({ skill_id: id, language_set }));
 
          query.where(skillIdsSet);
-         query.populate('skill_id', ['name', 'category', 'level']);
+         query.populate('skill_id', ['skills.id', 'name', 'category', 'level']);
 
          const { data = [], error } = await query.exec();
          if (error) {
             throw new ErrorDatabase(`Database error caught!`, 'DATABASE_ERROR');
          }
 
-         return data.map(skill => new Skill(skill));
+         return data.map(skill => new Skill(skill)).filter(skill => skill.language_set === language_set).sort((a, b) => b.level - a.level);
       } catch (error) {
          throw error;
       }

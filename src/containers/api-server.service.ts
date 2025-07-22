@@ -14,6 +14,7 @@ import experienceQuery from '../routes/experience/query';
 import experienceUpdate from '../routes/experience/update';
 import experienceUpdateSet from '../routes/experience/update-set';
 import experienceGet from '../routes/experience/experience_id';
+import experienceGetPublic from '../routes/experience/public/user-experiences';
 
 import skillCreate from '../routes/skill/create';
 import skillCreateSet from '../routes/skill/create-set';
@@ -21,6 +22,7 @@ import skillQuery from '../routes/skill/query';
 import skillGet from '../routes/skill/skill_id';
 import skillUpdate from '../routes/skill/update';
 import skillUpdateSet from '../routes/skill/update-set';
+import skillGetPublic from '../routes/skill/public/user-skills';
 
 import companyCreate from '../routes/company/create';
 import companyCreateSet from '../routes/company/create-set';
@@ -68,12 +70,14 @@ export default new ServerAPI({
       experienceGet,
       experienceUpdate,
       experienceUpdateSet,
+      experienceGetPublic,
       skillCreate,
       skillCreateSet,
       skillQuery,
       skillGet,
       skillUpdate,
       skillUpdateSet,
+      skillGetPublic,
       companyCreate,
       companyCreateSet,
       companyUpdate,

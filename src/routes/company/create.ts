@@ -30,6 +30,7 @@ export default new Route({
             industry,
             description,
             location,
+            language_set: 'en',
             user_id: userId
          });
 

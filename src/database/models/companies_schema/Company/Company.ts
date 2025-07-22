@@ -81,18 +81,22 @@ export default class Company extends CompanySet {
    }
 
    static async query(user_id: number, language_set: string): Promise<Company[]> {
-      const companiesQuery = database.select('companies_schema', 'company_sets');
-
-      companiesQuery.where({ user_id, language_set });
-      companiesQuery.populate('company_id', ['company_name', 'location', 'logo_url', 'site_url']);
-
-      const { error, data = [] } = await companiesQuery.exec();
-
-      if (error) {
+      try {
+         const companiesQuery = database.select('companies_schema', 'company_sets');
+   
+         companiesQuery.where({ user_id, language_set });
+         companiesQuery.populate('company_id', ['companies.id', 'company_name', 'location', 'logo_url', 'site_url']);
+   
+         const { error, data = [] } = await companiesQuery.exec();
+   
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch companies', 'COMPANY_QUERY_ERROR');
+         }
+   
+         return data.map((companyData) => new Company(companyData));
+      } catch (error) {
          throw new ErrorDatabase('Failed to fetch companies', 'COMPANY_QUERY_ERROR');
       }
-
-      return data.map((companyData) => new Company(companyData));
    }
 
    static async getFullSet(company_id: number): Promise<Company | null> {
