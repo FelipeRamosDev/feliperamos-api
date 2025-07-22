@@ -134,9 +134,9 @@ feliperamos-api/
    # Database Configuration (Docker)
    DB_HOST=postgres
    DB_PORT=5432
-   DB_NAME=feliperamos_db
-   DB_USER=feliperamos
-   DB_PASSWORD=your_db_password
+   POSTGRES_DB=feliperamos_db
+   POSTGRES_USER=feliperamos
+   POSTGRES_PASSWORD=your_db_password
    
    # Redis Configuration (Docker)
    REDIS_HOST=redis
@@ -206,9 +206,9 @@ feliperamos-api/
    # Database Configuration (Local)
    DB_HOST=localhost
    DB_PORT=5432
-   DB_NAME=feliperamos_db
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
+   POSTGRES_DB=feliperamos_db
+   POSTGRES_USER=your_db_user
+   POSTGRES_PASSWORD=your_db_password
    
    # Redis Configuration (Local)
    REDIS_HOST=localhost
