@@ -112,7 +112,7 @@ export default class Experience extends ExperienceSet {
       }
    }
 
-   static async getFullSet(experienceId: number): Promise<Experience | null> {
+   static async getFullSet(experienceId: number, language_set?: string): Promise<Experience | null> {
       try {
          const expBaseQuery = database.select('experiences_schema', 'experiences');
          expBaseQuery.where({ 'experiences.id': experienceId });
@@ -137,7 +137,7 @@ export default class Experience extends ExperienceSet {
 
          experienceData.company = company;
          experienceData.languageSets = experienceSetData;
-         experienceData.skills = await Skill.getManyByIds(experienceData.skills);
+         experienceData.skills = await Skill.getManyByIds(experienceData.skills, language_set);
 
          return new Experience(experienceData);
       } catch (error: any) {
