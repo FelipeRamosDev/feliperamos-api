@@ -7,6 +7,7 @@ export default new Route({
    routePath: '/experience/:experience_id',
    controller: async (req, res) => {
       const { experience_id } = req.params;
+      const { language_set = 'en' } = req.query;
       const experienceId = parseInt(experience_id, 10);
 
       if (isNaN(experienceId) || experienceId < 0) {
@@ -15,7 +16,7 @@ export default new Route({
       }
 
       try {
-         const experience = await Experience.getFullSet(experienceId);
+         const experience = await Experience.getFullSet(experienceId, language_set as string);
          if (!experience) {
             new ErrorResponseServerAPI('Experience not found', 404, 'EXPERIENCE_NOT_FOUND').send(res);
             return;
