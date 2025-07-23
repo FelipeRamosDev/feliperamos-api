@@ -52,4 +52,4 @@ class DeleteSQL extends SQL {
    }
 }
 
-export = DeleteSQL;
+export default DeleteSQL;

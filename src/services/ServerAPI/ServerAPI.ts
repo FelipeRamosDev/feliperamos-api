@@ -2,7 +2,8 @@
 // Declaring globals
 import '../../global/globals';
 
-import express, { Express, RequestHandler } from 'express';
+import express, { Express } from 'express';
+import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import cors from 'cors';
 import https from 'https';
@@ -20,6 +21,7 @@ import type {
    SSLConfig
 } from './ServerAPI.types';
 import { Route } from '../Route';
+import ErrorServerAPI from './models/ErrorServerAPI';
 
 /**
  * @class ServerAPI
@@ -74,9 +76,9 @@ class ServerAPI extends Microservice {
          PORT = 80,
          jsonLimit = '10mb',
          autoInitialize = false,
-         onConstructed = () => {},
-         onInitialized = () => {},
-         onListen = () => {},
+         onConstructed = () => { },
+         onInitialized = () => { },
+         onListen = () => { },
          httpEndpoints = [],
          defaultMaxListeners = 20,
          sessionCookiesMaxAge = 86400000,
@@ -91,7 +93,7 @@ class ServerAPI extends Microservice {
        * @type {Object}
        */
       this._4handsInstance = () => _4handsInstance;
-      
+
       this.app = express();
       this.projectName = projectName;
       this.app_queue = [];
@@ -139,8 +141,7 @@ class ServerAPI extends Microservice {
          }
       }
 
-      this.httpEndpoints.forEach(endpoint => this.createEndpoint(endpoint));
-
+      // Routes will be registered after middleware setup in init()
       if (this.autoInitialize) {
          this.init().catch(err => {
             throw err;
@@ -213,6 +214,7 @@ class ServerAPI extends Microservice {
       this.serverState = 'loading';
 
       this.app.use(express.json({ limit: this.jsonLimit }));
+      this.app.use(cookieParser());
       this.app.use(cors({
          origin: this.corsOrigin,
          credentials: true
@@ -234,16 +236,21 @@ class ServerAPI extends Microservice {
             saveUninitialized: this.sessionSaveUninitialized,
             cookie: {
                secure: this.useSSL, // Set secure to true if using HTTPS
-               maxAge: this.sessionCookiesMaxAge
+               maxAge: this.sessionCookiesMaxAge,
+               httpOnly: true, // Allow JavaScript access if needed
+               sameSite: this.useSSL ? 'none' : 'lax' // Adjust based on your setup
             }
          }));
       } else {
-         throw new Error('You need to provide a API SECRET to start the server!');
+         throw new ErrorServerAPI('You need to provide a API SECRET to start the server!', 'API_SECRET_REQUIRED');
       }
 
       if (this.staticPath) {
          this.app.use(express.static(this.rootPath + this.staticPath));
       }
+
+      // Register routes after all middleware is set up
+      this.httpEndpoints.forEach(endpoint => this.createEndpoint(endpoint));
 
       if (this.useSSL) {
          this.listenSSL();
@@ -268,14 +275,14 @@ class ServerAPI extends Microservice {
       try {
          // Verificação segura antes de usar
          if (!this.sslConfig?.keySSLPath || !this.sslConfig?.certSSLPath) {
-            throw new Error('SSL configuration is incomplete. Both keySSLPath and certSSLPath are required.');
+            throw new ErrorServerAPI('SSL configuration is missing key or cert paths!', 'SSL_CONFIG_ERROR');
          }
 
          const SSL_KEY = fs.readFileSync(this.sslConfig.keySSLPath);
          const SSL_CERT = fs.readFileSync(this.sslConfig.certSSLPath);
 
          if (!SSL_KEY || !SSL_CERT) {
-            throw new Error(`The SSL certificate wasn't found in the directory!`);
+            throw new ErrorServerAPI('The SSL certificate wasn\'t found in the directory!', 'SSL_CERTIFICATE_NOT_FOUND');
          }
 
          const options = {
@@ -296,11 +303,11 @@ class ServerAPI extends Microservice {
 
    createEndpoint(endpoint: Route): void {
       if (!endpoint || typeof endpoint !== 'object') {
-         throw new Error('The "endpoint" param must be a Route instance!');
+         throw new ErrorServerAPI('The "endpoint" param must be a Route instance!', 'INVALID_ENDPOINT');
       }
 
       if (!endpoint.routePath || typeof endpoint.controller !== 'function') {
-         throw new Error('Route must have a valid routePath and controller function!');
+         throw new ErrorServerAPI('Route must have a valid routePath and controller function!', 'INVALID_ROUTE');
       }
 
       const routePath = endpoint.routePath;
@@ -365,7 +372,7 @@ class ServerAPI extends Microservice {
             return;
          }
          default: {
-            throw new Error(`Unsupported HTTP method: ${endpoint.method}`);
+            throw new ErrorServerAPI(`Unsupported HTTP method: ${endpoint.method}`, 'UNSUPPORTED_HTTP_METHOD');
          }
       }
    }

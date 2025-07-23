@@ -1,7 +1,7 @@
 import { DatabaseSetup } from './types/Database.types';
-import Schema from './builders/Schema';
-import Table from './builders/Table';
-import Field from './builders/Field';
+import Schema from './models/Schema';
+import Table from './models/Table';
+import Field from './models/Field';
 import ErrorDatabase from './ErrorDatabase';
 
 /**
@@ -15,7 +15,6 @@ import ErrorDatabase from './ErrorDatabase';
 class DataBase {
    public dbName: string;
    public host: string;
-   public password: string;
    public schemas: Map<string, Schema>;
    public onReady: (database: any) => void;
    public onError: (database: ErrorDatabase) => void;
@@ -35,7 +34,6 @@ class DataBase {
       const {
          dbName = 'default-db',
          host = '0.0.0.0',
-         password = '',
          schemas = [],
          onReady = () => {},
          onError = () => {}
@@ -43,7 +41,6 @@ class DataBase {
 
       this.dbName = dbName;
       this.host = host;
-      this.password = password;
       this.schemas = new Map();
       this.onReady = onReady;
       this.onError = onError;

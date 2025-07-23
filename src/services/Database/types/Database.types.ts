@@ -1,5 +1,5 @@
-import Schema from "../builders/Schema";
-import ErrorDatabase from "../ErrorDatabase";
+import Schema from '../models/Schema';
+import ErrorDatabase from '../ErrorDatabase';
 
 export interface DatabaseSetup {
    dbName?: string;

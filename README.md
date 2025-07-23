@@ -1,6 +1,6 @@
-# Felipe Ramos API - Microservices Backend
+# Felipe Ramos API - Microservices Backend (v1.2.0)
 
-A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, AI assistance, and Slack integration.
+A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring complete admin dashboard capabilities with full CRUD operations, JWT authentication, and comprehensive database management. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, AI assistance, and Slack integration.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
@@ -9,19 +9,31 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 
 ## 🚀 Features
 
+### New in v1.2.0 - Admin Dashboard & Database Management
+- **🔐 JWT Authentication**: Secure token-based authentication with role-based access control
+- **👥 User Management**: Master user creation and admin user management system
+- **📊 Skills Management**: Complete CRUD operations for skills with multi-language support
+- **🏢 Company Management**: Full company profile management with industry categorization
+- **💼 Experience Management**: Comprehensive work experience tracking with detailed descriptions
+- **🌐 Multi-language Support**: Language sets for internationalization (English/Spanish/etc.)
+- **🔒 Role-based Authorization**: Master, Admin, and User role hierarchy with route protection
+- **📝 Public API Endpoints**: Read-only public endpoints for portfolio data display
+
+### Core Features
 - **AI-Powered Chat**: OpenAI GPT integration for intelligent career-related conversations
 - **Real-time Communication**: Socket.IO server with namespace and room management
 - **Microservices Architecture**: Modular, scalable service-oriented design
 - **Slack Integration**: Automated Slack bot for notifications and interactions
 - **Redis Cache Layer**: High-performance caching and session management
-- **PostgreSQL Database**: Robust relational data storage
+- **PostgreSQL Database**: Robust relational data storage with schema management
 - **Docker Support**: Containerized deployment with Docker Compose
 - **SSL/HTTPS Support**: Production-ready security configuration
 - **Cluster Management**: Multi-process support for high availability
-- **RESTful APIs**: Well-structured API endpoints
+- **RESTful APIs**: Well-structured API endpoints with comprehensive documentation
 
 ## 🏗️ Architecture
 
@@ -51,16 +63,22 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **Express 5** - Web application framework
 - **Socket.IO 4.8+** - Real-time bidirectional communication
 
+### Authentication & Security
+- **JWT (jsonwebtoken 9.0+)** - Secure token-based authentication
+- **bcrypt 6.0+** - Password hashing and validation
+- **cookie-parser 1.4+** - HTTP cookie parsing
+- **express-session 1.18+** - Session management
+
 ### AI & Integration
 - **OpenAI API 4.103+** - GPT assistant integration
 - **Slack Bolt 4.4+** - Slack app framework
 
 ### Database & Caching
-- **PostgreSQL 8.16+** - Primary database
+- **PostgreSQL 8.16+** - Primary database with full schema management
 - **Redis (ioredis 5.6+)** - Caching and session store
 
 ### Development & Deployment
-- **Docker & Docker Compose** - Containerization
+- **Docker & Docker Compose** - Containerization with health checks
 - **Nodemon** - Development auto-reload
 - **ts-node** - TypeScript execution
 - **Rimraf** - Clean build directories
@@ -77,24 +95,39 @@ feliperamos-api/
 │   │   ├── socket-server.service.ts # Socket.IO server
 │   │   ├── namespaces/         # Socket namespaces
 │   │   └── routes/             # API route definitions
-│   ├── services/               # Core service classes
-│   │   ├── AI/                 # OpenAI integration
-│   │   ├── ClusterManager/     # Process management
-│   │   ├── Database/           # PostgreSQL service
-│   │   ├── EventEndpoint/      # Event handling
-│   │   ├── Microservice/       # Base microservice class
-│   │   ├── RedisDB/           # Redis integration
-│   │   ├── Route/             # Route management
-│   │   ├── ServerAPI/         # HTTP/HTTPS server
-│   │   ├── SlackApp/          # Slack bot service
-│   │   └── SocketServer/      # Socket.IO implementation
-│   ├── global/                # Global types and utilities
-│   └── models/                # Data models
-├── cert/                      # SSL certificates
-├── docker-compose.yml         # Docker services configuration
-├── Dockerfile                 # Container build instructions
-├── app.ts                     # Main application entry
-└── package.json              # Dependencies and scripts
+│   ├── database/               # Database layer
+│   │   ├── index.ts           # Database initialization
+│   │   ├── models/            # Data models & ORM
+│   │   │   ├── users_schema/  # User management models
+│   │   │   ├── skills_schema/ # Skills management models
+│   │   │   ├── companies_schema/ # Company management models
+│   │   │   └── experiences_schema/ # Experience management models
+│   │   ├── schemas/           # Database schema definitions
+│   │   └── tables/            # Table structure definitions
+│   ├── routes/                # API endpoint implementations
+│   │   ├── auth/              # Authentication routes
+│   │   ├── skill/             # Skills CRUD operations
+│   │   ├── company/           # Company CRUD operations
+│   │   ├── experience/        # Experience CRUD operations
+│   │   └── health.route.ts    # Health check endpoint
+│   ├── services/              # Core service classes
+│   │   ├── AI/                # OpenAI integration
+│   │   ├── ClusterManager/    # Process management
+│   │   ├── Database/          # PostgreSQL service
+│   │   ├── EventEndpoint/     # Event handling
+│   │   ├── Microservice/      # Base microservice class
+│   │   ├── RedisDB/          # Redis integration
+│   │   ├── Route/            # Route management with auth
+│   │   ├── ServerAPI/        # HTTP/HTTPS server with middleware
+│   │   ├── SlackApp/         # Slack bot service
+│   │   └── SocketServer/     # Socket.IO implementation
+│   ├── global/               # Global types and utilities
+│   └── models/               # Data models
+├── cert/                     # SSL certificates
+├── docker-compose.yml        # Docker services configuration
+├── Dockerfile               # Container build instructions
+├── app.ts                   # Main application entry
+└── package.json            # Dependencies and scripts
 ```
 
 ## 🛠️ Setup & Installation
@@ -127,18 +160,29 @@ feliperamos-api/
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
-   API_SERVER_PORT=3001
+   SERVER_API_PORT=7000
    SLACK_SERVER_PORT=4000
    API_SECRET=your_api_secret
    
+   # JWT Authentication
+   JWT_SECRET=your_jwt_secret_key
+   
    # Database Configuration (Docker)
+   DB_TYPE=postgres
    DB_HOST=postgres
    DB_PORT=5432
-   DB_NAME=feliperamos_db
-   DB_USER=feliperamos
-   DB_PASSWORD=your_db_password
+   POSTGRES_DB=feliperamos-api
+   POSTGRES_USER=feliperamos
+   POSTGRES_PASSWORD=your_db_password
+   
+   # Master User Configuration
+   MASTER_USER_EMAIL=felipe@feliperamos.dev
+   MASTER_USER_PASSWORD=your_master_password
+   MASTER_USER_FIRST_NAME=Felipe
+   MASTER_USER_LAST_NAME=Ramos
    
    # Redis Configuration (Docker)
+   REDIS_URL=redis://localhost:6000
    REDIS_HOST=redis
    REDIS_PORT=6000
    REDIS_PASSWORD=your_redis_password
@@ -199,18 +243,29 @@ feliperamos-api/
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
-   API_SERVER_PORT=3001
+   SERVER_API_PORT=7000
    SLACK_SERVER_PORT=4000
    API_SECRET=your_api_secret
    
+   # JWT Authentication
+   JWT_SECRET=your_jwt_secret_key
+   
    # Database Configuration (Local)
+   DB_TYPE=postgres
    DB_HOST=localhost
    DB_PORT=5432
-   DB_NAME=feliperamos_db
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
+   POSTGRES_DB=feliperamos-api
+   POSTGRES_USER=your_db_user
+   POSTGRES_PASSWORD=your_db_password
+   
+   # Master User Configuration
+   MASTER_USER_EMAIL=felipe@feliperamos.dev
+   MASTER_USER_PASSWORD=your_master_password
+   MASTER_USER_FIRST_NAME=Felipe
+   MASTER_USER_LAST_NAME=Ramos
    
    # Redis Configuration (Local)
+   REDIS_URL=redis://localhost:6000
    REDIS_HOST=localhost
    REDIS_PORT=6000
    REDIS_PASSWORD=your_redis_password
@@ -354,13 +409,21 @@ npm run start:slack &
 ## 🗄️ Database Services
 
 ### PostgreSQL Database
-- **Schema Management**: Dynamic table and field creation
-- **Query Builder**: Type-safe query construction
+- **Schema Management**: Dynamic table and field creation with multi-schema support
+- **Model Layer**: Object-relational mapping with TypeScript support
+- **Query Builder**: Type-safe query construction with join capabilities
 - **Connection Pooling**: Efficient connection management
-- **Migration Support**: Database version control
+- **Migration Support**: Database version control and schema evolution
+- **Multi-language Sets**: Support for internationalization with language-specific content
+
+### Database Schemas
+- **Users Schema**: Admin user management with role-based access
+- **Skills Schema**: Technical skills with proficiency levels and categories
+- **Companies Schema**: Company profiles with industry information
+- **Experiences Schema**: Work experience tracking with detailed descriptions
 
 ### Redis Cache
-- **Session Storage**: User session persistence
+- **Session Storage**: User session persistence with JWT integration
 - **Pub/Sub Messaging**: Inter-service communication
 - **Data Caching**: Performance optimization
 - **Collection Management**: Document-style operations
@@ -372,24 +435,30 @@ npm run start:slack &
 services:
   ai-service:        # OpenAI integration service
   slack-service:     # Slack bot service  
-  api-server:        # REST API server
-  socket-server:     # Socket.IO server
-  redis:            # Redis cache server
-  postgres:         # PostgreSQL database
+  api-server:        # REST API server (Port 7000)
+  socket-server:     # Socket.IO server (Port 5000)
+  redis:            # Redis cache server with health checks
+  postgres:         # PostgreSQL database with health checks
 ```
 
-### Health Checks
-- Service readiness monitoring
-- Automatic restart policies
-- Dependency management with `depends_on`
+### Health Checks & Dependencies
+- Service readiness monitoring with health check endpoints
+- Automatic restart policies for failed services
+- Dependency management with `depends_on` and health conditions
+- Proper service startup order with database initialization
 
 ## 🔒 Security Features
 
+- **JWT Authentication**: Secure token-based authentication system
+- **Role-based Authorization**: Master, Admin, and User role hierarchy
+- **Password Hashing**: bcrypt for secure password storage
 - **CORS Configuration**: Cross-origin request security
-- **SSL/TLS Support**: HTTPS encryption
-- **API Secret**: Request authentication
+- **SSL/TLS Support**: HTTPS encryption for production
+- **API Secret**: Request authentication for internal services
 - **Environment Variables**: Secure credential management
-- **Input Validation**: Request sanitization
+- **Input Validation**: Request sanitization and validation
+- **Cookie Security**: HTTP-only cookies with secure flags
+- **Session Management**: Secure session handling with Redis store
 
 ## 📊 Monitoring & Logging
 
@@ -400,24 +469,48 @@ services:
 
 ## 🧪 Development Tools
 
-### Debugging
-- **PowerShell Scripts**: Windows-specific debugging utilities
-- **Fresh Compilation**: Cache clearing and restart utilities
-- **Inspect Mode**: Node.js debugging support
-
-### Type Safety
-- **TypeScript**: Full type coverage
+### Development Tools
+- **Docker Compose**: Multi-service development environment
+- **TypeScript**: Full type coverage with strict mode
 - **Interface Definitions**: Comprehensive type definitions
 - **Generic Types**: Reusable type patterns
+- **Error Handling**: Comprehensive error management system
 
 ## 🌐 API Endpoints
 
-### AI Service
-- `POST /assistant-generate` - Generate AI responses
+### Authentication Routes
+- `POST /auth/login` - User authentication with JWT token generation
+- `GET /auth/user` - Get current authenticated user information
 
-### Health Checks
-- `GET /health` - Service health status
-- `GET /stats` - Service statistics
+### Skills Management (Protected Routes)
+- `POST /skill/create` - Create new skill (Admin/Master)
+- `POST /skill/create-set` - Create skill language set (Admin/Master)
+- `GET /skill/query` - Query user skills (Admin/Master)
+- `GET /skill/:skill_id` - Get skill details by ID
+- `POST /skill/update` - Update skill information (Admin/Master)
+- `POST /skill/update-set` - Update skill language set (Admin/Master)
+- `GET /skill/public/user-skills` - Get public skills for master user
+
+### Companies Management (Protected Routes)
+- `POST /company/create` - Create new company (Admin/Master)
+- `POST /company/create-set` - Create company language set (Admin/Master)
+- `GET /company/query` - Query user companies (Admin/Master)
+- `GET /company/:company_id` - Get company details by ID
+- `POST /company/update` - Update company information (Admin/Master)
+- `POST /company/update-set` - Update company language set (Admin/Master)
+
+### Experience Management (Protected Routes)
+- `POST /experience/create` - Create new experience (Admin/Master)
+- `POST /experience/create-set` - Create experience language set (Admin/Master)
+- `GET /experience/query` - Query user experiences (Admin/Master)
+- `GET /experience/:experience_id` - Get experience details by ID
+- `POST /experience/update` - Update experience information (Admin/Master)
+- `POST /experience/update-set` - Update experience language set (Admin/Master)
+- `GET /experience/public/user-experiences` - Get public experiences for master user
+
+### AI & System Routes
+- `POST /assistant-generate` - Generate AI responses
+- `GET /health` - Service health status and diagnostics
 
 ## 🚀 Production Deployment
 
@@ -431,6 +524,36 @@ services:
 - **Horizontal Scaling**: Multiple service instances
 - **Load Balancing**: Request distribution
 - **Cluster Mode**: Multi-process support
+
+## 📋 What's New in v1.2.0
+
+### 🎯 Major Features Added
+- **Complete Admin Dashboard Backend**: Full CRUD operations for skills, companies, and experiences
+- **JWT Authentication System**: Secure token-based authentication with role management
+- **Database Integration**: Full PostgreSQL integration with schema management and models
+- **Multi-language Support**: Language sets for internationalization
+- **Master User System**: Automatic master user creation and management
+- **Public API Endpoints**: Read-only endpoints for portfolio data display
+
+### 🔧 Technical Improvements
+- **Database Models**: Complete ORM layer with TypeScript support
+- **Authentication Middleware**: JWT validation and role-based route protection
+- **Health Checks**: Enhanced Docker health monitoring for all services
+- **Error Handling**: Comprehensive error management system
+- **Security Enhancements**: Cookie-based token storage with secure flags
+- **API Restructuring**: Organized route structure with proper middleware
+
+### 🗂️ Database Schema
+- **Users Schema**: Admin users with role-based access (Master/Admin/User)
+- **Skills Schema**: Technical skills with proficiency levels and categories
+- **Companies Schema**: Company profiles with location and industry data
+- **Experiences Schema**: Work experience with detailed job descriptions
+
+### 🚀 Development Experience
+- **Simplified Configuration**: Streamlined VS Code debugging setup
+- **Enhanced Docker Support**: Improved health checks and service dependencies
+- **Better Type Safety**: Enhanced TypeScript definitions and interfaces
+- **Cleaner Architecture**: Improved service organization and separation of concerns
 
 ## 🤝 Contributing
 
@@ -456,4 +579,4 @@ This project is private and proprietary. All rights reserved.
 
 **Built with ❤️ by Felipe Ramos**
 
-*Showcasing modern backend architecture, AI integration, and real-time communication technologies.*
+*Version 1.2.0 - Showcasing modern backend architecture, AI integration, comprehensive admin features, and real-time communication technologies.*

@@ -73,4 +73,4 @@ class UpdateSQL extends SQL {
    }
 }
 
-export = UpdateSQL;
+export default UpdateSQL;
