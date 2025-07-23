@@ -25,7 +25,15 @@ export default new Route({
             throw new ErrorResponseServerAPI('Experiences invalid format!', 400, 'EXPERIENCES_INVALID_FORMAT');
          }
 
-         res.status(200).send(experiences);
+         const sortedExperiences = experiences.sort((a, b) => {
+            if (!b.start_date) return 1;
+            if (!a.start_date) return -1;
+            if (a.start_date === b.start_date) return 0;
+
+            return a.start_date > b.start_date ? -1 : 1;
+         });
+
+         res.status(200).send(sortedExperiences);
       } catch (error) {
          if (error instanceof ErrorResponseServerAPI) {
             error.send(res);
