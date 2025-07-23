@@ -16,7 +16,7 @@ export default new Route({
       }
 
       try {
-         const experience = await Experience.getFullSet(experienceId, language_set as string);
+         const experience = await Experience.getFullSet(experienceId, String(language_set));
          if (!experience) {
             new ErrorResponseServerAPI('Experience not found', 404, 'EXPERIENCE_NOT_FOUND').send(res);
             return;
