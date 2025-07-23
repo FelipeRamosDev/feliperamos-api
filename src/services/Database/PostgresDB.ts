@@ -5,9 +5,9 @@ import SelectSQL from './builders/SelectSQL';
 import InsertSQL from './builders/InsertSQL';
 import UpdateSQL from './builders/UpdateSQL';
 import DeleteSQL from './builders/DeleteSQL';
-import Schema from './builders/Schema';
-import Table from './builders/Table';
-import Field from './builders/Field';
+import Schema from './models/Schema';
+import Table from './models/Table';
+import Field from './models/Field';
 import ErrorDatabase from './ErrorDatabase';
 
 /**
@@ -50,7 +50,8 @@ class PostgresDB extends DataBase {
 
       const {
          user = 'postgres',
-         port = 5432
+         port = 5432,
+         password = '',
       } = setup;
 
       this.type = 'postgres';
@@ -61,7 +62,7 @@ class PostgresDB extends DataBase {
          user: this.user,
          database: this.dbName,
          host: this.host,
-         password: this.password,
+         password: password,
          port: this.port
       });
    }
@@ -83,16 +84,14 @@ class PostgresDB extends DataBase {
       try {
          await this.pool.connect();
          for (const schema of this.getSchemasArray()) {
-            await this.createSchema(schema)
+            await this.createSchema(schema);
          }
 
-         await this.createTestUser();
          await this.onReady(this);
-
          console.log('PostgresDB connected successfully');
          return this;
       } catch (error: any) {
-         throw new ErrorDatabase('Failed to connect to PostgresDB: ' + error.message, 'DB_CONNECTION_ERROR');
+         throw new ErrorDatabase(error.message, 'DB_CONNECTION_ERROR');
       }
    }
 

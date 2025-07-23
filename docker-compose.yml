@@ -5,7 +5,10 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - feliperamos-net
@@ -21,7 +24,10 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - feliperamos-net
@@ -37,7 +43,10 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - feliperamos-net
@@ -53,7 +62,10 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - feliperamos-net
@@ -72,9 +84,38 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --port 6000 --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6000", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.local
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - feliperamos-net
+    restart: unless-stopped
+    command: postgres -p ${DB_PORT}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p $${DB_PORT} -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   redis_data:
+  postgres_data:
 
 networks:
   feliperamos-net:

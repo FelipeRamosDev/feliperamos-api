@@ -29,8 +29,7 @@
          "sourceMaps": true,
          "skipFiles": [
             "<node_internals>/**"
-         ],
-         "preLaunchTask": "force-recompile-socket-service"
+         ]
       },
       {
          "name": "Debug AI Service",
@@ -51,8 +50,7 @@
          "sourceMaps": true,
          "skipFiles": [
             "<node_internals>/**"
-         ],
-         "preLaunchTask": "force-recompile-socket-service"
+         ]
       },
       {
          "name": "Debug API Server Service",
@@ -73,8 +71,7 @@
          "sourceMaps": true,
          "skipFiles": [
             "<node_internals>/**"
-         ],
-         "preLaunchTask": "force-recompile-socket-service"
+         ]
       },
       {
          "name": "Debug Slack Service",
@@ -95,8 +92,7 @@
          "sourceMaps": true,
          "skipFiles": [
             "<node_internals>/**"
-         ],
-         "preLaunchTask": "force-recompile-socket-service"
+         ]
       },
       {
          "name": "Debug Socket Service",

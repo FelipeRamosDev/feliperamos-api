@@ -11,3 +11,4 @@ export { default as EventEndpoint } from './EventEndpoint/EventEndpoint';
 export { ServerAPI } from './ServerAPI';
 export { Route } from './Route';
 export { SocketServer } from './SocketServer';
+export { default as PostgresDB } from './Database/PostgresDB';
