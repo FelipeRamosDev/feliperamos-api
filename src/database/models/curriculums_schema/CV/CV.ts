@@ -13,8 +13,8 @@ export default class CV extends CVSet {
    experiences?: Experience[];
    skills?: Skill[];
 
-   constructor(setup: Partial<CVSetup>) {
-      super(setup as CVSetSetup, 'curriculums_schema', 'cvs');
+   constructor(setup: CVSetup & CVSetSetup) {
+      super(setup, 'curriculums_schema', 'cvs');
 
       const {
          title = '',

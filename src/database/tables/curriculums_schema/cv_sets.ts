@@ -17,6 +17,6 @@ export default new Table({
          schema: 'curriculums_schema',
          table: 'cvs',
          field: 'id'
-      }},
+      }}
    ]
 });
