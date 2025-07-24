@@ -1,16 +1,33 @@
 import bcrypt from 'bcrypt';
 import TableRow from '../../../../services/Database/models/TableRow';
 import database from '../../..';
-import { AdminUserPublic, CreateUserProps } from './AdminUser.types';
+import { AdminUserPublic, CreateUserProps, UserRoles } from './AdminUser.types';
 
-const PUBLIC_FIELDS = [ 'id', 'email', 'first_name', 'last_name', 'role' ];
+const PUBLIC_FIELDS = [
+   'id',
+   'email',
+   'first_name',
+   'last_name',
+   'role',
+   'avatar_url',
+   'portfolio_url',
+   'github_url',
+   'linkedin_url',
+   'whatsapp_url'
+];
 
 export default class AdminUser extends TableRow {
    public email: string;
+   public phone?: string;
    public password: string;
    public first_name: string;
    public last_name: string;
-   public role: 'master' | 'admin' | 'user';
+   public role: UserRoles;
+   public avatar_url?: string;
+   public portfolio_url?: string;
+   public github_url?: string;
+   public linkedin_url?: string;
+   public whatsapp_url?: string;
 
    constructor(data: any) {
       super('users_schema', 'admin_users', data);
@@ -21,17 +38,29 @@ export default class AdminUser extends TableRow {
 
       const {
          email,
+         phone,
          password,
          first_name,
          last_name,
-         role
+         role,
+         avatar_url,
+         portfolio_url,
+         github_url,
+         linkedin_url,
+         whatsapp_url
       } = data;
 
       this.email = email;
+      this.phone = phone;
       this.password = password;
       this.first_name = first_name;
       this.last_name = last_name;
       this.role = role;
+      this.avatar_url = avatar_url;
+      this.portfolio_url = portfolio_url;
+      this.github_url = github_url;
+      this.linkedin_url = linkedin_url;
+      this.whatsapp_url = whatsapp_url;
    }
 
    get name() {
@@ -42,15 +71,22 @@ export default class AdminUser extends TableRow {
       return {
          id: this.id,
          email: this.email,
+         phone: this.phone,
          name: this.name,
          first_name: this.first_name,
          last_name: this.last_name,
-         role: this.role
+         role: this.role,
+         avatar_url: this.avatar_url,
+         portfolio_url: this.portfolio_url,
+         github_url: this.github_url,
+         linkedin_url: this.linkedin_url,
+         whatsapp_url: this.whatsapp_url
       };
    }
 
    static async createMaster(masterData: {
       email: string;
+      phone?: string;
       password: string;
       first_name: string;
       last_name: string;
@@ -58,6 +94,7 @@ export default class AdminUser extends TableRow {
       try {
          const created = await this.create({
             email: masterData.email,
+            phone: masterData.phone,
             password: masterData.password,
             first_name: masterData.first_name,
             last_name: masterData.last_name,
