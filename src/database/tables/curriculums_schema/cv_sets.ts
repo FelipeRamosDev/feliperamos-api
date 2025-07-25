@@ -8,6 +8,7 @@ export default new Table({
       { name: 'updated_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'professional_title', type: 'VARCHAR(255)', notNull: true },
       { name: 'brief_bio', type: 'VARCHAR(255)', notNull: true },
+      { name: 'language_set', type: 'VARCHAR(2)', notNull: true },
       { name: 'user_id', type: 'INTEGER', notNull: true, relatedField: {
          schema: 'users_schema',
          table: 'admin_users',

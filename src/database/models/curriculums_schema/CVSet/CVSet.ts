@@ -1,11 +1,14 @@
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import TableRow from '../../../../services/Database/models/TableRow';
 import { CVSetSetup } from './CVSet.types';
+import database from '../../../../database';
 
 export default class CVSet extends TableRow {
-   user_id?: number | null;
-   professional_title: string;
-   brief_bio: string;
-   cv_id: number;
+   public user_id?: number | null;
+   public professional_title?: string;
+   public brief_bio?: string;
+   public cv_id?: number;
+   public language_set: string;
 
    constructor(setup: CVSetSetup, schemaName: string = 'curriculums_schema', tableName: string = 'cv_sets') {
       super(schemaName, tableName, setup);
@@ -14,12 +17,41 @@ export default class CVSet extends TableRow {
          professional_title = '',
          brief_bio = '',
          user_id,
-         cv_id
+         cv_id,
+         language_set = 'en'
       } = setup || {};
-
+      
+      this.cv_id = cv_id;
+      this.user_id = user_id;
+      this.language_set = language_set;
       this.professional_title = professional_title;
       this.brief_bio = brief_bio;
-      this.user_id = user_id;
-      this.cv_id = cv_id;
+   }
+
+   static async createSet(setup: CVSetSetup): Promise<CVSet> {
+      const { cv_id, user_id, professional_title, brief_bio, language_set } = setup || {};
+
+      try {
+         const { data = [], error } = await database.insert('curriculums_schema', 'cv_sets').data({
+            cv_id,
+            user_id,
+            professional_title,
+            brief_bio,
+            language_set
+         }).returning().exec();
+         const [ createdSet ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to create CV Set', 'CV_SET_CREATE_ERROR');
+         }
+
+         if (!createdSet) {
+            throw new ErrorDatabase('No CV Set created', 'CV_SET_CREATE_NO_DATA');
+         }
+
+         return new CVSet(createdSet);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
+      }
    }
 }

@@ -7,7 +7,7 @@ export default class TableRow {
    public tableName: string;
 
    public id?: number;
-   public created_at: Date;
+   public created_at?: Date;
    public updated_at?: Date;
 
    constructor(schemaName: string, tableName: string, rawData: any) {

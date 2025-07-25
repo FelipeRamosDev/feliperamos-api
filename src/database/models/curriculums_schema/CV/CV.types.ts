@@ -1,14 +1,11 @@
 import { ExperienceSetup } from "../../experiences_schema/Experience/Experience.types";
 import { SkillSetup } from "../../skills_schema/Skill/Skill.types";
+import { CVSetSetup } from "../CVSet/CVSet.types";
 
-export interface CVSetup {
-   id: number;
-   created_at: Date;
-   updated_at: Date;
+export interface CVSetup extends CVSetSetup {
    title: string;
-   is_master: boolean;
-   user_id: number;
+   is_master?: boolean;
    notes?: string;
-   experiences?: ExperienceSetup[];
-   skills?: SkillSetup[];
+   cv_experiences?: ExperienceSetup[];
+   cv_skills?: SkillSetup[];
 }
