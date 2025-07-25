@@ -31,6 +31,8 @@ import companyUpdate from '../routes/company/update';
 import companyUpdateSet from '../routes/company/update-set';
 import companyGet from '../routes/company/company_id';
 
+import curriculumCreate from '../routes/curriculum/create';
+
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
 const {
@@ -83,7 +85,8 @@ export default new ServerAPI({
       companyUpdate,
       companyUpdateSet,
       companyQuery,
-      companyGet
+      companyGet,
+      curriculumCreate
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
