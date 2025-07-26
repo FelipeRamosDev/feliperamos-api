@@ -201,4 +201,25 @@ export default class CV extends CVSet {
          throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
       }
    }
+
+   static async update(cv_id: number, updates: Partial<CVSetup>): Promise<CV | null> {
+      try {
+         const updateQuery = database.update('curriculums_schema', 'cvs');
+
+         updateQuery.where({ id: cv_id });
+         updateQuery.set(updates);
+         updateQuery.returning();
+
+         const { data = [], error } = await updateQuery.exec();
+         const [ updatedCV ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to update CV', 'CV_UPDATE_ERROR');
+         }
+
+         return new CV(updatedCV);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_UPDATE_ERROR');
+      }
+   }
 }
