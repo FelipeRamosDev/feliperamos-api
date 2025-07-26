@@ -31,6 +31,8 @@ export default class CV extends CVSet {
       this.cv_experiences = cv_experiences.map(exp => {
          if (typeof exp === 'number') {
             return exp;
+         } else if (exp instanceof Experience) {
+            return exp;
          } else {
             return new Experience(exp);
          }
@@ -38,6 +40,8 @@ export default class CV extends CVSet {
 
       this.cv_skills = cv_skills.map(skill => {
          if (typeof skill === 'number') {
+            return skill;
+         } else if (skill instanceof Skill) {
             return skill;
          } else {
             return new Skill(skill);
@@ -82,6 +86,30 @@ export default class CV extends CVSet {
          return new CV({ ...newCVSet, ...savedCV });
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'CV_SAVE_ERROR');
+      }
+   }
+
+   static async getUserCVs(user_id: number, language_set: string = 'en'): Promise<CV[]> {
+      try {
+         const getQuery = database.select('curriculums_schema', 'cv_sets');
+
+         getQuery.where({ user_id, language_set });
+         getQuery.populate('cv_id', [ 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills' ]);
+
+         const { data = [], error } = await getQuery.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch user CVs', 'CV_FETCH_ERROR');
+         }
+
+         for (const cvData of data) {
+            cvData.cv_skills = await Skill.getManyById(cvData.cv_skills, language_set);
+            cvData.cv_experiences = await Experience.getManyById(cvData.cv_experiences, language_set);
+         }
+
+         return data.map(cvData => new CV(cvData));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
       }
    }
 }

@@ -137,7 +137,7 @@ export default class Experience extends ExperienceSet {
 
          experienceData.company = company;
          experienceData.languageSets = experienceSetData;
-         experienceData.skills = await Skill.getManyByIds(experienceData.skills, language_set);
+         experienceData.skills = await Skill.getManyById(experienceData.skills, language_set);
 
          return new Experience(experienceData);
       } catch (error: any) {
@@ -168,7 +168,7 @@ export default class Experience extends ExperienceSet {
 
             // Populate skills data
             if (Array.isArray(exp.skills) && exp.skills.length) {
-               exp.skills = await Skill.getManyByIds(exp.skills, language_set);
+               exp.skills = await Skill.getManyById(exp.skills, language_set);
             }
          }
 
@@ -183,6 +183,21 @@ export default class Experience extends ExperienceSet {
       }
    }
 
+   static async getManyById(ids: number[], language_set: string = 'en'): Promise<Experience[]> {
+      try {
+         const query = database.select('experiences_schema', 'experience_sets');
+         query.where(ids.map(id => ({ experience_id: id, language_set })));
+
+         const { data = [], error } = await query.exec();
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch Experiences by ID: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         return data.map(exp => new Experience(exp));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
+      }
+   }
    static async update(id: number, updates: Partial<Experience>): Promise<Experience> {
       try {
          const updateQuery = database.update('experiences_schema', 'experiences');

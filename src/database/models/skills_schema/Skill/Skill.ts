@@ -110,7 +110,7 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getManyByIds(skillIds: number[], language_set?: string): Promise<Skill[]> {
+   static async getManyById(skillIds: number[], language_set?: string): Promise<Skill[]> {
       if (!Array.isArray(skillIds)) {
          return [];
       }
