@@ -10,11 +10,6 @@ export default new Table({
       { name: 'is_master', type: 'BOOLEAN', defaultValue: false },
       { name: 'notes', type: 'TEXT' },
       { name: 'cv_experiences', type: 'INTEGER[]' },
-      { name: 'cv_skills', type: 'INTEGER[]' },
-      { name: 'user_id', type: 'INTEGER', notNull: true, relatedField: {
-         schema: 'users_schema',
-         table: 'admin_users',
-         field: 'id'
-      }}
+      { name: 'cv_skills', type: 'INTEGER[]' }
    ]
 });

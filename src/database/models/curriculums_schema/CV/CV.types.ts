@@ -8,4 +8,5 @@ export interface CVSetup extends CVSetSetup {
    notes?: string;
    cv_experiences?: ExperienceSetup[];
    cv_skills?: SkillSetup[];
+   cv_owner?: number; 
 }
