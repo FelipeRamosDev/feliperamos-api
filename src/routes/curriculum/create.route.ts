@@ -19,7 +19,7 @@ export default new Route({
       }
 
       if (!title) {
-         new ErrorResponseServerAPI('Title is required.', 400, 'CURRICULUM_CREATE_VALIDATION_ERROR').send(res);
+         new ErrorResponseServerAPI('Title is required.', 400, 'ROUTE_VALIDATION_ERROR').send(res);
          return;
       }
 
