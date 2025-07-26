@@ -32,6 +32,7 @@ import companyUpdateSet from '../routes/company/update-set.route';
 import companyGet from '../routes/company/company_id.route';
 
 import curriculumCreate from '../routes/curriculum/create.route';
+import curriculumCreateSet from '../routes/curriculum/create-set.route';
 import curriculumGet from '../routes/curriculum/cv_id.route';
 import curriculumUpdate from '../routes/curriculum/update.route';
 import curriculumUpdateSet from '../routes/curriculum/update-set.route';
@@ -91,6 +92,7 @@ export default new ServerAPI({
       companyQuery,
       companyGet,
       curriculumCreate,
+      curriculumCreateSet,
       curriculumGet,
       curriculumUpdate,
       curriculumUpdateSet,
