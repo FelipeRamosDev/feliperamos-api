@@ -54,4 +54,30 @@ export default class CVSet extends TableRow {
          throw new ErrorDatabase(error.message, error.code);
       }
    }
+
+   static async updateSet(id: number, updates: Partial<CVSetSetup>): Promise<CVSet | null> {
+      try {
+         const query = database.update('curriculums_schema', 'cv_sets');
+
+         query.set(updates);
+         query.where({ id });
+         query.returning();
+
+         const { data = [], error } = await query.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to update CV Set', 'CV_SET_UPDATE_ERROR');
+         }
+
+         const [ updatedSet ] = data;
+
+         if (!updatedSet) {
+            throw new ErrorDatabase('No CV Set found with the provided ID after update', 'CV_SET_NOT_FOUND');
+         }
+
+         return new CVSet(updatedSet);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
+      }
+   }
 }

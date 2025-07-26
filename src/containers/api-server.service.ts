@@ -34,6 +34,7 @@ import companyGet from '../routes/company/company_id';
 import curriculumCreate from '../routes/curriculum/create';
 import curriculumGet from '../routes/curriculum/cv_id';
 import curriculumUpdate from '../routes/curriculum/update';
+import curriculumUpdateSet from '../routes/curriculum/update-set';
 import curriculumUserCVs from '../routes/curriculum/user-cvs';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
@@ -92,6 +93,7 @@ export default new ServerAPI({
       curriculumCreate,
       curriculumGet,
       curriculumUpdate,
+      curriculumUpdateSet,
       curriculumUserCVs
    ],
    onListen: function () {
