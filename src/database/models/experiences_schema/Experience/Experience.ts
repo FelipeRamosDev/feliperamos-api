@@ -7,7 +7,6 @@ import { Company } from '../../companies_schema';
 import { Skill } from '../../skills_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
-import ErrorResponseServerAPI from '@/services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -53,6 +52,24 @@ export default class Experience extends ExperienceSet {
 
       if (user_id) {
          this.user = new AdminUser({ ...setup, id: user_id, created_at: undefined });
+      }
+   }
+
+   async populateCompany(language_set: string) {
+      if (!this.company_id) {
+         return;
+      }
+
+      try {
+         const company = await Company.getById(this.company_id, language_set);
+
+         if (company) {
+            this.company = company;
+         } else {
+            throw new ErrorDatabase('Company not found for the given ID', 'COMPANY_NOT_FOUND');
+         }
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'COMPANY_QUERY_ERROR');
       }
    }
 
@@ -187,13 +204,19 @@ export default class Experience extends ExperienceSet {
       try {
          const query = database.select('experiences_schema', 'experience_sets');
          query.where(ids.map(id => ({ experience_id: id, language_set })));
+         query.populate('experience_id', [ 'experiences.id', 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
 
          const { data = [], error } = await query.exec();
          if (error) {
             throw new ErrorDatabase('Failed to fetch Experiences by ID: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
          }
 
-         return data.map(exp => new Experience(exp));
+         const parsed = data.map(exp => new Experience(exp));
+         for (const experience of parsed) {
+            await experience.populateCompany(language_set);
+         }
+
+         return parsed;
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code);
       }

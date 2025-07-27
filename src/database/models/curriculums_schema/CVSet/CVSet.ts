@@ -5,8 +5,8 @@ import database from '../../../../database';
 
 export default class CVSet extends TableRow {
    public user_id?: number | null;
-   public professional_title?: string;
-   public brief_bio?: string;
+   public job_title?: string;
+   public summary?: string;
    public cv_id?: number;
    public language_set: string;
 
@@ -14,8 +14,8 @@ export default class CVSet extends TableRow {
       super(schemaName, tableName, setup);
 
       const {
-         professional_title = '',
-         brief_bio = '',
+         job_title = '',
+         summary = '',
          user_id,
          cv_id,
          language_set = 'en'
@@ -24,19 +24,19 @@ export default class CVSet extends TableRow {
       this.cv_id = cv_id;
       this.user_id = user_id;
       this.language_set = language_set;
-      this.professional_title = professional_title;
-      this.brief_bio = brief_bio;
+      this.job_title = job_title;
+      this.summary = summary;
    }
 
    static async createSet(setup: CVSetSetup): Promise<CVSet> {
-      const { cv_id, user_id, professional_title, brief_bio, language_set } = setup || {};
+      const { cv_id, user_id, job_title, summary, language_set } = setup || {};
 
       try {
          const { data = [], error } = await database.insert('curriculums_schema', 'cv_sets').data({
             cv_id,
             user_id,
-            professional_title,
-            brief_bio,
+            job_title,
+            summary,
             language_set
          }).returning().exec();
          const [ createdSet ] = data;

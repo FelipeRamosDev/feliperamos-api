@@ -5,8 +5,6 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 export default new Route({
    method: 'GET',
    routePath: '/curriculum/:cv_id',
-   useAuth: true,
-   allowedRoles: [ 'admin', 'master' ],
    controller: async (req, res) => {
       const { cv_id } = req.params || {};
 
