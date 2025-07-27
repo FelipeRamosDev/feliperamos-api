@@ -13,6 +13,7 @@ export default class CV extends CVSet {
    public cv_experiences?: (Experience | number)[];
    public cv_skills?: (Skill | number)[];
    public languageSets: CVSet[];
+   public cv_owner_id?: number;
 
    constructor(setup: CVSetup & CVSetSetup) {
       super(setup, 'curriculums_schema', 'cvs');
@@ -21,6 +22,8 @@ export default class CV extends CVSet {
          title = '',
          is_master = false,
          notes = '',
+         cv_owner_id,
+         user_id,
          cv_skills = [],
          cv_experiences = [],
          languageSets = []
@@ -30,6 +33,7 @@ export default class CV extends CVSet {
       this.is_master = Boolean(is_master);
       this.notes = notes;
       this.languageSets = languageSets;
+      this.cv_owner_id = cv_owner_id || user_id;
 
       this.cv_experiences = cv_experiences.map(exp => {
          if (typeof exp === 'number') {
@@ -57,7 +61,7 @@ export default class CV extends CVSet {
          title: this.title,
          notes: this.notes,
          is_master: this.is_master,
-         user_id: this.user_id,
+         cv_owner_id: this.cv_owner_id,
          cv_experiences: this.cv_experiences,
          cv_skills: this.cv_skills,
       }
@@ -90,7 +94,7 @@ export default class CV extends CVSet {
       }
 
       try {
-         const [ expIndex ] = this.cv_experiences;
+         const [expIndex] = this.cv_experiences;
 
          if (typeof expIndex === 'number') {
             this.cv_experiences = await Experience.getManyById(this.cv_experiences as number[], this.language_set || 'en');
@@ -109,7 +113,7 @@ export default class CV extends CVSet {
       }
 
       try {
-         const [ skillIndex ] = this.cv_skills;
+         const [skillIndex] = this.cv_skills;
 
          if (typeof skillIndex === 'number') {
             this.cv_skills = await Skill.getManyById(this.cv_skills as number[], this.language_set || 'en');
@@ -126,7 +130,7 @@ export default class CV extends CVSet {
 
       try {
          const { data = [], error } = await database.insert('curriculums_schema', 'cvs').data(this.toSave).returning().exec();
-         const [ savedCV ] = data;
+         const [savedCV] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to save CV', 'CV_SAVE_ERROR');
@@ -155,7 +159,7 @@ export default class CV extends CVSet {
          const getQuery = database.select('curriculums_schema', 'cv_sets');
 
          getQuery.where({ user_id, language_set });
-         getQuery.populate('cv_id', [ 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills' ]);
+         getQuery.populate('cv_id', ['cvs.id', 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills']);
 
          const { data = [], error } = await getQuery.exec();
 
@@ -180,7 +184,7 @@ export default class CV extends CVSet {
          cvQuery.where({ id });
 
          const { data = [], error } = await cvQuery.exec();
-         const [ cvData ] = data;
+         const [cvData] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to fetch CV by ID', 'CV_FETCH_ERROR');
@@ -211,7 +215,7 @@ export default class CV extends CVSet {
          updateQuery.returning();
 
          const { data = [], error } = await updateQuery.exec();
-         const [ updatedCV ] = data;
+         const [updatedCV] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to update CV', 'CV_UPDATE_ERROR');
@@ -220,6 +224,28 @@ export default class CV extends CVSet {
          return new CV(updatedCV);
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'CV_UPDATE_ERROR');
+      }
+   }
+
+   static async setUserMasterCV(cv_id: number, userId: number): Promise<CV | null> {
+      try {
+         const disableAllQuery = database.update('curriculums_schema', 'cvs');
+         disableAllQuery.set({ is_master: false });
+         disableAllQuery.where({ cv_owner_id: userId, is_master: true });
+
+         const { error } = await disableAllQuery.exec();
+         if (error) {
+            throw new ErrorDatabase('Failed to disable all master CVs', 'CV_DISABLE_ALL_ERROR');
+         }
+
+         const enableMaster = await this.update(cv_id, { is_master: true });
+         if (!enableMaster) {
+            throw new ErrorDatabase('Failed to enable master CV', 'CV_ENABLE_MASTER_ERROR');
+         }
+
+         return enableMaster;
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_SET_MASTER_ERROR');
       }
    }
 }

@@ -11,4 +11,5 @@ export interface CVSetup extends CVSetSetup {
    cv_skills?: (SkillSetup | number)[];
    cv_owner?: number; 
    languageSets?: CVSet[];
+   cv_owner_id?: number;
 }
