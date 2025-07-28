@@ -73,6 +73,18 @@ export default class Experience extends ExperienceSet {
       }
    }
 
+   async populateSkills(language_set: string) {
+      if (!this.skills?.length) {
+         return;
+      }
+
+      try {
+         this.skills = await Skill.getManyById(this.rawData.skills, language_set);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'SKILL_QUERY_ERROR');
+      }
+   }
+
    static async create(data: ExperienceCreateSetup): Promise<Experience> {
       try {
          const savedQuery = await database.insert('experiences_schema', 'experiences').data({
@@ -221,9 +233,10 @@ export default class Experience extends ExperienceSet {
          const parsed = data.map(exp => new Experience(exp));
          for (const experience of parsed) {
             await experience.populateCompany(language_set);
+            await experience.populateSkills(language_set);
          }
 
-         return parsed;
+         return parsed.filter(exp => exp.language_set === language_set);
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code);
       }
