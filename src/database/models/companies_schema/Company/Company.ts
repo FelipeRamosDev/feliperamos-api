@@ -59,8 +59,8 @@ export default class Company extends CompanySet {
       });
 
       return new Company({
-         ...createdCompany,
          ...isSet,
+         ...createdCompany,
       });
    }
 

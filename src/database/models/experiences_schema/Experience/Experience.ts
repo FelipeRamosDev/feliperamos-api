@@ -102,7 +102,10 @@ export default class Experience extends ExperienceSet {
             experience_id: createdExperience.id,
          });
 
-         return new Experience({ ...createdExperience, ...createdDefaultSet });
+         return new Experience({
+            ...createdDefaultSet,
+            ...createdExperience
+         });
       } catch (error: any) {
          throw new ErrorDatabase('Failed to create Experience: ' + error.message, 'EXPERIENCE_CREATION_ERROR');
       }
