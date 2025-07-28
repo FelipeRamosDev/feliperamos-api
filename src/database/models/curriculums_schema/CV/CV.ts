@@ -248,4 +248,30 @@ export default class CV extends CVSet {
          throw new ErrorDatabase(error.message, error.code || 'CV_SET_MASTER_ERROR');
       }
    }
+
+   static async delete(cv_id: number): Promise<boolean> {
+      if (!cv_id) {
+         throw new ErrorDatabase('CV ID is required for deletion', 'CV_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('curriculums_schema', 'cv_sets').where({ cv_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete CV set', 'CV_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('curriculums_schema', 'cvs').where({ id: cv_id });
+         const { error: cvError } = await deleteQuery.exec();
+         if (cvError) {
+            throw new ErrorDatabase('Failed to delete CV', 'CV_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting CV:', error);
+         throw new ErrorDatabase(error.message, error.code || 'CV_DELETE_ERROR');
+      }
+   }
 }

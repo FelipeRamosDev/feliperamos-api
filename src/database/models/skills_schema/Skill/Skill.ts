@@ -178,4 +178,30 @@ export default class Skill extends SkillSet {
          throw error;
       }
    }
+
+   static async delete(skill_id: number): Promise<boolean> {
+      if (!skill_id) {
+         throw new ErrorDatabase('Skill ID is required for deletion', 'SKILL_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('skills_schema', 'skill_sets').where({ skill_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete skill set', 'SKILL_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('skills_schema', 'skills').where({ id: skill_id });
+         const { error: skillError } = await deleteQuery.exec();
+         if (skillError) {
+            throw new ErrorDatabase('Failed to delete skill', 'SKILL_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting skill:', error);
+         throw new ErrorDatabase(error.message, error.code || 'SKILL_DELETE_ERROR');
+      }
+   }
 }
