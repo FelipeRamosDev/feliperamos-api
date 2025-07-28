@@ -5,6 +5,7 @@ import CVSet from '../CVSet/CVSet';
 import { CVSetSetup } from '../CVSet/CVSet.types';
 import { CVSetup } from './CV.types';
 import database from '../../../../database';
+import { AdminUser } from '../../users_schema';
 
 export default class CV extends CVSet {
    public title: string;
@@ -113,8 +114,7 @@ export default class CV extends CVSet {
       }
 
       try {
-         const [skillIndex] = this.cv_skills;
-
+         const [ skillIndex ] = this.cv_skills;
          if (typeof skillIndex === 'number') {
             this.cv_skills = await Skill.getManyById(this.cv_skills as number[], this.language_set || 'en');
          }
@@ -154,25 +154,51 @@ export default class CV extends CVSet {
       }
    }
 
-   static async getUserCVs(user_id: number, language_set: string = 'en'): Promise<CV[]> {
+   static async getMaster(language_set: string = 'en'): Promise<CV | null> {
+      try {
+         const user = await AdminUser.getMaster();
+
+         if (!user?.id) {
+            throw new ErrorDatabase('Master user not found', 'CV_MASTER_USER_NOT_FOUND');
+         }
+
+         const user_id = user.id;
+         const [ masterCV ] = await this.getUserCVs(user_id, language_set, true);
+
+         if (!masterCV) {
+            return null;
+         }
+
+         return masterCV;
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_MASTER_FETCH_ERROR');
+      }
+   }
+
+   static async getUserCVs(user_id: number, language_set: string = 'en', onlyMaster?: boolean): Promise<CV[]> {
       try {
          const getQuery = database.select('curriculums_schema', 'cv_sets');
 
-         getQuery.where({ user_id, language_set });
-         getQuery.populate('cv_id', ['cvs.id', 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills']);
+         if (onlyMaster) {
+            getQuery.where({ user_id, language_set, is_master: true });
+         } else {
+            getQuery.where({ user_id, language_set });
+         }
 
+         getQuery.populate('cv_id', ['cvs.id', 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills']);
          const { data = [], error } = await getQuery.exec();
 
          if (error) {
             throw new ErrorDatabase('Failed to fetch user CVs', 'CV_FETCH_ERROR');
          }
 
-         for (const cvData of data) {
-            cvData.cv_skills = await Skill.getManyById(cvData.cv_skills, language_set);
-            cvData.cv_experiences = await Experience.getManyById(cvData.cv_experiences, language_set);
+         const parsedCV = data.map(cvData => new CV(cvData));
+         for (const cvData of parsedCV) {
+            await cvData.populateSkills();
+            await cvData.populateExperiences();
          }
 
-         return data.map(cvData => new CV(cvData));
+         return parsedCV;
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
       }
