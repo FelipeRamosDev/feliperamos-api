@@ -43,7 +43,10 @@ export default class Skill extends SkillSet {
             user_id: skillData.user_id
          });
 
-         return new Skill({ ...createdSkill, ...skillSetCreated });
+         return new Skill({
+            ...skillSetCreated,
+            ...createdSkill
+         });
       } catch (error) {
          throw error;
       }
@@ -74,7 +77,7 @@ export default class Skill extends SkillSet {
       try {
          const query = database.select('skills_schema', 'skill_sets');
          query.where({ user_id: userId, language_set });
-         query.populate('skill_id', ['name', 'category', 'level']);
+         query.populate('skill_id', ['skills.id', 'name', 'category', 'level']);
 
          const { data = [], error } = await query.exec();
          if (error) {
