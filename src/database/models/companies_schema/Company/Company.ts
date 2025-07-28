@@ -166,4 +166,30 @@ export default class Company extends CompanySet {
          throw new ErrorDatabase('Failed to update company', 'COMPANY_UPDATE_ERROR');
       }
    }
+
+   static async delete(company_id: number): Promise<boolean> {
+      if (!company_id) {
+         throw new ErrorDatabase('Company ID is required for deletion', 'COMPANY_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('companies_schema', 'company_sets').where({ company_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete company set', 'COMPANY_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('companies_schema', 'companies').where({ id: company_id });
+         const { error: companyError } = await deleteQuery.exec();
+         if (companyError) {
+            throw new ErrorDatabase('Failed to delete company', 'COMPANY_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting company:', error);
+         throw new ErrorDatabase(error.message, error.code || 'COMPANY_DELETE_ERROR');
+      }
+   }
 }

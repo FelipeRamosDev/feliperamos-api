@@ -271,9 +271,9 @@ class SQL {
             
             if (!Array.isArray(props) && typeof props === 'object') {
                const conditionValue = props as WhereConditionValue;
-               const operator = conditionValue.operator || '=';
+               const operator = conditionValue?.operator || '=';
 
-               this.values.push(conditionValue.value);
+               this.values.push(conditionValue?.value);
                return `${key} ${operator} $${this.values.length}`;
             }
 
@@ -288,9 +288,9 @@ class SQL {
 
             if (!Array.isArray(props) && typeof props === 'object') {
                const conditionValue = props as WhereConditionValue;
-               const operator = conditionValue.operator || '=';
+               const operator = conditionValue?.operator || '=';
 
-               this.values.push(conditionValue.value);
+               this.values.push(conditionValue?.value);
                return `${key} ${operator} $${this.values.length}`;
             }
 

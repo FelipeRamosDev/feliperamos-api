@@ -181,11 +181,15 @@ export default class Experience extends ExperienceSet {
 
          // Populating company data for each experience
          for (const exp of data) {
-            exp.company = await Company.getById(exp.company_id, language_set);
+            if (exp.company_id) {
+               exp.company = await Company.getById(exp.company_id, language_set);
+            }
 
             // Populate skills data
             if (Array.isArray(exp.skills) && exp.skills.length) {
-               exp.skills = await Skill.getManyById(exp.skills, language_set);
+               if (exp.skills) {
+                  exp.skills = await Skill.getManyById(exp.skills, language_set);
+               }
             }
          }
 
@@ -243,6 +247,32 @@ export default class Experience extends ExperienceSet {
          }
 
          throw new ErrorDatabase('Failed to update experience.', 'EXPERIENCE_UPDATE_ERROR');
+      }
+   }
+
+   static async delete(experience_id: number): Promise<boolean> {
+      if (!experience_id) {
+         throw new ErrorDatabase('Experience ID is required for deletion', 'EXPERIENCE_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('experiences_schema', 'experience_sets').where({ experience_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete experience set', 'EXPERIENCE_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('experiences_schema', 'experiences').where({ id: experience_id });
+         const { error: experienceError } = await deleteQuery.exec();
+         if (experienceError) {
+            throw new ErrorDatabase('Failed to delete experience', 'EXPERIENCE_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting experience:', error);
+         throw new ErrorDatabase(error.message, error.code || 'EXPERIENCE_DELETE_ERROR');
       }
    }
 }

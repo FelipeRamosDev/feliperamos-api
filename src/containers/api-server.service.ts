@@ -14,6 +14,7 @@ import experienceQuery from '../routes/experience/query.route';
 import experienceUpdate from '../routes/experience/update.route';
 import experienceUpdateSet from '../routes/experience/update-set.route';
 import experienceGet from '../routes/experience/experience_id.route';
+import experienceDelete from '../routes/experience/delete.route';
 import experienceGetPublic from '../routes/experience/public/user-experiences.route';
 
 import skillCreate from '../routes/skill/create.route';
@@ -22,6 +23,7 @@ import skillQuery from '../routes/skill/query.route';
 import skillGet from '../routes/skill/skill_id.route';
 import skillUpdate from '../routes/skill/update.route';
 import skillUpdateSet from '../routes/skill/update-set.route';
+import skillDelete from '../routes/skill/delete.route';
 import skillGetPublic from '../routes/skill/public/user-skills.route';
 
 import companyCreate from '../routes/company/create.route';
@@ -30,6 +32,7 @@ import companyQuery from '../routes/company/query.route';
 import companyUpdate from '../routes/company/update.route';
 import companyUpdateSet from '../routes/company/update-set.route';
 import companyGet from '../routes/company/company_id.route';
+import companyDelete from '../routes/company/delete.route';
 
 import curriculumCreate from '../routes/curriculum/create.route';
 import curriculumCreateSet from '../routes/curriculum/create-set.route';
@@ -38,6 +41,7 @@ import curriculumUpdate from '../routes/curriculum/update.route';
 import curriculumUpdateSet from '../routes/curriculum/update-set.route';
 import curriculumUserCVs from '../routes/curriculum/user-cvs.route';
 import curriculumSetMaster from '../routes/curriculum/set-master.route';
+import curriculumDelete from '../routes/curriculum/delete.route';
 
 import userUpdate from '../routes/user/update.route';
 
@@ -80,12 +84,14 @@ export default new ServerAPI({
       experienceGet,
       experienceUpdate,
       experienceUpdateSet,
+      experienceDelete,
       experienceGetPublic,
       skillCreate,
       skillCreateSet,
       skillQuery,
       skillGet,
       skillUpdate,
+      skillDelete,
       skillUpdateSet,
       skillGetPublic,
       companyCreate,
@@ -94,6 +100,7 @@ export default new ServerAPI({
       companyUpdateSet,
       companyQuery,
       companyGet,
+      companyDelete,
       curriculumCreate,
       curriculumCreateSet,
       curriculumUpdate,
@@ -101,6 +108,7 @@ export default new ServerAPI({
       curriculumUserCVs,
       curriculumGet,
       curriculumSetMaster,
+      curriculumDelete,
       userUpdate
    ],
    onListen: function () {
