@@ -2,18 +2,24 @@ import bcrypt from 'bcrypt';
 import TableRow from '../../../../services/Database/models/TableRow';
 import database from '../../..';
 import { AdminUserPublic, CreateUserProps, UserRoles } from './AdminUser.types';
+import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 
 const PUBLIC_FIELDS = [
    'id',
    'email',
    'first_name',
    'last_name',
+   'birth_date',
+   'country',
+   'state',
+   'city',
+   'phone',
    'role',
    'avatar_url',
    'portfolio_url',
    'github_url',
    'linkedin_url',
-   'whatsapp_url'
+   'whatsapp_number'
 ];
 
 export default class AdminUser extends TableRow {
@@ -22,12 +28,16 @@ export default class AdminUser extends TableRow {
    public password: string;
    public first_name: string;
    public last_name: string;
+   public birth_date?: Date;
+   public country?: string;
+   public state?: string;
+   public city?: string;
    public role: UserRoles;
    public avatar_url?: string;
    public portfolio_url?: string;
    public github_url?: string;
    public linkedin_url?: string;
-   public whatsapp_url?: string;
+   public whatsapp_number?: string;
 
    constructor(data: any) {
       super('users_schema', 'admin_users', data);
@@ -42,12 +52,16 @@ export default class AdminUser extends TableRow {
          password,
          first_name,
          last_name,
+         birth_date,
+         country,
+         state,
+         city,
          role,
          avatar_url,
          portfolio_url,
          github_url,
          linkedin_url,
-         whatsapp_url
+         whatsapp_number
       } = data;
 
       this.email = email;
@@ -55,12 +69,16 @@ export default class AdminUser extends TableRow {
       this.password = password;
       this.first_name = first_name;
       this.last_name = last_name;
+      this.birth_date = birth_date;
+      this.country = country;
+      this.state = state;
+      this.city = city;
       this.role = role;
       this.avatar_url = avatar_url;
       this.portfolio_url = portfolio_url;
       this.github_url = github_url;
       this.linkedin_url = linkedin_url;
-      this.whatsapp_url = whatsapp_url;
+      this.whatsapp_number = whatsapp_number;
    }
 
    get name() {
@@ -75,12 +93,16 @@ export default class AdminUser extends TableRow {
          name: this.name,
          first_name: this.first_name,
          last_name: this.last_name,
+         birth_date: this.birth_date,
+         country: this.country,
+         state: this.state,
+         city: this.city,
          role: this.role,
          avatar_url: this.avatar_url,
          portfolio_url: this.portfolio_url,
          github_url: this.github_url,
          linkedin_url: this.linkedin_url,
-         whatsapp_url: this.whatsapp_url
+         whatsapp_number: this.whatsapp_number
       };
    }
 
@@ -216,6 +238,21 @@ export default class AdminUser extends TableRow {
          return new AdminUser(user).toPublic();
       } catch (error: any) {
          throw new Error(`Validating user failed: ${error.message}`);
+      }
+   }
+
+   static async update(userId: number, updates: Partial<AdminUser>): Promise<AdminUser> {
+      try {
+         const { data = [], error } = await database.update('users_schema', 'admin_users').set(updates).where({ id: userId }).returning().exec();
+         const [ user ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to update user', error.code || 'USER_UPDATE_ERROR');
+         }
+
+         return new AdminUser(user);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'USER_UPDATE_ERROR');
       }
    }
 }
