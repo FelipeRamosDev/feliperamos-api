@@ -1,5 +1,11 @@
+import ErrorVirtualBrowser from './ErrorVirtualBrowser';
+import VirtualBrowser from './VirtualBrowser';
+
 export interface VirtualBrowserSetup {
    viewPort?: ViewPortSetup;
+   autoInit?: boolean;
+   onInit?: (virtualBrowser: VirtualBrowser) => void;
+   onError?: (error: ErrorVirtualBrowser) => void;
 }
 
 export interface ViewPortSetup {
