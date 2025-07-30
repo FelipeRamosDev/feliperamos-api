@@ -5,7 +5,7 @@ import { VirtualBrowserPageSetup } from './VirtualBrowser.types';
 
 class VirtualBrowserPage {
    public id: string;
-   public startURL?: string;
+   public startURL: string;
 
    private _page: Page | null;
    private _browser: () => VirtualBrowser;
@@ -13,22 +13,27 @@ class VirtualBrowserPage {
    constructor(setup: VirtualBrowserPageSetup, virtualBrowser: VirtualBrowser) {
       const { id, startURL } = setup || {};
       
+      if (!virtualBrowser) {
+         throw new ErrorVirtualBrowser('Virtual Browser instance is required', 'VIRTUAL_BROWSER_REQUIRED');
+      }
+
       if (!id) {
          throw new ErrorVirtualBrowser('Page ID is required', 'PAGE_ID_REQUIRED');
       }
 
+      if (!startURL) {
+         throw new ErrorVirtualBrowser('Start URL is required', 'START_URL_REQUIRED');
+      }
+
       this._browser = () => virtualBrowser;
       this._page = null;
+
       this.id = id;
       this.startURL = startURL;
    }
 
    get virtualBrowser(): VirtualBrowser {
       return this._browser();
-   }
-
-   get page(): Page | null {
-      return this._page;
    }
 
    async open(): Promise<VirtualBrowserPage> {
