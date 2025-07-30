@@ -3,8 +3,8 @@ import VirtualBrowser from '../services/VirtualBrowser';
 export default new VirtualBrowser({
    autoInit: true,
    async onInit(virtualBrowser) {
-      const initialPage = await virtualBrowser.newPage('initial-page', 'https://feliperamos.dev');
-      debugger
+      console.log('Virtual Browser initialized');
+      console.log(`Viewport: ${virtualBrowser.viewPort.width}x${virtualBrowser.viewPort.height}`);
    },
    onError(error) {
       console.error(error);

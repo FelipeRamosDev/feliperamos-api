@@ -34,7 +34,7 @@ class ServerAPI extends Microservice {
    public app_queue: Array<() => void> = [];
    public API_SECRET: string;
    public sessionCookiesMaxAge: number;
-   public staticPath?: string;
+   public publicPath?: string;
    public redisURL: string;
    public corsOrigin: string[];
    public jsonLimit: string;
@@ -68,7 +68,7 @@ class ServerAPI extends Microservice {
       const {
          projectName = 'default-server',
          API_SECRET,
-         staticPath,
+         publicPath,
          sslConfig,
          FE_ORIGIN,
 
@@ -99,7 +99,7 @@ class ServerAPI extends Microservice {
       this.app_queue = [];
       this.API_SECRET = API_SECRET;
       this.sessionCookiesMaxAge = sessionCookiesMaxAge;
-      this.staticPath = staticPath;
+      this.publicPath = publicPath;
       this.redisURL = redisURL;
       this.corsOrigin = corsOrigin;
       this.jsonLimit = jsonLimit;
@@ -245,8 +245,8 @@ class ServerAPI extends Microservice {
          throw new ErrorServerAPI('You need to provide a API SECRET to start the server!', 'API_SECRET_REQUIRED');
       }
 
-      if (this.staticPath) {
-         this.app.use(express.static(this.rootPath + this.staticPath));
+      if (this.publicPath) {
+         this.app.use(express.static(this.publicPath));
       }
 
       // Register routes after all middleware is set up

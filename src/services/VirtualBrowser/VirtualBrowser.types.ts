@@ -17,3 +17,8 @@ export interface VirtualBrowserPageSetup {
    id: string;
    startURL?: string;
 }
+
+export interface VirtualBrowserSuccessResponse<T> {
+   success: true;
+   data: T;
+}

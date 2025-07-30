@@ -75,6 +75,7 @@ export default new ServerAPI({
    corsOrigin: CORS_ORIGIN,
    sslConfig: sslConfig,
    autoInitialize: true,
+   publicPath: 'public',
    httpEndpoints: [
       loginRoute,
       authUserRoute,
