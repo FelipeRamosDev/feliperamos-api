@@ -1,11 +1,12 @@
-import { Page } from 'puppeteer';
+import { Page, PDFOptions } from 'puppeteer';
 import ErrorVirtualBrowser from './ErrorVirtualBrowser';
 import VirtualBrowser from './VirtualBrowser';
-import { VirtualBrowserPageSetup } from './VirtualBrowser.types';
+import { writeFile } from './VirtualBrowser.helpers';
+import type { VirtualBrowserPageSetup } from './VirtualBrowser.types';
 
 class VirtualBrowserPage {
    public id: string;
-   public startURL: string;
+   public startURL?: string;
 
    private _page: Page | null;
    private _browser: () => VirtualBrowser;
@@ -19,10 +20,6 @@ class VirtualBrowserPage {
 
       if (!id) {
          throw new ErrorVirtualBrowser('Page ID is required', 'PAGE_ID_REQUIRED');
-      }
-
-      if (!startURL) {
-         throw new ErrorVirtualBrowser('Start URL is required', 'START_URL_REQUIRED');
       }
 
       this._browser = () => virtualBrowser;
@@ -49,7 +46,7 @@ class VirtualBrowserPage {
          }
 
          if (this.startURL) {
-            await this._page.goto(this.startURL);
+            await this._page.goto(this.startURL, { waitUntil: 'domcontentloaded' });
          }
 
          await this._page.setViewport(this.virtualBrowser.viewPort);
@@ -72,6 +69,37 @@ class VirtualBrowserPage {
          await this._page.goto(url);
       } catch (error: any) {
          throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_NAVIGATION_ERROR');
+      }
+   }
+
+   async toPDF(filePath: string, options?: PDFOptions): Promise<Uint8Array> {
+      if (!this._page) {
+         throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
+      }
+
+      if (!filePath) {
+         throw new ErrorVirtualBrowser('File path is required for PDF generation', 'FILE_PATH_REQUIRED');
+      }
+
+      try {
+         const pdfBuffer = await this._page.pdf({
+            path: filePath,
+            format: 'A4',
+            ...options
+         });
+
+         if (!pdfBuffer) {
+            throw new ErrorVirtualBrowser('Failed to generate PDF', 'PDF_GENERATION_ERROR');
+         }
+
+         const writeResult = await writeFile(filePath, pdfBuffer);
+         if (!writeResult) {
+            throw new ErrorVirtualBrowser('Failed to write PDF file', 'PDF_WRITE_ERROR');
+         }
+
+         return pdfBuffer;
+      } catch (error: any) {
+         throw new ErrorVirtualBrowser(error.message, error.code || 'PDF_GENERATION_ERROR');
       }
    }
 
