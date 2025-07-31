@@ -2,6 +2,7 @@ import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import TableRow from '../../../../services/Database/models/TableRow';
 import { CVSetSetup } from './CVSet.types';
 import database from '../../../../database';
+import { AdminUser } from '../../users_schema';
 
 export default class CVSet extends TableRow {
    public user_id?: number | null;
@@ -9,6 +10,7 @@ export default class CVSet extends TableRow {
    public summary?: string;
    public cv_id?: number;
    public language_set: string;
+   public user: AdminUser;
 
    constructor(setup: CVSetSetup, schemaName: string = 'curriculums_schema', tableName: string = 'cv_sets') {
       super(schemaName, tableName, setup);
@@ -22,10 +24,11 @@ export default class CVSet extends TableRow {
       } = setup || {};
       
       this.cv_id = cv_id;
-      this.user_id = user_id;
       this.language_set = language_set;
       this.job_title = job_title;
       this.summary = summary;
+      this.user_id = user_id;
+      this.user = new AdminUser(setup);
    }
 
    static async createSet(setup: CVSetSetup): Promise<CVSet> {

@@ -114,7 +114,7 @@ export default class CV extends CVSet {
       }
 
       try {
-         const [ skillIndex ] = this.cv_skills;
+         const [skillIndex] = this.cv_skills;
          if (typeof skillIndex === 'number') {
             this.cv_skills = await Skill.getManyById(this.cv_skills as number[], this.language_set || 'en');
          }
@@ -163,7 +163,7 @@ export default class CV extends CVSet {
          }
 
          const user_id = user.id;
-         const [ masterCV ] = await this.getUserCVs(user_id, language_set, true);
+         const [masterCV] = await this.getUserCVs(user_id, language_set, true);
 
          if (!masterCV) {
             return null;
@@ -199,6 +199,55 @@ export default class CV extends CVSet {
          }
 
          return parsedCV;
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
+      }
+   }
+
+   static async getById(id: number, language_set: string = 'en'): Promise<CV | null> {
+      if (!id) {
+         throw new ErrorDatabase('CV ID is required', 'CV_ID_REQUIRED');
+      }
+
+      try {
+         const cvQuery = database.select('curriculums_schema', 'cv_sets');
+         cvQuery.where({ cv_id: id, language_set });
+         cvQuery.populate('cv_id', ['cvs.id', 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills']);
+         cvQuery.populate('user_id', [
+            'cvs.id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'birth_date',
+            'country',
+            'state',
+            'city',
+            'role',
+            'avatar_url',
+            'portfolio_url',
+            'github_url',
+            'linkedin_url',
+            'whatsapp_number'
+         ]);
+
+         const { data: cvData = [], error } = await cvQuery.exec();
+         const [cvRaw] = cvData;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch CV by ID', 'CV_FETCH_ERROR');
+         }
+
+         if (!cvRaw) {
+            return null;
+         }
+
+         const cv = new CV(cvRaw);
+
+         await cv.populateExperiences();
+         await cv.populateSkills();
+
+         return cv;
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
       }
@@ -293,7 +342,7 @@ export default class CV extends CVSet {
          if (cvError) {
             throw new ErrorDatabase('Failed to delete CV', 'CV_DELETE_ERROR');
          }
-   
+
          return true;
       } catch (error: any) {
          console.error('Error deleting CV:', error);
