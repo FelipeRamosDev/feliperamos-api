@@ -13,6 +13,7 @@ import ErrorDatabase from '../ErrorDatabase';
  */
 class InsertSQL extends SQL {
    private insertClause: string;
+   public queryType: string;
 
    /**
     * @constructor
@@ -23,6 +24,7 @@ class InsertSQL extends SQL {
    constructor(database: any, schemaName: string, tableName: string) {
       super(database, schemaName, tableName);
       
+      this.queryType = 'INSERT';
       this.insertClause = '';
    }
 

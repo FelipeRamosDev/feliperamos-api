@@ -13,6 +13,8 @@ import PostgresDB from '../PostgresDB';
  * @param {string} tableName - The table name.
  */
 class DeleteSQL extends SQL {
+   public queryType: string;
+
    /**
     * @constructor
     * @param {PostgresDB} database - The database instance with a pool.query method.
@@ -22,6 +24,7 @@ class DeleteSQL extends SQL {
    constructor(database: PostgresDB, schemaName: string, tableName: string) {
       super(database, schemaName, tableName);
 
+      this.queryType = 'DELETE';
       this.isAllowedNullWhere = false;
    }
 
