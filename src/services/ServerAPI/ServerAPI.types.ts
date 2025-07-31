@@ -25,7 +25,7 @@ export interface SSLConfig {
 export interface ServerAPISetup extends MicroserviceSetup {
    projectName?: string;
    API_SECRET: string;
-   staticPath?: string;
+   publicPath?: string;
    sslConfig?: SSLConfig;
    FE_ORIGIN?: string;
    PORT?: number;

@@ -29,6 +29,9 @@ async function executeCommands() {
       console.log('Starting Socket Server service...');
       executeCommand('npm', ['run', 'dev:socket-server']);
 
+      console.log('Starting Virtual Browser service...');
+      executeCommand('npm', ['run', 'dev:virtual-browser']);
+
       console.log('All commands completed!');
    } catch (error) {
       console.error('Error executing commands:', error);

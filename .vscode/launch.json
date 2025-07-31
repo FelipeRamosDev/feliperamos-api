@@ -11,6 +11,18 @@
          "type": "node-terminal"
       },
       {
+         "command": "npm run watch:virtual-browser",
+         "name": "Virtual Browser Watch",
+         "request": "launch",
+         "type": "node-terminal"
+      },
+      {
+         "command": "npm run watch:api-server",
+         "name": "API Server Watch",
+         "request": "launch",
+         "type": "node-terminal"
+      },
+      {
          "name": "Debug Main App",
          "type": "node",
          "request": "launch",
@@ -99,6 +111,26 @@
          "type": "node",
          "request": "launch",
          "program": "${workspaceFolder}/src/containers/socket-server.service.ts",
+         "runtimeArgs": [
+            "-r",
+            "ts-node/register"
+         ],
+         "env": {
+            "NODE_ENV": "development",
+            "TS_NODE_CACHE": "0"
+         },
+         "console": "integratedTerminal",
+         "restart": true,
+         "sourceMaps": true,
+         "skipFiles": [
+            "<node_internals>/**"
+         ]
+      },
+      {
+         "name": "Debug Virtual Browser Service",
+         "type": "node",
+         "request": "launch",
+         "program": "${workspaceFolder}/src/containers/virtual-browser.service.ts",
          "runtimeArgs": [
             "-r",
             "ts-node/register"
