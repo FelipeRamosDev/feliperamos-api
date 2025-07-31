@@ -1,17 +1,20 @@
 import ErrorDatabase from '../ErrorDatabase';
 import { DatabaseEventSetup } from '../types/models/DatabaseEvent.types';
 import { EventEmitter } from 'events';
+import Schema from './Schema';
+import Table from './Table';
 
 class DatabaseEvent {
    public id: string;
    public name: string;
    public type: string;
-
+   
+   private _table: Table;
    private _handler: (data: any) => void;
 
    static emitter = new EventEmitter();
 
-   constructor(setup: DatabaseEventSetup) {
+   constructor(setup: DatabaseEventSetup, table: Table) {
       const {
          id = 'default',
          name,
@@ -34,13 +37,23 @@ class DatabaseEvent {
       this.id = id;
       this.name = name;
       this.type = type;
+
       this._handler = handler;
+      this._table = table;
 
       DatabaseEvent.emitter.on(this.nativeId, this._handler);
    }
 
    get nativeId(): string {
-      return `database:${this.name}`;
+      if (!this.table?.name) {
+         throw new ErrorDatabase('Table name is required to generate nativeId for DatabaseEvent.', 'TABLE_NAME_REQUIRED');
+      }
+
+      return `database:${this.table.name}:${this.name}`;
+   }
+
+   get table(): Table {
+      return this._table;
    }
 
    trigger(data: any): void {

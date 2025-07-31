@@ -1,6 +1,8 @@
 import ErrorDatabase from '../ErrorDatabase';
 import { DatabaseEventSetup } from '../types/models/DatabaseEvent.types';
 import DatabaseEvent from './DatabaseEvent';
+import Schema from './Schema';
+import Table from './Table';
 
 class DatabaseEventStore {
    public name: string;
@@ -23,8 +25,8 @@ class DatabaseEventStore {
       this._events.forEach((event: DatabaseEvent) => event.trigger(data));
    }
 
-   addEvent(eventSetup: DatabaseEventSetup): void {
-      const event = new DatabaseEvent(eventSetup);
+   addEvent(eventSetup: DatabaseEventSetup, instance: Table): void {
+      const event = new DatabaseEvent(eventSetup, instance);
 
       if (this._events.has(event.id)) {
          console.warn(`Event with id ${event.id} already exists in store ${this.name}. Overwriting.`);

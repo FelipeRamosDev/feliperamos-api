@@ -3,6 +3,7 @@ import Schema from './models/Schema';
 import Table from './models/Table';
 import Field from './models/Field';
 import ErrorDatabase from './ErrorDatabase';
+import { SchemaSetup } from './types/models/Schema.types';
 
 /**
  * Base class for database services.
@@ -46,7 +47,10 @@ class DataBase {
       this.onError = onError;
       this.pool = null;
 
-      schemas.forEach((schema: Schema) => this.schemas.set(schema.name, schema));
+      schemas.forEach((schema: SchemaSetup) => {
+         const newSchema = schema instanceof Schema ? schema : new Schema(schema);
+         this.schemas.set(schema.name, newSchema);
+      });
    }
 
    /**

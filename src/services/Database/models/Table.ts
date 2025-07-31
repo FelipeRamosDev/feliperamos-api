@@ -3,6 +3,7 @@ import Field from './Field';
 import ErrorDatabase from '../ErrorDatabase';
 import { DatabaseEventSetup } from '../types/models/DatabaseEvent.types';
 import DatabaseEventStore from './DatabaseEventStore';
+import Schema from './Schema';
 
 /**
  * Table class represents a database table with a name and fields.
@@ -18,12 +19,13 @@ class Table {
    public name: string;
    public fields: Field[];
    private _events: Map<string, DatabaseEventStore>;
+   private _schema?: Schema;
 
    /**
     * Creates a new Table instance.
     * @param {Object} setup - The setup object for the table.
     */
-   constructor(setup: TableSetup = {} as TableSetup) {
+   constructor(setup: TableSetup = {} as TableSetup, schema?: Schema) {
       const { name, fields = [], events = {} } = setup;
 
       if (!name) {
@@ -33,6 +35,7 @@ class Table {
       this.name = name;
       this.fields = fields.map(field => new Field(field));
       this._events = new Map<string, DatabaseEventStore>();
+      this._schema = schema;
 
       if (Array.isArray(events.customs)) {
          events.customs.forEach(customEvent => {
@@ -109,6 +112,24 @@ class Table {
       }
    }
 
+   get schema(): Schema | undefined {
+      return this._schema;
+   }
+
+   get schemaName(): string | undefined {
+      return this._schema?.name;
+   }
+
+   setSchema(schema: Schema): Table {
+      if (!schema || !(schema instanceof Schema)) {
+         throw new ErrorDatabase('setSchema method requires a valid "schema" parameter of type Schema.', 'SCHEMA_REQUIRED');
+      }
+
+      this._schema = schema;
+      return this;
+
+   }
+
    /**
     * Returns a field object by name from this table.
     * @param {string} fieldName - The name of the field.
@@ -147,11 +168,11 @@ class Table {
       const existingEventStore = this._events.get(eventSetup.name);
 
       if (existingEventStore) {
-         existingEventStore.addEvent(eventSetup);
+         existingEventStore.addEvent(eventSetup, this);
       } else {
          const eventStore = new DatabaseEventStore(eventSetup.name);
 
-         eventStore.addEvent(eventSetup);
+         eventStore.addEvent(eventSetup, this);
          this._events.set(eventSetup.name, eventStore);
       }
    }

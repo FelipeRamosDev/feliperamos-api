@@ -35,9 +35,10 @@ class Schema {
          const isTableInstance = table instanceof Table;
 
          if (isTableInstance) {
+            table.setSchema(this);
             this.tables.set(table.name, table);
          } else {
-            const newTable = new Table(table);
+            const newTable = new Table(table, this);
             this.tables.set(table.name, newTable);
          }
       });

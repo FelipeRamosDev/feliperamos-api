@@ -110,6 +110,8 @@ class VirtualBrowserPage {
 
       try {
          await this._page.close();
+         this.virtualBrowser.deletePage(this.id);
+         this._page = null;
       } catch (error: any) {
          throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_CLOSE_ERROR');
       }

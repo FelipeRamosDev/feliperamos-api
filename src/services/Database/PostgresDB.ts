@@ -88,7 +88,7 @@ class PostgresDB extends DataBase {
          }
 
          await this.onReady(this);
-         console.log('PostgresDB connected successfully');
+         console.log(`[${process.pid}]`, 'PostgresDB connected successfully');
          return this;
       } catch (error: any) {
          throw new ErrorDatabase(error.message, 'DB_CONNECTION_ERROR');

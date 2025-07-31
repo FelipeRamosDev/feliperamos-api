@@ -74,6 +74,15 @@ class SQL {
       return `${this.charsVerifier(this.schemaName)}.${this.charsVerifier(this.tableName)}`;
    }
 
+   get firstRow(): any {
+      if (!this.response || !Array.isArray(this.response.rows)) {
+         return null;
+      }
+
+      const [ firstRow ] = this.response.rows;
+      return firstRow || null;
+   }
+
    /**
     * Verifies that an identifier (schema/table/column) is valid (alphanumeric or underscore).
     * @param {string} identifier
