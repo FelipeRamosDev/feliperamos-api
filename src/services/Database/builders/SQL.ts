@@ -1,7 +1,7 @@
 import { JoinConfig, WhereCondition, QueryResult } from '../types/builders/SQL.types';
 import ErrorDatabase from '../ErrorDatabase';
 import DataBase from '../Database';
-import { RelatedFieldSetup } from '../types/builders/RelatedField.types';
+import { RelatedFieldSetup } from '../types/models/RelatedField.types';
 
 interface WhereConditionValue {
   operator?: string;

@@ -1,6 +1,7 @@
-import { SchemaSetup } from '../types/builders/Schema.types';
+import { SchemaSetup } from '../types/models/Schema.types';
 import Table from './Table';
 import ErrorDatabase from '../ErrorDatabase';
+import { TableSetup } from '../types/models/Table.types';
 
 /**
  * Schema class represents a database schema containing multiple tables.
@@ -30,9 +31,15 @@ class Schema {
       this.name = name;
       this.tables = new Map();
       
-      tables.map(table => {
-         const newTable = new Table(table);
-         this.tables.set(table.name, newTable);
+      tables.map((table: TableSetup) => {
+         const isTableInstance = table instanceof Table;
+
+         if (isTableInstance) {
+            this.tables.set(table.name, table);
+         } else {
+            const newTable = new Table(table);
+            this.tables.set(table.name, newTable);
+         }
       });
    }
 
