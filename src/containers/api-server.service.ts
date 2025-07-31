@@ -42,6 +42,7 @@ import curriculumUpdateSet from '../routes/curriculum/update-set.route';
 import curriculumUserCVs from '../routes/curriculum/user-cvs.route';
 import curriculumSetMaster from '../routes/curriculum/set-master.route';
 import curriculumDelete from '../routes/curriculum/delete.route';
+import curriculumPublicGet from '../routes/curriculum/public/cv_id.route';
 
 import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
@@ -75,7 +76,7 @@ export default new ServerAPI({
    corsOrigin: CORS_ORIGIN,
    sslConfig: sslConfig,
    autoInitialize: true,
-   publicPath: 'public',
+   publicPath: 'pdf',
    httpEndpoints: [
       loginRoute,
       authUserRoute,
@@ -111,6 +112,7 @@ export default new ServerAPI({
       curriculumGet,
       curriculumSetMaster,
       curriculumDelete,
+      curriculumPublicGet,
       userUpdate,
       userMasterCV
    ],
