@@ -1,3 +1,4 @@
+import { sendToCreateCVPDF } from "../../../helpers/database.helper";
 import Table from "../../../services/Database/models/Table";
 
 export default new Table({
@@ -19,5 +20,20 @@ export default new Table({
          table: 'cvs',
          field: 'id'
       }}
-   ]
+   ],
+   events: {
+      onAfterInsert(query) {
+         const { cv_id, language_set } = query.insertData;
+         sendToCreateCVPDF({ cv_id, language_set });
+      },
+      onAfterUpdate(query) {
+         const responseData = query.firstRow;
+
+         if (!responseData) {
+            return;
+         }
+
+         sendToCreateCVPDF({ cv_id: responseData.cv_id, language_set: responseData.language_set });
+      },
+   }
 });

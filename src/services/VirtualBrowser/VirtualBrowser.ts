@@ -3,8 +3,9 @@ import ErrorVirtualBrowser from './ErrorVirtualBrowser';
 import ViewPort from './ViewPort';
 import VirtualBrowserPage from './VirtualBrowserPage';
 import type { VirtualBrowserSetup } from './VirtualBrowser.types';
+import Microservice from '../Microservice/Microservice';
 
-class VirtualBrowser {
+class VirtualBrowser extends Microservice {
    private _viewPort: ViewPort;
    private _browser: Browser | null;
    private _onInit: (virtualBrowser: VirtualBrowser) => void;
@@ -12,8 +13,9 @@ class VirtualBrowser {
 
    public pages: Map<string, VirtualBrowserPage>;
 
-   constructor(setup?: VirtualBrowserSetup) {
-      const { viewPort, autoInit, onInit = () => {}, onError = () => {} } = setup || {};
+   constructor(setup: VirtualBrowserSetup = {}) {
+      super(setup);
+      const { viewPort, autoInit, onInit = () => {}, onError = () => {} } = setup;
 
       this._browser = null;
       this._viewPort = new ViewPort(viewPort);

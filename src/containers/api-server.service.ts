@@ -66,7 +66,7 @@ const sslConfig = SSL_KEY_PATH && SSL_CERT_PATH ? {
    certSSLPath: SSL_CERT_PATH
 } : undefined;
 
-export default new ServerAPI({
+global.service = new ServerAPI({
    id: 'server-api',
    API_SECRET: API_SECRET,
    projectName: 'feliperamos-api',
@@ -120,3 +120,5 @@ export default new ServerAPI({
       console.log(`Server API is running on port ${this.PORT}`);
    }
 });
+
+export default global.service;

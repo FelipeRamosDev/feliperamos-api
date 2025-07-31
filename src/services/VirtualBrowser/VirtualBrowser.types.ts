@@ -1,7 +1,8 @@
+import { MicroserviceSetup } from '../Microservice/Microservice.types';
 import ErrorVirtualBrowser from './ErrorVirtualBrowser';
 import VirtualBrowser from './VirtualBrowser';
 
-export interface VirtualBrowserSetup {
+export interface VirtualBrowserSetup extends MicroserviceSetup {
    viewPort?: ViewPortSetup;
    autoInit?: boolean;
    onInit?: (virtualBrowser: VirtualBrowser) => void;
