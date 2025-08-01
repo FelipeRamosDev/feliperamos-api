@@ -212,6 +212,31 @@ export default class AdminUser extends TableRow {
       }
    }
 
+   static async getById(userId: number): Promise<AdminUser | null> {
+      if (!userId) {
+         throw new ErrorDatabase('User ID is required to fetch user.', 'USER_ID_REQUIRED');
+      }
+
+      try {
+         const query = database.select('users_schema', 'admin_users');
+
+         query.selectFields(PUBLIC_FIELDS);
+         query.where({ id: userId });
+         query.limit(1);
+
+         const { data = [] } = await query.exec();
+         const [ user ] = data;
+
+         if (!user) {
+            return null;
+         }
+
+         return new AdminUser(user);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'USER_FETCH_ERROR');
+      }
+   }
+
    static async validateUser(email: string, password: string): Promise<AdminUserPublic | null> {
       if (!email || !password) {
          throw new Error('Email and password are required for validation.');

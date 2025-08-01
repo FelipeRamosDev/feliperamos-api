@@ -6,6 +6,7 @@ import { CVSetSetup } from '../CVSet/CVSet.types';
 import { CVSetup } from './CV.types';
 import database from '../../../../database';
 import { AdminUser } from '../../users_schema';
+import { AdminUserPublic } from '../../users_schema/AdminUser/AdminUser.types';
 
 export default class CV extends CVSet {
    public title: string;
@@ -125,6 +126,25 @@ export default class CV extends CVSet {
       }
    }
 
+   async populateUser(): Promise<AdminUserPublic | null> {
+      if (!this.cv_owner_id) {
+         return null;
+      }
+
+      try {
+         const user = await AdminUser.getById(this.cv_owner_id);
+
+         if (!user) {
+            throw null;
+         }
+         
+         this.user = user.toPublic();
+         return this.user;
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_USER_FETCH_ERROR');
+      }
+   }
+
    async save(props?: CVSetup): Promise<CVSet> {
       let processing;
 
@@ -196,6 +216,7 @@ export default class CV extends CVSet {
          for (const cvData of parsedCV) {
             await cvData.populateSkills();
             await cvData.populateExperiences();
+            await cvData.populateUser();
          }
 
          return parsedCV;
@@ -274,6 +295,7 @@ export default class CV extends CVSet {
          await cv.populateSets();
          await cv.populateExperiences();
          await cv.populateSkills();
+         await cv.populateUser();
 
          return cv;
       } catch (error: any) {

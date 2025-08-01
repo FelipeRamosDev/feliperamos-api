@@ -3,6 +3,7 @@ import TableRow from '../../../../services/Database/models/TableRow';
 import { CVSetSetup } from './CVSet.types';
 import database from '../../../../database';
 import { AdminUser } from '../../users_schema';
+import { AdminUserPublic } from '../../users_schema/AdminUser/AdminUser.types';
 
 export default class CVSet extends TableRow {
    public user_id?: number | null;
@@ -10,7 +11,7 @@ export default class CVSet extends TableRow {
    public summary?: string;
    public cv_id?: number;
    public language_set: string;
-   public user: AdminUser;
+   public user: AdminUser | AdminUserPublic;
 
    constructor(setup: CVSetSetup, schemaName: string = 'curriculums_schema', tableName: string = 'cv_sets') {
       super(schemaName, tableName, setup);
