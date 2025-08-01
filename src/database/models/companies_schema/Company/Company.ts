@@ -3,6 +3,8 @@ import database from '../../../../database';
 import CompanySet from '../CompanySet/CompanySet';
 import { CompanySetup, CreateCompanyData } from './Company.types';
 import { CompanySetSetup } from '../CompanySet/CompanySet.types';
+import { Experience } from '../../experiences_schema';
+import { CV } from '../../curriculums_schema';
 
 export default class Company extends CompanySet {
    public company_name: string;
@@ -28,6 +30,42 @@ export default class Company extends CompanySet {
       this.site_url = site_url;
 
       this.languageSets = languageSets.map((companySet: CompanySetSetup) => new CompanySet(companySet));
+   }
+
+   async getRelatedExperiences(): Promise<any[]> {
+      try {
+         const experiencesQuery = database.select('experiences_schema', 'experiences');
+         experiencesQuery.where({ company_id: this.id });
+         const { data = [], error } = await experiencesQuery.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch related experiences', 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         return data.map((experience) => new Experience(experience));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'EXPERIENCE_FETCH_ERROR');
+      }
+   }
+
+   async getRelatedCVs(): Promise<CV[]> {
+      try {
+         const experiences = await this.getRelatedExperiences();
+         const cvs: Map<number, CV> = new Map();
+
+         for (const experience of experiences) {
+            const experienceCVs = await experience.getRelatedCVs();
+
+            experienceCVs.forEach((cv: CV) => {
+               if (!cv.id) return;
+               cvs.set(cv.id, cv);
+            });
+         }
+
+         return Array.from(cvs.values());
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
+      }
    }
 
    static async create(data: CreateCompanyData): Promise<Company> {
