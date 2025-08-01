@@ -2,6 +2,7 @@ import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import database from '../../../../database';
 import TableRow from '../../../../services/Database/models/TableRow';
 import { ExperienceSetSetup } from './ExperienceSet.types';
+import { CV } from '../../curriculums_schema';
 
 export default class ExperienceSet extends TableRow {
    public slug: string;
@@ -11,6 +12,7 @@ export default class ExperienceSet extends TableRow {
    public description: string;
    public responsibilities: string;
    public user_id: number;
+   public experience_id: number;
 
    constructor (setup: ExperienceSetSetup, schemaName: string = 'experiences_schema', tableName: string = 'experience_sets') {
       super(schemaName, tableName, setup);
@@ -26,6 +28,7 @@ export default class ExperienceSet extends TableRow {
          summary = '',
          description = '',
          responsibilities = '',
+         experience_id,
          user_id
       } = setup || {};
 
@@ -36,6 +39,27 @@ export default class ExperienceSet extends TableRow {
       this.description = description;
       this.responsibilities = responsibilities;
       this.user_id = user_id;
+      this.experience_id = experience_id;
+   }
+
+   async getSetRelatedCVs(): Promise<CV[]> {
+      if (!this.id) {
+         return [];
+      }
+
+      try {
+         const cvQuery = database.select('curriculums_schema', 'cvs');
+         cvQuery.where({ cv_experiences: { condition: '@>', value: [this.experience_id] } });
+
+         const { data = [], error } = await cvQuery.exec();
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         return data.map((cvData) => new CV(cvData));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_QUERY_ERROR');
+      }
    }
 
    static async set(data: Partial<ExperienceSetSetup>): Promise<ExperienceSet> {

@@ -23,17 +23,25 @@ export default new Table({
    ],
    events: {
       onAfterInsert(query) {
-         const { cv_id, language_set } = query.insertData;
-         sendToCreateCVPDF({ cv_id, language_set });
+         try {
+            const { cv_id, language_set } = query.insertData;
+            sendToCreateCVPDF({ cv_id, language_set });
+         } catch (error) {
+            console.error('Error sending CV PDF creation request:', error);
+         }
       },
       onAfterUpdate(query) {
-         const responseData = query.firstRow;
-
-         if (!responseData) {
-            return;
+         try {
+            const responseData = query.firstRow;
+   
+            if (!responseData) {
+               return;
+            }
+   
+            sendToCreateCVPDF({ cv_id: responseData.cv_id, language_set: responseData.language_set });
+         } catch (error) {
+            console.error('Error sending CV PDF creation request:', error);
          }
-
-         sendToCreateCVPDF({ cv_id: responseData.cv_id, language_set: responseData.language_set });
       },
    }
 });
