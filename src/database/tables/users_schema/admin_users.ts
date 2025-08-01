@@ -1,4 +1,7 @@
+import { CV } from '../../../database/models/curriculums_schema';
 import Table from '../../../services/Database/models/Table';
+import { locales } from '../../../app.config';
+import { sendToCreateCVPDF } from '../../../helpers/database.helper';
 
 export default new Table({
    name: 'admin_users',
@@ -20,5 +23,26 @@ export default new Table({
       { name: 'github_url', type: 'VARCHAR(255)' },
       { name: 'linkedin_url', type: 'VARCHAR(255)' },
       { name: 'whatsapp_number', type: 'VARCHAR(255)' },
-   ]
+   ],
+   events: {
+      onAfterUpdate: async (query) => {
+         const { id } = query.firstRow || {};
+
+         if (!id) {
+            return;
+         }
+
+         try {
+            const userCVs = await CV.getUserCVs(id);
+
+            userCVs.forEach((cv: CV) => {
+               locales.forEach((language_set: string) => {
+                  sendToCreateCVPDF({ cv_id: cv.id, language_set });
+               });
+            });
+         } catch (error) {
+            console.error('Error creating admin user instance:', error);
+         }
+      }
+   }
 });
