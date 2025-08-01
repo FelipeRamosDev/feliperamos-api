@@ -370,7 +370,7 @@ class SQL {
     */
    async exec(): Promise<QueryResult> {
       try {
-         this.triggerBeforeEvent();
+         await this.triggerBeforeEvent();
          const response = await this.database.pool.query(this.toString(), this.values);
 
          this.triggerAfterEvent(response);
@@ -424,7 +424,7 @@ class SQL {
       return schema?.getTable(this.tableName);
    }
 
-   triggerBeforeEvent(): void {
+   triggerBeforeEvent(): void | Promise<void> {
       const table = this.getTable();
 
       if (!table) {
