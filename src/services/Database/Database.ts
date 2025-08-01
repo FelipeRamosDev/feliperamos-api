@@ -47,7 +47,7 @@ class DataBase {
       this.onError = onError;
       this.pool = null;
 
-      schemas.forEach((schema: SchemaSetup) => {
+      schemas.forEach((schema: Schema | SchemaSetup) => {
          const newSchema = schema instanceof Schema ? schema : new Schema(schema);
          this.schemas.set(schema.name, newSchema);
       });
