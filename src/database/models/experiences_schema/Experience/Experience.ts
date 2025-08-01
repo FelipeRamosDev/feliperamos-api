@@ -7,6 +7,7 @@ import { Company } from '../../companies_schema';
 import { Skill } from '../../skills_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
+import { CV } from '../../curriculums_schema';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -82,6 +83,26 @@ export default class Experience extends ExperienceSet {
          this.skills = await Skill.getManyById(this.rawData.skills, language_set);
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'SKILL_QUERY_ERROR');
+      }
+   }
+
+   async getRelatedCVs(): Promise<CV[]> {
+      if (!this.id) {
+         throw new ErrorDatabase('Experience ID is required to fetch related CVs', 'EXPERIENCE_ID_REQUIRED');
+      }
+
+      try {
+         const cvQuery = database.select('curriculums_schema', 'cvs');
+         cvQuery.where({ cv_experiences: { condition: '@>', value: [this.id] } });
+
+         const { data = [], error } = await cvQuery.exec();
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         return data.map((cvData) => new CV(cvData));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_QUERY_ERROR');
       }
    }
 
@@ -177,6 +198,28 @@ export default class Experience extends ExperienceSet {
       }
    }
 
+   static async getById(id: number, language_set: string = 'en'): Promise<Experience | null> {
+      try {
+         const query = database.select('experiences_schema', 'experience_sets');
+         query.where({ experience_id: id, language_set });
+         query.populate('experience_id', [ 'experiences.id', 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+
+         const { data = [], error } = await query.exec();
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch Experience by ID: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         const [ experienceData ] = data;
+         if (!experienceData) {
+            return null;
+         }
+
+         return new Experience(experienceData);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
+      }
+   }
+
    static async getByUserId(userId: number, language_set: string, options?: { status: string }): Promise<Experience[]> {
       try {
          const query = database.select('experiences_schema', 'experience_sets');
@@ -241,6 +284,7 @@ export default class Experience extends ExperienceSet {
          throw new ErrorDatabase(error.message, error.code);
       }
    }
+
    static async update(id: number, updates: Partial<Experience>): Promise<Experience> {
       try {
          const updateQuery = database.update('experiences_schema', 'experiences');
