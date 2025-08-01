@@ -21,5 +21,5 @@ export function cvPdfPath(cv: Partial<CV>): string {
    }
 
    const userName = cv.user.name.replace(/ /g, '_');
-   return `pdf/cv/${userName}-CV_${cv.language_set}_${cv.id}.pdf`;
+   return `pdf/cv/${userName}-CV_${cv.id}_${cv.language_set}.pdf`;
 }
