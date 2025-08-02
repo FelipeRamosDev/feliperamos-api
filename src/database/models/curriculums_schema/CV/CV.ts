@@ -10,6 +10,7 @@ import { AdminUserPublic } from '../../users_schema/AdminUser/AdminUser.types';
 
 export default class CV extends CVSet {
    public title: string;
+   public experience_time: number | null;
    public is_master: boolean;
    public notes?: string;
    public cv_experiences?: (Experience | number)[];
@@ -17,11 +18,22 @@ export default class CV extends CVSet {
    public languageSets: CVSet[];
    public cv_owner_id?: number;
 
+   static populateFields = [
+      'cvs.id',
+      'title',
+      'is_master',
+      'experience_time',
+      'notes',
+      'cv_experiences',
+      'cv_skills'
+   ]
+
    constructor(setup: CVSetup & CVSetSetup) {
       super(setup, 'curriculums_schema', 'cvs');
 
       const {
          title = '',
+         experience_time = 0,
          is_master = false,
          notes = '',
          cv_owner_id,
@@ -32,6 +44,7 @@ export default class CV extends CVSet {
       } = setup || {};
 
       this.title = title;
+      this.experience_time = experience_time;
       this.is_master = Boolean(is_master);
       this.notes = notes;
       this.languageSets = languageSets;
@@ -205,7 +218,7 @@ export default class CV extends CVSet {
             getQuery.where({ user_id, language_set });
          }
 
-         getQuery.populate('cv_id', ['cvs.id', 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills']);
+         getQuery.populate('cv_id', this.populateFields);
          const { data = [], error } = await getQuery.exec();
 
          if (error) {
@@ -233,7 +246,7 @@ export default class CV extends CVSet {
       try {
          const cvQuery = database.select('curriculums_schema', 'cv_sets');
          cvQuery.where({ cv_id: id, language_set });
-         cvQuery.populate('cv_id', ['cvs.id', 'title', 'is_master', 'notes', 'cv_experiences', 'cv_skills']);
+         cvQuery.populate('cv_id', this.populateFields);
          cvQuery.populate('user_id', [
             'cvs.id',
             'first_name',
