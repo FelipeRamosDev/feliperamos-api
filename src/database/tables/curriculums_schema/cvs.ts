@@ -9,6 +9,7 @@ export default new Table({
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'updated_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'title', type: 'VARCHAR(255)', notNull: true },
+      { name: 'experience_time', type: 'DECIMAL(2,1)' },
       { name: 'is_master', type: 'BOOLEAN', defaultValue: false },
       { name: 'notes', type: 'TEXT' },
       { name: 'cv_experiences', type: 'INTEGER[]' },
