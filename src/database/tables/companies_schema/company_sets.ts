@@ -1,3 +1,4 @@
+import { defaultLocale } from '../../../app.config';
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
@@ -5,7 +6,7 @@ export default new Table({
    fields: [
       { name: 'id', primaryKey: true, autoIncrement: true },
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
-      { name: 'language_set', type: 'VARCHAR(2)', defaultValue: 'en' },
+      { name: 'language_set', type: 'VARCHAR(2)', defaultValue: defaultLocale },
       { name: 'description', type: 'TEXT' },
       { name: 'industry', type: 'VARCHAR(255)' },
       { name: 'company_id',

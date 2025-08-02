@@ -2,6 +2,7 @@ import TableRow from '../../../../services/Database/models/TableRow';
 import database from '../../../../database';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import { SkillSetSetup } from './SkillSet.types';
+import { defaultLocale } from '../../../../app.config';
 
 export default class SkillSet extends TableRow {
    public skill_id: number;
@@ -12,7 +13,7 @@ export default class SkillSet extends TableRow {
    constructor (setup: SkillSetSetup) {
       super('skills_schema', 'skill_sets', setup);
 
-      const { user_id, skill_id, language_set = 'en', journey } = setup || {};
+      const { user_id, skill_id, language_set = defaultLocale, journey } = setup || {};
 
       this.skill_id = skill_id;
       this.language_set = language_set;

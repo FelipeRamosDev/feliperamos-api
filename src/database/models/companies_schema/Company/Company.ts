@@ -5,6 +5,7 @@ import { CompanySetup, CreateCompanyData } from './Company.types';
 import { CompanySetSetup } from '../CompanySet/CompanySet.types';
 import { Experience } from '../../experiences_schema';
 import { CV } from '../../curriculums_schema';
+import { defaultLocale } from '../../../../app.config';
 
 export default class Company extends CompanySet {
    public company_name: string;
@@ -102,7 +103,7 @@ export default class Company extends CompanySet {
       });
    }
 
-   static async getById(company_id: number, language_set: string = 'en'): Promise<Company> {
+   static async getById(company_id: number, language_set: string = defaultLocale): Promise<Company> {
       try {
          const companyQuery = database.select('companies_schema', 'company_sets');
    

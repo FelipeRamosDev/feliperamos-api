@@ -21,7 +21,7 @@ export default class CVSet extends TableRow {
          summary = '',
          user_id,
          cv_id,
-         language_set = 'en'
+         language_set = defaultLocale
       } = setup || {};
       
       this.cv_id = cv_id;

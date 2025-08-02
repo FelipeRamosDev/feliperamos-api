@@ -8,6 +8,7 @@ import { Skill } from '../../skills_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
 import { CV } from '../../curriculums_schema';
+import { defaultLocale } from '../../../../app.config';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -198,7 +199,7 @@ export default class Experience extends ExperienceSet {
       }
    }
 
-   static async getById(id: number, language_set: string = 'en'): Promise<Experience | null> {
+   static async getById(id: number, language_set: string = defaultLocale): Promise<Experience | null> {
       try {
          const query = database.select('experiences_schema', 'experience_sets');
          query.where({ experience_id: id, language_set });
@@ -262,7 +263,7 @@ export default class Experience extends ExperienceSet {
       }
    }
 
-   static async getManyById(ids: number[], language_set: string = 'en'): Promise<Experience[]> {
+   static async getManyById(ids: number[], language_set: string = defaultLocale): Promise<Experience[]> {
       try {
          const query = database.select('experiences_schema', 'experience_sets');
          query.where(ids.map(id => ({ experience_id: id, language_set })));
