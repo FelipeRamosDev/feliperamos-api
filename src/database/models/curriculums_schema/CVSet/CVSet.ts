@@ -4,6 +4,7 @@ import { CVSetSetup } from './CVSet.types';
 import database from '../../../../database';
 import { AdminUser } from '../../users_schema';
 import { AdminUserPublic } from '../../users_schema/AdminUser/AdminUser.types';
+import { defaultLocale } from '../../../../app.config';
 
 export default class CVSet extends TableRow {
    public user_id?: number | null;
