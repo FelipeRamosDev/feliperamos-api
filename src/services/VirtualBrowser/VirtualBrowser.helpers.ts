@@ -1,8 +1,12 @@
 import fs from 'fs';
+import path from 'path';
 import ErrorVirtualBrowser from './ErrorVirtualBrowser';
 
 export async function writeFile(filePath: string, data: Uint8Array): Promise<boolean> {
    try {
+      const dir = path.dirname(filePath);
+      await fs.promises.mkdir(dir, { recursive: true });
+
       await fs.promises.writeFile(filePath, data);
       return true;
    } catch (error: any) {

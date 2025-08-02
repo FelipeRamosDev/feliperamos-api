@@ -52,6 +52,8 @@ services:
       - feliperamos-net
     env_file:
       - .env.local
+    volumes:
+      - shared_data:/app/shared
     command: ['npm', 'run', 'start:api-server']
 
   socket-server:
@@ -72,6 +74,25 @@ services:
     env_file:
       - .env.local
     command: ['npm', 'run', 'start:socket-server']
+
+  virtual-browser:
+    build: .
+    container_name: virtual-browser
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      redis-service:
+        condition: service_healthy
+      postgres-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    volumes:
+      - shared_data:/app/shared
+    command: ['npm', 'run', 'start:virtual-browser']
 
   redis-service:
     image: redis:7-alpine
@@ -111,11 +132,15 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
-      start_period: 30s
-
 volumes:
   redis_data:
   postgres_data:
+  shared_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./shared_files
 
 networks:
   feliperamos-net:

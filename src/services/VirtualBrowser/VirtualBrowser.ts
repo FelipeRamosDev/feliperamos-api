@@ -47,7 +47,18 @@ class VirtualBrowser extends Microservice {
 
    async init(): Promise<VirtualBrowser> {
       try {
-         this._browser = await puppeteer.launch();
+         // For Docker container, explicitly use the chromium path
+         const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || (process.platform === 'linux' ? '/usr/bin/chromium' : undefined);
+         this._browser = await puppeteer.launch({
+            executablePath,
+            args: [
+               '--no-sandbox',
+               '--disable-setuid-sandbox',
+               '--disable-dev-shm-usage',
+               '--no-first-run'
+            ]
+         });
+
          return this;
       } catch (error: any) {
          throw new ErrorVirtualBrowser(error.message, error.code || 'VIRTUAL_BROWSER_LAUNCH_ERROR');

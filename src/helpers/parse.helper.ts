@@ -29,5 +29,12 @@ export function cvPdfPath(userFullName: string, cvId: number, languageSet: strin
    }
 
    const userName = userFullName.replace(/ /g, '_');
-   return `pdf/cv/${userName}-CV_${cvId}_${languageSet}.pdf`;
+
+   const relativePath = `pdf/cv/${userName}-CV_${cvId}_${languageSet}.pdf`;
+   console.log(process.env.NODE_ENV)
+   if (process.env.NODE_ENV === 'production') {
+      return `/app/shared/${relativePath}`;
+   } else {
+      return relativePath;
+   }
 }
