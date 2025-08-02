@@ -32,6 +32,7 @@ class SQL {
    protected values: any[];
    protected isAllowedNullWhere: boolean;
    protected queryType: string;
+   private _eventsData: Map<string, any>;
    public response: Result | null;
 
    /**
@@ -45,6 +46,7 @@ class SQL {
          throw new ErrorDatabase('A valid database instance with a query method is required.', 'DATABASE_INSTANCE_REQUIRED');
       }
 
+      this._eventsData = new Map();
       this.queryType = '';
       this.database = database;
       this.schemaName = schemaName;
@@ -81,6 +83,26 @@ class SQL {
 
       const [ firstRow ] = this.response.rows;
       return firstRow || null;
+   }
+
+   getEventData(key: string): any {
+      if (!this._eventsData.has(key)) {
+         return;
+      }
+
+      if (typeof key !== 'string' || !key.trim()) {
+         throw new ErrorDatabase('Invalid event name.', 'INVALID_EVENT_NAME');
+      }
+
+      return this._eventsData.get(key);
+   }
+
+   setEventData(key: string, data: any): void {
+      if (typeof key !== 'string' || !key.trim()) {
+         throw new ErrorDatabase('Invalid event name.', 'INVALID_EVENT_NAME');
+      }
+
+      this._eventsData.set(key, data);
    }
 
    /**
