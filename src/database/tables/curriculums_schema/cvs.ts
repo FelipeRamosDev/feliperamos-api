@@ -1,5 +1,6 @@
+import { CV } from '../../../database/models/curriculums_schema';
 import { locales } from '../../../app.config';
-import { sendToCreateCVPDF } from '../../../helpers/database.helper';
+import { sendToCreateCVPDF, sendToDeleteCVPDF } from '../../../helpers/database.helper';
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
@@ -26,6 +27,20 @@ export default new Table({
 
          locales.forEach((language_set) => {
             sendToCreateCVPDF({ cv_id: responseData.id, language_set });
+         });
+      },
+      async onAfterDelete(query) {
+         const responseData = query.firstRow;
+
+         if (!responseData) {
+            return;
+         }
+
+         const cv = new CV(responseData);
+
+         await cv.populateUser();
+         locales.forEach((language_set) => {
+            sendToDeleteCVPDF(responseData.id, language_set, cv.user?.name);
          });
       }
    }

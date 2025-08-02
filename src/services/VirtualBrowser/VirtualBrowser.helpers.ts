@@ -9,3 +9,12 @@ export async function writeFile(filePath: string, data: Uint8Array): Promise<boo
       throw new ErrorVirtualBrowser(`Failed to write file at ${filePath}: ${error.message}`, error.code || 'FILE_WRITE_ERROR');
    }
 }
+
+export async function deleteFile(filePath: string): Promise<boolean> {
+   try {
+      await fs.promises.unlink(filePath);
+      return true;
+   } catch (error: any) {
+      throw new ErrorVirtualBrowser(`Failed to delete file at ${filePath}: ${error.message}`, error.code || 'FILE_DELETE_ERROR');
+   }
+}

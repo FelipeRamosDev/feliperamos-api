@@ -359,7 +359,7 @@ export default class CV extends CVSet {
       }
    }
 
-   static async delete(cv_id: number): Promise<boolean> {
+   static async delete(cv_id: number): Promise<CV[]> {
       if (!cv_id) {
          throw new ErrorDatabase('CV ID is required for deletion', 'CV_DELETE_ERROR');
       }
@@ -372,13 +372,13 @@ export default class CV extends CVSet {
             throw new ErrorDatabase('Failed to delete CV set', 'CV_SET_DELETE_ERROR');
          }
 
-         const deleteQuery = database.delete('curriculums_schema', 'cvs').where({ id: cv_id });
-         const { error: cvError } = await deleteQuery.exec();
+         const deleteQuery = database.delete('curriculums_schema', 'cvs').where({ id: cv_id }).returning();
+         const { data: deletedCVs = [], error: cvError } = await deleteQuery.exec();
          if (cvError) {
             throw new ErrorDatabase('Failed to delete CV', 'CV_DELETE_ERROR');
          }
 
-         return true;
+         return deletedCVs.map(cv => new CV(cv));
       } catch (error: any) {
          console.error('Error deleting CV:', error);
          throw new ErrorDatabase(error.message, error.code || 'CV_DELETE_ERROR');

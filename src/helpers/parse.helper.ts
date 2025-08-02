@@ -15,11 +15,19 @@ export function frontendURL(path: string, queryParams: Record<string, string | n
    return url.toString();
 }
 
-export function cvPdfPath(cv: Partial<CV>): string {
-   if (!cv?.user?.name) {
-      throw new Error('Invalid CV object');
+export function cvPdfPath(userFullName: string, cvId: number, languageSet: string): string {
+   if (!userFullName) {
+      throw new Error('Invalid userFullName provided');
    }
 
-   const userName = cv.user.name.replace(/ /g, '_');
-   return `pdf/cv/${userName}-CV_${cv.id}_${cv.language_set}.pdf`;
+   if (!cvId || typeof cvId !== 'number') {
+      throw new Error('Invalid cvId provided');
+   }
+
+   if (!languageSet || typeof languageSet !== 'string') {
+      throw new Error('Invalid languageSet provided');
+   }
+
+   const userName = userFullName.replace(/ /g, '_');
+   return `pdf/cv/${userName}-CV_${cvId}_${languageSet}.pdf`;
 }

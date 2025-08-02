@@ -32,7 +32,8 @@ export default new EventEndpoint({
             return done(new EventEndpoint.Error('Failed to create PDF template page!', 'PAGE_CREATION_FAILED'));
          }
 
-         const pdfBuffer = await page.toPDF(cvPdfPath(cv), {
+         const pdfPath = cvPdfPath(cv.user.name, Number(cv.id), language_set);
+         const pdfBuffer = await page.toPDF(pdfPath, {
             printBackground: true
          });
 
