@@ -1,7 +1,8 @@
 import ErrorDatabase from '../../../services/Database/ErrorDatabase';
 import Table from '../../../services/Database/models/Table';
-import { Experience, ExperienceSet } from '../../../database/models/experiences_schema';
+import { ExperienceSet } from '../../../database/models/experiences_schema';
 import { sendToCreateCVPDF } from '../../../helpers/database.helper';
+import { defaultLocale } from '../../../app.config';
 
 export default new Table({
    name: 'experience_sets',
@@ -10,7 +11,7 @@ export default new Table({
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'slug', type: 'VARCHAR(255)', notNull: true },
       { name: 'position', type: 'VARCHAR(50)', notNull: true },
-      { name: 'language_set', type: 'VARCHAR(2)', defaultValue: 'en' },
+      { name: 'language_set', type: 'VARCHAR(2)', defaultValue: defaultLocale },
       { name: 'summary', type: 'TEXT', notNull: true },
       { name: 'description', type: 'TEXT' },
       { name: 'responsibilities', type: 'TEXT' },

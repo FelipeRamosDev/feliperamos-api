@@ -7,6 +7,7 @@ import { CVSetup } from './CV.types';
 import database from '../../../../database';
 import { AdminUser } from '../../users_schema';
 import { AdminUserPublic } from '../../users_schema/AdminUser/AdminUser.types';
+import { defaultLocale } from '../../../../app.config';
 
 export default class CV extends CVSet {
    public title: string;
@@ -112,7 +113,7 @@ export default class CV extends CVSet {
          const [expIndex] = this.cv_experiences;
 
          if (typeof expIndex === 'number') {
-            this.cv_experiences = await Experience.getManyById(this.cv_experiences as number[], this.language_set || 'en');
+            this.cv_experiences = await Experience.getManyById(this.cv_experiences as number[], this.language_set || defaultLocale);
          }
 
          return this.cv_experiences as Experience[];
@@ -130,7 +131,7 @@ export default class CV extends CVSet {
       try {
          const [skillIndex] = this.cv_skills;
          if (typeof skillIndex === 'number') {
-            this.cv_skills = await Skill.getManyById(this.cv_skills as number[], this.language_set || 'en');
+            this.cv_skills = await Skill.getManyById(this.cv_skills as number[], this.language_set || defaultLocale);
          }
 
          return this.cv_skills as Skill[];
@@ -187,7 +188,7 @@ export default class CV extends CVSet {
       }
    }
 
-   static async getMaster(language_set: string = 'en'): Promise<CV | null> {
+   static async getMaster(language_set: string = defaultLocale): Promise<CV | null> {
       try {
          const user = await AdminUser.getMaster();
 
@@ -208,7 +209,7 @@ export default class CV extends CVSet {
       }
    }
 
-   static async getUserCVs(user_id: number, language_set: string = 'en', onlyMaster?: boolean): Promise<CV[]> {
+   static async getUserCVs(user_id: number, language_set: string = defaultLocale, onlyMaster?: boolean): Promise<CV[]> {
       try {
          const getQuery = database.select('curriculums_schema', 'cv_sets');
 
@@ -238,7 +239,7 @@ export default class CV extends CVSet {
       }
    }
 
-   static async getById(id: number, language_set: string = 'en'): Promise<CV | null> {
+   static async getById(id: number, language_set: string = defaultLocale): Promise<CV | null> {
       if (!id) {
          throw new ErrorDatabase('CV ID is required', 'CV_ID_REQUIRED');
       }

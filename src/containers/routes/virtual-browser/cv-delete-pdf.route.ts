@@ -1,3 +1,4 @@
+import { defaultLocale } from '../../../app.config';
 import { cvPdfPath } from '../../../helpers/parse.helper';
 import { EventEndpoint } from '../../../services';
 import ErrorEventEndpoint from '../../../services/EventEndpoint/ErrorEventEndpoint';
@@ -6,7 +7,7 @@ import { deleteFile } from '../../../services/VirtualBrowser/VirtualBrowser.help
 export default new EventEndpoint({
    path: '/virtual-browser/cv-delete-pdf',
    controller: async (params = {}, done = () => {}) => {
-      const { cv_id, language_set = 'en', userFullName } = params;
+      const { cv_id, language_set = defaultLocale, userFullName } = params;
       
       try {
          const pdfPath = cvPdfPath(userFullName, cv_id, language_set);

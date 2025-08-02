@@ -1,3 +1,4 @@
+import { defaultLocale } from '../../app.config';
 import CVSet from '../../database/models/curriculums_schema/CVSet/CVSet';
 import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
@@ -8,7 +9,7 @@ export default new Route({
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],
    controller: async (req, res) => {
-      const { cv_id, job_title, summary, language_set = 'en' } = req.body;
+      const { cv_id, job_title, summary, language_set = defaultLocale } = req.body;
       const userId = req.session?.user?.id || 1;
 
       if (!userId) {

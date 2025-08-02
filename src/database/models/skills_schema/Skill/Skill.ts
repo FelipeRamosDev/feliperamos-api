@@ -4,6 +4,7 @@ import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import SkillSet from '../SkillSet/SkillSet';
 import { Experience } from '../../experiences_schema';
 import { CV } from '../../curriculums_schema';
+import { defaultLocale } from '../../../../app.config';
 
 export default class Skill extends SkillSet {
    public name: string;
@@ -130,7 +131,7 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getSkillsByUserId(userId: number, language_set: string = 'en'): Promise<Skill[]> {
+   static async getSkillsByUserId(userId: number, language_set: string = defaultLocale): Promise<Skill[]> {
       try {
          const query = database.select('skills_schema', 'skill_sets');
          query.where({ user_id: userId, language_set });
@@ -147,7 +148,7 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getById(skill_id: number, language_set: string = 'en'): Promise<Skill | null> {
+   static async getById(skill_id: number, language_set: string = defaultLocale): Promise<Skill | null> {
       try {
          const query = database.select('skills_schema', 'skill_sets');
 

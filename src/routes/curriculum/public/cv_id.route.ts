@@ -1,3 +1,4 @@
+import { defaultLocale } from "../../../app.config";
 import { CV } from "../../../database/models/curriculums_schema";
 import { Route } from "../../../services";
 import ErrorResponseServerAPI from "../../../services/ServerAPI/models/ErrorResponseServerAPI";
@@ -7,7 +8,7 @@ export default new Route({
    routePath: '/curriculum/public/:cv_id',
    controller: async (req, res) => {
       const { cv_id } = req.params || {};
-      const { language_set = 'en' } = req.query || {};
+      const { language_set = defaultLocale } = req.query || {};
 
       if (!cv_id) {
          new ErrorResponseServerAPI('CV ID is required', 400, 'CV_ID_REQUIRED').send(res);

@@ -2,11 +2,12 @@ import { EventEndpoint } from '../../../services';
 import { cvPdfPath, frontendURL } from '../../../helpers/parse.helper';
 import { CV } from '../../../database/models/curriculums_schema';
 import service from '../../../containers/virtual-browser.service';
+import { defaultLocale } from '../../../app.config';
 
 export default new EventEndpoint({
    path: '/virtual-browser/cv-create-pdf',
    controller: async (params = {}, done = () => {}) => {
-      const { cv_id, language_set = 'en' } = params;
+      const { cv_id, language_set = defaultLocale } = params;
       let cv: CV | undefined;
 
       if (!cv_id) {
