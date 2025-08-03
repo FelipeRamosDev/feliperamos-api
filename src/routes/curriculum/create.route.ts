@@ -10,7 +10,7 @@ export default new Route({
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],
    controller: async (req: Request, res: Response) => {
-      const { title, notes, cv_experiences = [], cv_skills = [], summary, is_master, job_title }: CVSetup = req.body;
+      const { title, notes, cv_experiences = [], cv_skills = [], summary, is_master, job_title, experience_time }: CVSetup = req.body;
       const userId = req.session?.user?.id;
 
       if (!userId) {
@@ -27,10 +27,10 @@ export default new Route({
          const newCurriculum = new CV({
             title,
             notes,
+            experience_time,
             cv_experiences,
             cv_skills,
             summary,
-            is_master,
             job_title,
             user_id: userId
          });
@@ -40,6 +40,15 @@ export default new Route({
          if (!created) {
             new ErrorResponseServerAPI('Failed to create curriculum', 500, 'CURRICULUM_CREATE_ERROR').send(res);
             return;
+         }
+
+         if (is_master && created.id && created.cv_owner_id) {
+            const masterCV = await CV.setUserMasterCV(created.id, created.cv_owner_id);
+
+            if (!masterCV) {
+               new ErrorResponseServerAPI('Failed to set master CV', 500, 'CURRICULUM_MASTER_SET_ERROR').send(res);
+               return;
+            }
          }
 
          res.status(201).send(created);
