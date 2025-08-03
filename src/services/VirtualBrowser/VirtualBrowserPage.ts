@@ -1,7 +1,7 @@
 import { Page, PDFOptions } from 'puppeteer';
 import ErrorVirtualBrowser from './ErrorVirtualBrowser';
 import VirtualBrowser from './VirtualBrowser';
-import { writeFile } from './VirtualBrowser.helpers';
+import { createDirIfNotExists, writeFile } from '../../helpers/fs.helpers';
 import type { VirtualBrowserPageSetup } from './VirtualBrowser.types';
 
 class VirtualBrowserPage {

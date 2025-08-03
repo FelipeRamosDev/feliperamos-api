@@ -137,10 +137,6 @@ volumes:
   postgres_data:
   shared_data:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./shared_files
 
 networks:
   feliperamos-net:

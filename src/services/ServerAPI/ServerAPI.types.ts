@@ -25,7 +25,7 @@ export interface SSLConfig {
 export interface ServerAPISetup extends MicroserviceSetup {
    projectName?: string;
    API_SECRET: string;
-   publicPath?: string;
+   staticFolders?: StaticFolderSetup[];
    sslConfig?: SSLConfig;
    FE_ORIGIN?: string;
    PORT?: number;
@@ -52,5 +52,11 @@ export interface RouteConfig {
    routePath: string;
    middlewares?: RequestHandler[];
    controller: RequestHandler;
+}
+
+export interface StaticFolderSetup {
+   publicRoot?: string;
+   path?: string;
+   alias?: string;
 }
 

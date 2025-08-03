@@ -1,4 +1,4 @@
-import { CV } from "@/database/models/curriculums_schema";
+import path from "path";
 
 export function frontendURL(path: string, queryParams: Record<string, string | number | boolean> = {}): string {
    const url = new URL(process.env.FRONTEND_URL || 'http://localhost:3000');
@@ -30,11 +30,6 @@ export function cvPdfPath(userFullName: string, cvId: number, languageSet: strin
 
    const userName = userFullName.replace(/ /g, '_');
 
-   const relativePath = `pdf/cv/${userName}-CV_${cvId}_${languageSet}.pdf`;
-   console.log(process.env.NODE_ENV)
-   if (process.env.NODE_ENV === 'production') {
-      return `/app/shared/${relativePath}`;
-   } else {
-      return relativePath;
-   }
+   const relativePath = `cv/${userName}-CV_${cvId}_${languageSet}.pdf`;
+   return path.join(process.env.PUBLIC_PATH || '', relativePath);
 }

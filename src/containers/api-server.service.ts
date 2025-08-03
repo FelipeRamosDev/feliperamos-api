@@ -76,7 +76,12 @@ global.service = new ServerAPI({
    corsOrigin: CORS_ORIGIN,
    sslConfig: sslConfig,
    autoInitialize: true,
-   publicPath: 'pdf',
+   staticFolders: [
+      { 
+         publicRoot: process.env.PUBLIC_PATH,
+         alias: '/static'
+      }
+   ],
    httpEndpoints: [
       loginRoute,
       authUserRoute,

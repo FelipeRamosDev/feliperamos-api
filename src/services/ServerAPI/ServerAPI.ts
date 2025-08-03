@@ -22,6 +22,8 @@ import type {
 } from './ServerAPI.types';
 import { Route } from '../Route';
 import ErrorServerAPI from './models/ErrorServerAPI';
+import { createDirIfNotExists } from '../../helpers/fs.helpers';
+import StaticFolder from './StaticFolder';
 
 /**
  * @class ServerAPI
@@ -34,7 +36,7 @@ class ServerAPI extends Microservice {
    public app_queue: Array<() => void> = [];
    public API_SECRET: string;
    public sessionCookiesMaxAge: number;
-   public publicPath?: string;
+   public staticFolders: StaticFolder[];
    public redisURL: string;
    public corsOrigin: string[];
    public jsonLimit: string;
@@ -66,15 +68,15 @@ class ServerAPI extends Microservice {
       super(setup);
 
       const {
-         projectName = 'default-server',
          API_SECRET,
-         publicPath,
          sslConfig,
          FE_ORIGIN,
-
+         
          // Defaults
+         projectName = 'default-server',
          PORT = 80,
          jsonLimit = '10mb',
+         staticFolders = [],
          autoInitialize = false,
          onConstructed = () => { },
          onInitialized = () => { },
@@ -99,7 +101,7 @@ class ServerAPI extends Microservice {
       this.app_queue = [];
       this.API_SECRET = API_SECRET;
       this.sessionCookiesMaxAge = sessionCookiesMaxAge;
-      this.publicPath = publicPath;
+      this.staticFolders = staticFolders.map(folderConfig => new StaticFolder(folderConfig));
       this.redisURL = redisURL;
       this.corsOrigin = corsOrigin;
       this.jsonLimit = jsonLimit;
@@ -209,6 +211,14 @@ class ServerAPI extends Microservice {
       }
    }
 
+   buildStaticAlias(pathConfig: StaticFolder): string {
+      if (!(pathConfig instanceof StaticFolder)) {
+         throw new ErrorServerAPI('The "pathConfig" param must be a StaticFolder object!', 'INVALID_PATH_CONFIG');
+      }
+
+      return `/${(pathConfig.alias || pathConfig.path).split('/').filter(Boolean).join('/')}`;
+   }
+
    async init(): Promise<void> {
       this.rootPath = path.normalize(__dirname.replace(path.normalize(`${this.prodPath}/src/services`), '/'));
       this.serverState = 'loading';
@@ -245,9 +255,8 @@ class ServerAPI extends Microservice {
          throw new ErrorServerAPI('You need to provide a API SECRET to start the server!', 'API_SECRET_REQUIRED');
       }
 
-      if (this.publicPath) {
-         this.app.use(express.static(this.publicPath));
-      }
+      // Initialize static folders
+      this.staticFolders.forEach(pathConfig => this.initStaticFolder(pathConfig));
 
       // Register routes after all middleware is set up
       this.httpEndpoints.forEach(endpoint => this.createEndpoint(endpoint));
@@ -259,6 +268,21 @@ class ServerAPI extends Microservice {
       }
 
       this.onInitialized.call(this);
+   }
+
+   initStaticFolder(pathConfig: StaticFolder): void {
+      if (!(pathConfig instanceof StaticFolder)) {
+         throw new ErrorServerAPI('The "pathConfig" param must be a StaticFolder object!', 'INVALID_PATH_CONFIG');
+      }
+
+      try {
+         const { path: folderPath, alias } = pathConfig;
+   
+         createDirIfNotExists(folderPath);
+         this.app.use(alias, express.static(folderPath));
+      } catch (error: any) {
+         throw new ErrorServerAPI(`Failed to set static folder: ${error.message}`, 'STATIC_FOLDER_ERROR');
+      }
    }
 
    /**
