@@ -159,7 +159,7 @@ export default class CV extends CVSet {
       }
    }
 
-   async save(props?: CVSetup): Promise<CVSet> {
+   async save(props?: CVSetup): Promise<CV> {
       let processing;
 
       try {
