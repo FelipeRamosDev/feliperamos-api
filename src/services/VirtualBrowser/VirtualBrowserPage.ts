@@ -1,7 +1,7 @@
 import { Page, PDFOptions } from 'puppeteer';
 import ErrorVirtualBrowser from './ErrorVirtualBrowser';
 import VirtualBrowser from './VirtualBrowser';
-import { writeFile } from './VirtualBrowser.helpers';
+import { createDirIfNotExists, writeFile } from '../../helpers/fs.helpers';
 import type { VirtualBrowserPageSetup } from './VirtualBrowser.types';
 
 class VirtualBrowserPage {
@@ -97,8 +97,10 @@ class VirtualBrowserPage {
             throw new ErrorVirtualBrowser('Failed to write PDF file', 'PDF_WRITE_ERROR');
          }
 
+         console.log(`PDF saved to ${filePath} successfully. Size: ${pdfBuffer.length} bytes`);
          return pdfBuffer;
       } catch (error: any) {
+         console.error(`Error generating PDF: ${error.message}`);
          throw new ErrorVirtualBrowser(error.message, error.code || 'PDF_GENERATION_ERROR');
       }
    }
