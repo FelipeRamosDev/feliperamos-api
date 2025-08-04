@@ -48,7 +48,7 @@ import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
-const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : undefined;
+const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/ /g, '').split(',') : undefined;
 const {
    SSL_KEY_PATH,
    SSL_CERT_PATH,
