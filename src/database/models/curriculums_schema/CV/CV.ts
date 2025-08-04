@@ -160,8 +160,6 @@ export default class CV extends CVSet {
    }
 
    async save(props?: CVSetup): Promise<CV> {
-      let processing;
-
       try {
          const { data = [], error } = await database.insert('curriculums_schema', 'cvs').data(this.toSave).returning().exec();
          const [savedCV] = data;
@@ -174,7 +172,6 @@ export default class CV extends CVSet {
             throw new ErrorDatabase('No CV saved', 'CV_SAVE_NO_DATA');
          }
 
-         processing = savedCV;
          const cvData = { ...this, ...props, cv_id: savedCV.id };
          const newCVSet = await CVSet.createSet(cvData as CVSetSetup);
 
