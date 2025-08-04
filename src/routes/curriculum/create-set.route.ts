@@ -9,7 +9,7 @@ export default new Route({
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],
    controller: async (req, res) => {
-      const { cv_id, job_title, summary, language_set = defaultLocale } = req.body;
+      const { cv_id, job_title, sub_title, summary, language_set = defaultLocale } = req.body;
       const userId = req.session?.user?.id || 1;
 
       if (!userId) {
@@ -26,6 +26,7 @@ export default new Route({
          const newSet = await CVSet.createSet({
             cv_id,
             job_title,
+            sub_title,
             summary,
             user_id: userId,
             language_set
