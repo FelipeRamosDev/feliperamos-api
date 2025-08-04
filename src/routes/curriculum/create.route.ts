@@ -10,7 +10,7 @@ export default new Route({
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],
    controller: async (req: Request, res: Response) => {
-      const { title, notes, cv_experiences = [], cv_skills = [], summary, is_master, job_title, experience_time }: CVSetup = req.body;
+      const { title, notes, cv_experiences = [], cv_skills = [], summary, is_master, job_title, sub_title, experience_time }: CVSetup = req.body;
       const userId = req.session?.user?.id;
 
       if (!userId) {
@@ -32,6 +32,7 @@ export default new Route({
             cv_skills,
             summary,
             job_title,
+            sub_title,
             user_id: userId
          });
 
