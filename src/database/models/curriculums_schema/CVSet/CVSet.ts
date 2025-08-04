@@ -9,6 +9,7 @@ import { defaultLocale } from '../../../../app.config';
 export default class CVSet extends TableRow {
    public user_id?: number | null;
    public job_title?: string;
+   public sub_title?: string;
    public summary?: string;
    public cv_id?: number;
    public language_set: string;
@@ -19,6 +20,7 @@ export default class CVSet extends TableRow {
 
       const {
          job_title = '',
+         sub_title = '',
          summary = '',
          user_id,
          cv_id,
@@ -28,19 +30,21 @@ export default class CVSet extends TableRow {
       this.cv_id = cv_id;
       this.language_set = language_set;
       this.job_title = job_title;
+      this.sub_title = sub_title;
       this.summary = summary;
       this.user_id = user_id;
       this.user = new AdminUser(setup);
    }
 
    static async createSet(setup: CVSetSetup): Promise<CVSet> {
-      const { cv_id, user_id, job_title, summary, language_set } = setup || {};
+      const { cv_id, user_id, job_title, sub_title, summary, language_set } = setup || {};
 
       try {
          const { data = [], error } = await database.insert('curriculums_schema', 'cv_sets').data({
             cv_id,
             user_id,
             job_title,
+            sub_title,
             summary,
             language_set
          }).returning().exec();
