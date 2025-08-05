@@ -1,8 +1,25 @@
-# Use the official Node.js runtime as the base image
 FROM node:20-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
+
+# Install Chrome dependencies for Puppeteer
+RUN apk update && apk add --no-cache \
+   chromium \
+   nss \
+   freetype \
+   freetype-dev \
+   harfbuzz \
+   ca-certificates \
+   ttf-freefont \
+   && rm -rf /var/cache/apk/*
+
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed version.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+   PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Create shared directories
+RUN mkdir -p /app/shared/cv
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./

@@ -1,6 +1,9 @@
-import { TableSetup } from '../types/builders/Table.types';
+import { TableSetup } from '../types/models/Table.types';
 import Field from './Field';
 import ErrorDatabase from '../ErrorDatabase';
+import { DatabaseEventSetup } from '../types/models/DatabaseEvent.types';
+import DatabaseEventStore from './DatabaseEventStore';
+import Schema from './Schema';
 
 /**
  * Table class represents a database table with a name and fields.
@@ -15,13 +18,15 @@ import ErrorDatabase from '../ErrorDatabase';
 class Table {
    public name: string;
    public fields: Field[];
+   private _events: Map<string, DatabaseEventStore>;
+   private _schema?: Schema;
 
    /**
     * Creates a new Table instance.
     * @param {Object} setup - The setup object for the table.
     */
-   constructor(setup: TableSetup = {} as TableSetup) {
-      const { name, fields = [] } = setup;
+   constructor(setup: TableSetup = {} as TableSetup, schema?: Schema) {
+      const { name, fields = [], events = {} } = setup;
 
       if (!name) {
          throw new ErrorDatabase('Table name is required', 'TABLE_NAME_REQUIRED');
@@ -29,6 +34,100 @@ class Table {
 
       this.name = name;
       this.fields = fields.map(field => new Field(field));
+      this._events = new Map<string, DatabaseEventStore>();
+      this._schema = schema;
+
+      if (Array.isArray(events.customs)) {
+         events.customs.forEach(customEvent => {
+            this.addEvent({
+               name: customEvent.name,
+               type: customEvent.type,
+               handler: customEvent.handler
+            });
+         });
+      }
+
+      if (events.onAfterSelect) {
+         this.addEvent({
+            name: 'onAfterSelect',
+            type: 'after-select',
+            handler: events.onAfterSelect
+         });
+      }
+
+      if (events.onAfterDelete) {
+         this.addEvent({
+            name: 'onAfterDelete',
+            type: 'after-delete',
+            handler: events.onAfterDelete
+         });
+      }
+
+      if (events.onAfterInsert) {
+         this.addEvent({
+            name: 'onAfterInsert',
+            type: 'after-insert',
+            handler: events.onAfterInsert
+         });
+      }
+
+      if (events.onAfterUpdate) {
+         this.addEvent({
+            name: 'onAfterUpdate',
+            type: 'after-update',
+            handler: events.onAfterUpdate
+         });
+      }
+
+      if (events.onBeforeDelete) {
+         this.addEvent({
+            name: 'onBeforeDelete',
+            type: 'before-delete',
+            handler: events.onBeforeDelete
+         });
+      }
+
+      if (events.onBeforeInsert) {
+         this.addEvent({
+            name: 'onBeforeInsert',
+            type: 'before-insert',
+            handler: events.onBeforeInsert
+         });
+      }
+
+      if (events.onBeforeUpdate) {
+         this.addEvent({
+            name: 'onBeforeUpdate',
+            type: 'before-update',
+            handler: events.onBeforeUpdate
+         });
+      }
+
+      if (events.onBeforeSelect) {
+         this.addEvent({
+            name: 'onBeforeSelect',
+            type: 'before-select',
+            handler: events.onBeforeSelect
+         });
+      }
+   }
+
+   get schema(): Schema | undefined {
+      return this._schema;
+   }
+
+   get schemaName(): string | undefined {
+      return this._schema?.name;
+   }
+
+   setSchema(schema: Schema): Table {
+      if (!schema || !(schema instanceof Schema)) {
+         throw new ErrorDatabase('setSchema method requires a valid "schema" parameter of type Schema.', 'SCHEMA_REQUIRED');
+      }
+
+      this._schema = schema;
+      return this;
+
    }
 
    /**
@@ -63,6 +162,28 @@ class Table {
 
       const fieldsDefinition = this.fields.map(field => field.buildDefinitionSQL()).join(', ');
       return `CREATE TABLE IF NOT EXISTS ${schemaName}.${this.name} (${fieldsDefinition});`;
+   }
+
+   addEvent(eventSetup: DatabaseEventSetup): void {
+      const existingEventStore = this._events.get(eventSetup.name);
+
+      if (existingEventStore) {
+         existingEventStore.addEvent(eventSetup, this);
+      } else {
+         const eventStore = new DatabaseEventStore(eventSetup.name);
+
+         eventStore.addEvent(eventSetup, this);
+         this._events.set(eventSetup.name, eventStore);
+      }
+   }
+
+   triggerEvent(eventName: string, data: any): void {
+      const eventStore = this._events.get(eventName);
+      if (!eventStore) {
+         return;
+      }
+
+      eventStore.triggerEvent(data);
    }
 }
 

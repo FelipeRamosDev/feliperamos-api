@@ -7,7 +7,8 @@ import { Company } from '../../companies_schema';
 import { Skill } from '../../skills_schema';
 import { ExperienceSetSetup } from '../ExperienceSet/ExperienceSet.types';
 import { SkillSetup } from '../../skills_schema/Skill/Skill.types';
-import ErrorResponseServerAPI from '@/services/ServerAPI/models/ErrorResponseServerAPI';
+import { CV } from '../../curriculums_schema';
+import { defaultLocale } from '../../../../app.config';
 
 export default class Experience extends ExperienceSet {
    public type: ExperienceType;
@@ -56,6 +57,56 @@ export default class Experience extends ExperienceSet {
       }
    }
 
+   async populateCompany(language_set: string) {
+      if (!this.company_id) {
+         return;
+      }
+
+      try {
+         const company = await Company.getById(this.company_id, language_set);
+
+         if (company) {
+            this.company = company;
+         } else {
+            throw new ErrorDatabase('Company not found for the given ID', 'COMPANY_NOT_FOUND');
+         }
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'COMPANY_QUERY_ERROR');
+      }
+   }
+
+   async populateSkills(language_set: string) {
+      if (!this.skills?.length) {
+         return;
+      }
+
+      try {
+         this.skills = await Skill.getManyById(this.rawData.skills, language_set);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'SKILL_QUERY_ERROR');
+      }
+   }
+
+   async getRelatedCVs(): Promise<CV[]> {
+      if (!this.id) {
+         throw new ErrorDatabase('Experience ID is required to fetch related CVs', 'EXPERIENCE_ID_REQUIRED');
+      }
+
+      try {
+         const cvQuery = database.select('curriculums_schema', 'cvs');
+         cvQuery.where({ cv_experiences: { condition: '@>', value: [this.id] } });
+
+         const { data = [], error } = await cvQuery.exec();
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         return data.map((cvData) => new CV(cvData));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_QUERY_ERROR');
+      }
+   }
+
    static async create(data: ExperienceCreateSetup): Promise<Experience> {
       try {
          const savedQuery = await database.insert('experiences_schema', 'experiences').data({
@@ -85,7 +136,10 @@ export default class Experience extends ExperienceSet {
             experience_id: createdExperience.id,
          });
 
-         return new Experience({ ...createdExperience, ...createdDefaultSet });
+         return new Experience({
+            ...createdDefaultSet,
+            ...createdExperience
+         });
       } catch (error: any) {
          throw new ErrorDatabase('Failed to create Experience: ' + error.message, 'EXPERIENCE_CREATION_ERROR');
       }
@@ -137,11 +191,33 @@ export default class Experience extends ExperienceSet {
 
          experienceData.company = company;
          experienceData.languageSets = experienceSetData;
-         experienceData.skills = await Skill.getManyByIds(experienceData.skills, language_set);
+         experienceData.skills = await Skill.getManyById(experienceData.skills, language_set);
 
          return new Experience(experienceData);
       } catch (error: any) {
          throw new ErrorDatabase('Failed to fetch Experience: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
+      }
+   }
+
+   static async getById(id: number, language_set: string = defaultLocale): Promise<Experience | null> {
+      try {
+         const query = database.select('experiences_schema', 'experience_sets');
+         query.where({ experience_id: id, language_set });
+         query.populate('experience_id', [ 'experiences.id', 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+
+         const { data = [], error } = await query.exec();
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch Experience by ID: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         const [ experienceData ] = data;
+         if (!experienceData) {
+            return null;
+         }
+
+         return new Experience(experienceData);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
       }
    }
 
@@ -164,11 +240,15 @@ export default class Experience extends ExperienceSet {
 
          // Populating company data for each experience
          for (const exp of data) {
-            exp.company = await Company.getById(exp.company_id, language_set);
+            if (exp.company_id) {
+               exp.company = await Company.getById(exp.company_id, language_set);
+            }
 
             // Populate skills data
             if (Array.isArray(exp.skills) && exp.skills.length) {
-               exp.skills = await Skill.getManyByIds(exp.skills, language_set);
+               if (exp.skills) {
+                  exp.skills = await Skill.getManyById(exp.skills, language_set);
+               }
             }
          }
 
@@ -180,6 +260,29 @@ export default class Experience extends ExperienceSet {
          return data.map(exp => new Experience(exp));
       } catch (error) {
          throw error;
+      }
+   }
+
+   static async getManyById(ids: number[], language_set: string = defaultLocale): Promise<Experience[]> {
+      try {
+         const query = database.select('experiences_schema', 'experience_sets');
+         query.where(ids.map(id => ({ experience_id: id, language_set })));
+         query.populate('experience_id', [ 'experiences.id', 'title', 'type', 'status', 'start_date', 'end_date', 'company_id', 'skills' ]);
+
+         const { data = [], error } = await query.exec();
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch Experiences by ID: ' + error.message, 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         const parsed = data.map(exp => new Experience(exp));
+         for (const experience of parsed) {
+            await experience.populateCompany(language_set);
+            await experience.populateSkills(language_set);
+         }
+
+         return parsed.filter(exp => exp.language_set === language_set);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code);
       }
    }
 
@@ -205,6 +308,32 @@ export default class Experience extends ExperienceSet {
          }
 
          throw new ErrorDatabase('Failed to update experience.', 'EXPERIENCE_UPDATE_ERROR');
+      }
+   }
+
+   static async delete(experience_id: number): Promise<boolean> {
+      if (!experience_id) {
+         throw new ErrorDatabase('Experience ID is required for deletion', 'EXPERIENCE_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('experiences_schema', 'experience_sets').where({ experience_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete experience set', 'EXPERIENCE_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('experiences_schema', 'experiences').where({ id: experience_id });
+         const { error: experienceError } = await deleteQuery.exec();
+         if (experienceError) {
+            throw new ErrorDatabase('Failed to delete experience', 'EXPERIENCE_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting experience:', error);
+         throw new ErrorDatabase(error.message, error.code || 'EXPERIENCE_DELETE_ERROR');
       }
    }
 }

@@ -15,6 +15,7 @@ import ErrorDatabase from '../ErrorDatabase';
 class SelectSQL extends SQL {
    private selectClause: string;
    private sortClause: string;
+   public queryType: string;
 
    /**
     * @constructor
@@ -25,6 +26,7 @@ class SelectSQL extends SQL {
    constructor(database: any, schemaName: string, tableName: string) {
       super(database, schemaName, tableName);
 
+      this.queryType = 'SELECT';
       this.selectClause = '';
       this.sortClause = '';
    }

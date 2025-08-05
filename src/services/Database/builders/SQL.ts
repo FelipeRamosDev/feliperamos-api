@@ -1,7 +1,9 @@
 import { JoinConfig, WhereCondition, QueryResult } from '../types/builders/SQL.types';
 import ErrorDatabase from '../ErrorDatabase';
 import DataBase from '../Database';
-import { RelatedFieldSetup } from '../types/builders/RelatedField.types';
+import { RelatedFieldSetup } from '../types/models/RelatedField.types';
+import Table from '../models/Table';
+import { Result } from 'pg';
 
 interface WhereConditionValue {
   operator?: string;
@@ -29,6 +31,9 @@ class SQL {
    protected onClause: string;
    protected values: any[];
    protected isAllowedNullWhere: boolean;
+   protected queryType: string;
+   private _eventsData: Map<string, any>;
+   public response: Result | null;
 
    /**
     * @constructor
@@ -41,6 +46,8 @@ class SQL {
          throw new ErrorDatabase('A valid database instance with a query method is required.', 'DATABASE_INSTANCE_REQUIRED');
       }
 
+      this._eventsData = new Map();
+      this.queryType = '';
       this.database = database;
       this.schemaName = schemaName;
       this.tableName = tableName;
@@ -53,6 +60,7 @@ class SQL {
       this.onClause = '';
       this.values = [];
       this.isAllowedNullWhere = false;
+      this.response = null;
    }
 
    /**
@@ -66,6 +74,35 @@ class SQL {
       }
 
       return `${this.charsVerifier(this.schemaName)}.${this.charsVerifier(this.tableName)}`;
+   }
+
+   get firstRow(): any {
+      if (!this.response || !Array.isArray(this.response.rows)) {
+         return null;
+      }
+
+      const [ firstRow ] = this.response.rows;
+      return firstRow || null;
+   }
+
+   getEventData(key: string): any {
+      if (!this._eventsData.has(key)) {
+         return;
+      }
+
+      if (typeof key !== 'string' || !key.trim()) {
+         throw new ErrorDatabase('Invalid event name.', 'INVALID_EVENT_NAME');
+      }
+
+      return this._eventsData.get(key);
+   }
+
+   setEventData(key: string, data: any): void {
+      if (typeof key !== 'string' || !key.trim()) {
+         throw new ErrorDatabase('Invalid event name.', 'INVALID_EVENT_NAME');
+      }
+
+      this._eventsData.set(key, data);
    }
 
    /**
@@ -271,9 +308,9 @@ class SQL {
             
             if (!Array.isArray(props) && typeof props === 'object') {
                const conditionValue = props as WhereConditionValue;
-               const operator = conditionValue.operator || '=';
+               const operator = conditionValue?.operator || '=';
 
-               this.values.push(conditionValue.value);
+               this.values.push(conditionValue?.value);
                return `${key} ${operator} $${this.values.length}`;
             }
 
@@ -288,9 +325,9 @@ class SQL {
 
             if (!Array.isArray(props) && typeof props === 'object') {
                const conditionValue = props as WhereConditionValue;
-               const operator = conditionValue.operator || '=';
+               const operator = conditionValue?.operator || '=';
 
-               this.values.push(conditionValue.value);
+               this.values.push(conditionValue?.value);
                return `${key} ${operator} $${this.values.length}`;
             }
 
@@ -355,8 +392,10 @@ class SQL {
     */
    async exec(): Promise<QueryResult> {
       try {
+         await this.triggerBeforeEvent();
          const response = await this.database.pool.query(this.toString(), this.values);
 
+         this.triggerAfterEvent(response);
          if (!response || !response.rows) {
             throw new ErrorDatabase('No data returned from the database.', 'DATABASE_NO_DATA', response);
          }
@@ -380,7 +419,7 @@ class SQL {
             mappedError = { ...error, code: 404 }; 
          }
 
-         throw new ErrorDatabase(`Database query execution failed: ${error.message}`, 'DATABASE_QUERY_ERROR', error);
+         throw new ErrorDatabase(`Database query execution failed: ${mappedError.message}`, 'DATABASE_QUERY_ERROR', mappedError);
       }
    }
 
@@ -400,6 +439,63 @@ class SQL {
     */
    toString(): string {
       throw new ErrorDatabase('toString method must be implemented in subclasses.', 'TO_STRING_NOT_IMPLEMENTED');
+   }
+
+   getTable(): Table {
+      const schema = this.database.getSchema(this.schemaName);
+      return schema?.getTable(this.tableName);
+   }
+
+   triggerBeforeEvent(): void | Promise<void> {
+      const table = this.getTable();
+
+      if (!table) {
+         return;
+      }
+
+      switch (this.queryType) {
+         case 'SELECT':
+            table.triggerEvent('onBeforeSelect', this);
+            break;
+         case 'INSERT':
+            table.triggerEvent('onBeforeInsert', this);
+            break;
+         case 'UPDATE':
+            table.triggerEvent('onBeforeUpdate', this);
+            break;
+         case 'DELETE':
+            table.triggerEvent('onBeforeDelete', this);
+            break;
+         default:
+            throw new ErrorDatabase(`Unsupported query type: ${this.queryType}`, 'UNSUPPORTED_QUERY_TYPE');
+      }
+   }
+
+   triggerAfterEvent(response: Result): void {
+      const table = this.getTable();
+
+      if (!table) {
+         return;
+      }
+
+      this.response = response;
+
+      switch (this.queryType) {
+         case 'SELECT':
+            table.triggerEvent('onAfterSelect', this);
+            break;
+         case 'INSERT':
+            table.triggerEvent('onAfterInsert', this);
+            break;
+         case 'UPDATE':
+            table.triggerEvent('onAfterUpdate', this);
+            break;
+         case 'DELETE':
+            table.triggerEvent('onAfterDelete', this);
+            break;
+         default:
+            throw new ErrorDatabase(`Unsupported query type: ${this.queryType}`, 'UNSUPPORTED_QUERY_TYPE');
+      }
    }
 }
 

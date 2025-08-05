@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 import { AI, Cluster, Core, InstanceBase, Microservice, Thread } from '..';
 import { EndpointSetup } from './EventEndpoint.types';
+import ErrorEventEndpoint from './ErrorEventEndpoint';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const ioRedis = new IORedis(REDIS_URL);
@@ -16,6 +17,8 @@ class EventEndpoint {
    public controller: (data: any, done?: () => void) => void;
    private _instance: () => InstanceType | undefined;
    public ioRedis: IORedis;
+
+   static Error = ErrorEventEndpoint;
 
    /**
     * Constructs an EventEndpoint, subscribes to the Redis channel, and sets up message handling.

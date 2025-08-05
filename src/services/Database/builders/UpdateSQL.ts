@@ -14,6 +14,8 @@ import ErrorDatabase from '../ErrorDatabase';
 class UpdateSQL extends SQL {
    private updateClause: string;
    private setClause: string;
+   public queryType: string;
+   public updates: Record<string, any>;
 
    /**
     * @constructor
@@ -24,8 +26,10 @@ class UpdateSQL extends SQL {
    constructor (database: any, schemaName: string, tableName: string) {
       super(database, schemaName, tableName);
       
+      this.queryType = 'UPDATE';
       this.updateClause = `UPDATE ${this.tablePath}`;
       this.setClause = '';
+      this.updates = {};
    }
 
    /**
@@ -68,7 +72,8 @@ class UpdateSQL extends SQL {
          return `${key} = $${this.values.length}`;
       });
 
-      this.setClause = `SET ${parsed.join(', ')}`; 
+      this.setClause = `SET ${parsed.join(', ')}`;
+      this.updates = dataSet;
       return this;
    }
 }

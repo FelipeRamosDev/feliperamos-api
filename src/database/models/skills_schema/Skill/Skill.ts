@@ -2,6 +2,9 @@ import { SkillCreateSetup, SkillSetup } from './Skill.types';
 import database from '../../../../database';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import SkillSet from '../SkillSet/SkillSet';
+import { Experience } from '../../experiences_schema';
+import { CV } from '../../curriculums_schema';
+import { defaultLocale } from '../../../../app.config';
 
 export default class Skill extends SkillSet {
    public name: string;
@@ -18,6 +21,61 @@ export default class Skill extends SkillSet {
       this.level = level;
       this.category = category;
       this.languageSets = languageSets;
+   }
+
+   async getRelatedExperiences(): Promise<Experience[]> {
+      try {
+         const experiencesQuery = database.select('experiences_schema', 'experiences');
+         experiencesQuery.where({ skills: { operator: '@>', value: [this.id] }});
+         const { data: relatedExperiences = [], error } = await experiencesQuery.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch related experiences', 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         return relatedExperiences.map((experience) => new Experience(experience));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'EXPERIENCE_FETCH_ERROR');
+      }
+   }
+
+   async getRelatedCVs(): Promise<CV[]> {
+      try {
+         const relatedExperiences = await this.getRelatedExperiences();
+         const cvs: Map<number, CV> = new Map();
+
+         for (const experience of relatedExperiences) {
+            const relatedCVs = await experience.getRelatedCVs();
+            relatedCVs.forEach(cv => {
+               if (!cv.id) {
+                  return;
+               }
+
+               cvs.set(cv.id, cv);
+            });
+         }
+
+         const directCVsQuery = database.select('curriculums_schema', 'cvs');
+         directCVsQuery.where({ cv_skills: { condition: '@>', value: [this.id] }});
+
+         const { data = [], error } = await directCVsQuery.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch direct CVs', 'CV_QUERY_ERROR');
+         }
+
+         data.forEach(cv => {
+            if (!cv.id) {
+               return;
+            }
+
+            cvs.set(cv.id, cv);
+         });
+
+         return Array.from(cvs.values());
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
+      }
    }
 
    static async create(skillData: SkillCreateSetup): Promise<Skill> {
@@ -43,7 +101,10 @@ export default class Skill extends SkillSet {
             user_id: skillData.user_id
          });
 
-         return new Skill({ ...createdSkill, ...skillSetCreated });
+         return new Skill({
+            ...skillSetCreated,
+            ...createdSkill
+         });
       } catch (error) {
          throw error;
       }
@@ -70,11 +131,11 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getSkillsByUserId(userId: number, language_set: string = 'en'): Promise<Skill[]> {
+   static async getSkillsByUserId(userId: number, language_set: string = defaultLocale): Promise<Skill[]> {
       try {
          const query = database.select('skills_schema', 'skill_sets');
          query.where({ user_id: userId, language_set });
-         query.populate('skill_id', ['name', 'category', 'level']);
+         query.populate('skill_id', ['skills.id', 'name', 'category', 'level']);
 
          const { data = [], error } = await query.exec();
          if (error) {
@@ -87,7 +148,7 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getById(skill_id: number, language_set: string = 'en'): Promise<Skill | null> {
+   static async getById(skill_id: number, language_set: string = defaultLocale): Promise<Skill | null> {
       try {
          const query = database.select('skills_schema', 'skill_sets');
 
@@ -110,7 +171,7 @@ export default class Skill extends SkillSet {
       }
    }
 
-   static async getManyByIds(skillIds: number[], language_set?: string): Promise<Skill[]> {
+   static async getManyById(skillIds: number[], language_set?: string): Promise<Skill[]> {
       if (!Array.isArray(skillIds)) {
          return [];
       }
@@ -176,6 +237,32 @@ export default class Skill extends SkillSet {
          return new Skill(updatedSkill);
       } catch (error) {
          throw error;
+      }
+   }
+
+   static async delete(skill_id: number): Promise<boolean> {
+      if (!skill_id) {
+         throw new ErrorDatabase('Skill ID is required for deletion', 'SKILL_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('skills_schema', 'skill_sets').where({ skill_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete skill set', 'SKILL_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('skills_schema', 'skills').where({ id: skill_id });
+         const { error: skillError } = await deleteQuery.exec();
+         if (skillError) {
+            throw new ErrorDatabase('Failed to delete skill', 'SKILL_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting skill:', error);
+         throw new ErrorDatabase(error.message, error.code || 'SKILL_DELETE_ERROR');
       }
    }
 }
