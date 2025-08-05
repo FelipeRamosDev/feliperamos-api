@@ -149,7 +149,7 @@ export default class CV extends CVSet {
          const user = await AdminUser.getById(this.cv_owner_id);
 
          if (!user) {
-            throw null;
+            throw new ErrorDatabase('User not found', 'CV_USER_NOT_FOUND');
          }
          
          this.user = user.toPublic();
