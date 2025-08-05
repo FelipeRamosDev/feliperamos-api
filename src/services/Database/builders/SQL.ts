@@ -482,7 +482,7 @@ class SQL {
 
       switch (this.queryType) {
          case 'SELECT':
-            table.   triggerEvent('onAfterSelect', this);
+            table.triggerEvent('onAfterSelect', this);
             break;
          case 'INSERT':
             table.triggerEvent('onAfterInsert', this);

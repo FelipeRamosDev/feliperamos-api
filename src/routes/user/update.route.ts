@@ -18,7 +18,8 @@ export default new Route({
          const updatedUser = await AdminUser.update(userId, updates);
 
          if (!updatedUser) {
-            new ErrorResponseServerAPI();
+            new ErrorResponseServerAPI('User not found or update failed', 404, 'USER_NOT_FOUND').send(res);
+            return;
          }
 
          req.session.user = updatedUser.toPublic();

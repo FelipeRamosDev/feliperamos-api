@@ -14,7 +14,7 @@ export default new Route({
          res.status(200).send(masterCV);
       } catch (error) {
          console.error('Error fetching master CV:', error);
-         new ErrorResponseServerAPI('Internal Server Error', 500, 'ERROR_FETCHING_MASTER_CV');
+         new ErrorResponseServerAPI('Internal Server Error', 500, 'ERROR_FETCHING_MASTER_CV').send(res);
       }
    }
 });

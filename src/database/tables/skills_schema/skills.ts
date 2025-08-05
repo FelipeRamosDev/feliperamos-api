@@ -2,7 +2,7 @@ import { locales } from '../../../app.config';
 import { Skill } from '../../../database/models/skills_schema';
 import Table from '../../../services/Database/models/Table';
 import { sendToCreateCVPDF } from '../../../helpers/database.helper';
-import { CV } from '@/database/models/curriculums_schema';
+import { CV } from '../../../database/models/curriculums_schema';
 
 export default new Table({
    name: 'skills',
