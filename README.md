@@ -19,6 +19,10 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **📊 Skills Management**: Complete CRUD operations for skills with multi-language support
 - **🏢 Company Management**: Full company profile management with industry categorization
 - **💼 Experience Management**: Comprehensive work experience tracking with detailed descriptions
+- **📄 CV Management**: Complete curriculum vitae creation and management system
+- **🤖 VirtualBrowser Service**: Headless browser automation for PDF generation
+- **📋 PDF Generation**: Automated CV PDF creation with multi-language support
+- **🔄 Database Events**: Event-driven architecture for automatic PDF updates
 - **🌐 Multi-language Support**: Language sets for internationalization (English/Spanish/etc.)
 - **🔒 Role-based Authorization**: Master, Admin, and User role hierarchy with route protection
 - **📝 Public API Endpoints**: Read-only public endpoints for portfolio data display
@@ -45,6 +49,7 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 | **Socket Server** | 5000 | Real-time WebSocket communication |
 | **API Server** | 3001 | RESTful API endpoints |
 | **Slack Service** | 4000 | Slack bot and webhook handling |
+| **VirtualBrowser Service** | - | Headless browser automation for PDF generation |
 
 ### Core Services
 
@@ -54,6 +59,7 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **💾 Redis DB**: Caching, sessions, and pub/sub messaging
 - **🗄️ Database**: PostgreSQL with schema management
 - **🏗️ Cluster Manager**: Process management and scaling
+- **🖥️ VirtualBrowser**: Headless browser automation service for PDF generation and web scraping
 
 ## 📦 Tech Stack
 
@@ -72,6 +78,7 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 ### AI & Integration
 - **OpenAI API 4.103+** - GPT assistant integration
 - **Slack Bolt 4.4+** - Slack app framework
+- **Puppeteer 24.15+** - Headless browser automation for PDF generation
 
 ### Database & Caching
 - **PostgreSQL 8.16+** - Primary database with full schema management
@@ -93,14 +100,17 @@ feliperamos-api/
 │   │   ├── api-server.service.ts # REST API server
 │   │   ├── slack.service.ts    # Slack integration
 │   │   ├── socket-server.service.ts # Socket.IO server
+│   │   ├── virtual-browser.service.ts # VirtualBrowser service
 │   │   ├── namespaces/         # Socket namespaces
 │   │   └── routes/             # API route definitions
+│   │       └── virtual-browser/ # VirtualBrowser event routes
 │   ├── database/               # Database layer
 │   │   ├── index.ts           # Database initialization
 │   │   ├── models/            # Data models & ORM
 │   │   │   ├── users_schema/  # User management models
 │   │   │   ├── skills_schema/ # Skills management models
 │   │   │   ├── companies_schema/ # Company management models
+│   │   │   ├── curriculums_schema/ # CV/Resume management models
 │   │   │   └── experiences_schema/ # Experience management models
 │   │   ├── schemas/           # Database schema definitions
 │   │   └── tables/            # Table structure definitions
@@ -108,7 +118,9 @@ feliperamos-api/
 │   │   ├── auth/              # Authentication routes
 │   │   ├── skill/             # Skills CRUD operations
 │   │   ├── company/           # Company CRUD operations
+│   │   ├── curriculum/        # CV/Resume CRUD operations
 │   │   ├── experience/        # Experience CRUD operations
+│   │   ├── user/              # User management routes
 │   │   └── health.route.ts    # Health check endpoint
 │   ├── services/              # Core service classes
 │   │   ├── AI/                # OpenAI integration
@@ -120,7 +132,8 @@ feliperamos-api/
 │   │   ├── Route/            # Route management with auth
 │   │   ├── ServerAPI/        # HTTP/HTTPS server with middleware
 │   │   ├── SlackApp/         # Slack bot service
-│   │   └── SocketServer/     # Socket.IO implementation
+│   │   ├── SocketServer/     # Socket.IO implementation
+│   │   └── VirtualBrowser/   # Headless browser automation service
 │   ├── global/               # Global types and utilities
 │   └── models/               # Data models
 ├── cert/                     # SSL certificates
@@ -351,6 +364,7 @@ npm run start:slack &
 | `npm run dev:socket-server` | Start Socket server only |
 | `npm run dev:api-server` | Start API server only |
 | `npm run dev:slack` | Start Slack service only |
+| `npm run dev:virtual-browser` | Start VirtualBrowser service only |
 
 ### Production
 | Script | Description |
@@ -361,6 +375,7 @@ npm run start:slack &
 | `npm run start:socket-server` | Start built Socket server |
 | `npm run start:api-server` | Start built API server |
 | `npm run start:slack` | Start built Slack service |
+| `npm run start:virtual-browser` | Start built VirtualBrowser service |
 
 ### Watch Mode
 | Script | Description |
@@ -369,6 +384,7 @@ npm run start:slack &
 | `npm run watch:socket-server` | Watch Socket server with nodemon |
 | `npm run watch:api-server` | Watch API server with nodemon |
 | `npm run watch:slack` | Watch Slack service with nodemon |
+| `npm run watch:virtual-browser` | Watch VirtualBrowser service with nodemon |
 
 ### Utilities
 | Script | Description |
@@ -406,6 +422,27 @@ npm run start:slack &
 - `assistant-typing` - Typing indicators
 - `user-message` - User message handling
 
+## 🖥️ VirtualBrowser Service Features
+
+### Headless Browser Automation
+- **Puppeteer Integration**: Chrome/Chromium headless browser automation
+- **Page Management**: Multiple browser pages with lifecycle management
+- **PDF Generation**: High-quality PDF creation from web content
+- **Viewport Configuration**: Customizable browser viewport settings
+- **Event-Driven Architecture**: Automatic PDF generation triggered by database events
+
+### PDF Generation Capabilities
+- **CV/Resume PDFs**: Automated CV PDF creation in multiple languages
+- **Real-time Updates**: PDFs regenerated when CV data changes
+- **Multi-language Support**: PDFs generated for different locales
+- **File Management**: Automatic PDF storage and cleanup
+- **Template Rendering**: Web-based CV templates rendered to PDF
+
+### Docker Integration
+- **Containerized Browser**: Runs in Docker with proper Chromium setup
+- **Health Checks**: Service health monitoring and auto-restart
+- **Resource Management**: Optimized for server environments
+
 ## 🗄️ Database Services
 
 ### PostgreSQL Database
@@ -437,6 +474,7 @@ services:
   slack-service:     # Slack bot service  
   api-server:        # REST API server (Port 7000)
   socket-server:     # Socket.IO server (Port 5000)
+  virtual-browser:   # VirtualBrowser service for PDF generation
   redis:            # Redis cache server with health checks
   postgres:         # PostgreSQL database with health checks
 ```
@@ -508,6 +546,21 @@ services:
 - `POST /experience/update-set` - Update experience language set (Admin/Master)
 - `GET /experience/public/user-experiences` - Get public experiences for master user
 
+### Curriculum/CV Management (Protected Routes)
+- `POST /curriculum/create` - Create new CV/resume (Admin/Master)
+- `POST /curriculum/create-set` - Create CV language set (Admin/Master)
+- `GET /curriculum/user-cvs` - Get user's CVs (Admin/Master)
+- `GET /curriculum/:cv_id` - Get CV details by ID (Admin/Master)
+- `POST /curriculum/update` - Update CV information (Admin/Master)
+- `POST /curriculum/update-set` - Update CV language set (Admin/Master)
+- `POST /curriculum/set-master` - Set CV as master/primary CV (Admin/Master)
+- `DELETE /curriculum/delete` - Delete CV (Admin/Master)
+- `GET /curriculum/public/:cv_id` - Get public CV data for display
+- `GET /user/master-cv` - Get master user's primary CV
+
+### User Management (Protected Routes)
+- `POST /user/update` - Update user profile information (Admin/Master)
+
 ### AI & System Routes
 - `POST /assistant-generate` - Generate AI responses
 - `GET /health` - Service health status and diagnostics
@@ -525,29 +578,21 @@ services:
 - **Load Balancing**: Request distribution
 - **Cluster Mode**: Multi-process support
 
-## 📋 What's New in v1.2.0
+## 📋 What's New in v1.3.0
 
 ### 🎯 Major Features Added
-- **Complete Admin Dashboard Backend**: Full CRUD operations for skills, companies, and experiences
-- **JWT Authentication System**: Secure token-based authentication with role management
-- **Database Integration**: Full PostgreSQL integration with schema management and models
-- **Multi-language Support**: Language sets for internationalization
-- **Master User System**: Automatic master user creation and management
-- **Public API Endpoints**: Read-only endpoints for portfolio data display
+- **CV/Resume Management System**: Complete curriculum vitae creation, editing, and management
+- **VirtualBrowser Service**: Headless browser automation service for PDF generation
+- **Automated PDF Generation**: Real-time CV PDF creation with multi-language support
+- **Database Events System**: Event-driven architecture for automatic PDF updates
 
 ### 🔧 Technical Improvements
-- **Database Models**: Complete ORM layer with TypeScript support
-- **Authentication Middleware**: JWT validation and role-based route protection
-- **Health Checks**: Enhanced Docker health monitoring for all services
-- **Error Handling**: Comprehensive error management system
-- **Security Enhancements**: Cookie-based token storage with secure flags
-- **API Restructuring**: Organized route structure with proper middleware
+- **VirtualBrowser Integration**: Puppeteer-based headless browser service with PDF generation
+- **Event-Driven Architecture**: Database events triggering automatic PDF updates
+- **File System Integration**: PDF storage and management capabilities
 
 ### 🗂️ Database Schema
-- **Users Schema**: Admin users with role-based access (Master/Admin/User)
-- **Skills Schema**: Technical skills with proficiency levels and categories
-- **Companies Schema**: Company profiles with location and industry data
-- **Experiences Schema**: Work experience with detailed job descriptions
+- **Curriculums Schema**: CV/Resume data with language sets and PDF management
 
 ### 🚀 Development Experience
 - **Simplified Configuration**: Streamlined VS Code debugging setup
@@ -574,9 +619,3 @@ This project is private and proprietary. All rights reserved.
 - Email: felipe@feliperamos.dev
 - LinkedIn: [linkedin.com/in/feliperamos-dev](https://linkedin.com/in/feliperamos-dev)
 - GitHub: [github.com/FelipeRamosDev](https://github.com/FelipeRamosDev)
-
----
-
-**Built with ❤️ by Felipe Ramos**
-
-*Version 1.2.0 - Showcasing modern backend architecture, AI integration, comprehensive admin features, and real-time communication technologies.*

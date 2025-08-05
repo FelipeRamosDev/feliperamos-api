@@ -1,4 +1,4 @@
-import { RelatedFieldSetup } from '../types/builders/RelatedField.types';
+import { RelatedFieldSetup } from '../types/models/RelatedField.types';
 import ErrorDatabase from '../ErrorDatabase';
 
 /**

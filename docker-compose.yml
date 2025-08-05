@@ -5,9 +5,9 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      redis:
+      redis-service:
         condition: service_healthy
-      postgres:
+      postgres-service:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -24,9 +24,9 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      redis:
+      redis-service:
         condition: service_healthy
-      postgres:
+      postgres-service:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -43,15 +43,17 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      redis:
+      redis-service:
         condition: service_healthy
-      postgres:
+      postgres-service:
         condition: service_healthy
     restart: unless-stopped
     networks:
       - feliperamos-net
     env_file:
       - .env.local
+    volumes:
+      - shared_data:/app/shared
     command: ['npm', 'run', 'start:api-server']
 
   socket-server:
@@ -62,9 +64,9 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      redis:
+      redis-service:
         condition: service_healthy
-      postgres:
+      postgres-service:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -73,9 +75,28 @@ services:
       - .env.local
     command: ['npm', 'run', 'start:socket-server']
 
-  redis:
+  virtual-browser:
+    build: .
+    container_name: virtual-browser
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      redis-service:
+        condition: service_healthy
+      postgres-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - feliperamos-net
+    env_file:
+      - .env.local
+    volumes:
+      - shared_data:/app/shared
+    command: ['npm', 'run', 'start:virtual-browser']
+
+  redis-service:
     image: redis:7-alpine
-    container_name: redis
+    container_name: redis-service
     ports:
       - "6000:6000"
     restart: unless-stopped
@@ -91,31 +112,31 @@ services:
       retries: 3
       start_period: 10s
 
-  postgres:
+  postgres-service:
     image: postgres:15
-    container_name: postgres
+    container_name: postgres-service
     environment:
       - NODE_ENV=production
     env_file:
       - .env.local
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - feliperamos-net
     restart: unless-stopped
-    command: postgres -p ${DB_PORT}
+    command: postgres -p 5432
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h localhost -p $${DB_PORT} -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 30s
       timeout: 5s
       retries: 5
-      start_period: 30s
-
 volumes:
   redis_data:
   postgres_data:
+  shared_data:
+    driver: local
 
 networks:
   feliperamos-net:

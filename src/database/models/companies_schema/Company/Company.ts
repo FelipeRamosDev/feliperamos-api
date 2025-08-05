@@ -3,6 +3,9 @@ import database from '../../../../database';
 import CompanySet from '../CompanySet/CompanySet';
 import { CompanySetup, CreateCompanyData } from './Company.types';
 import { CompanySetSetup } from '../CompanySet/CompanySet.types';
+import { Experience } from '../../experiences_schema';
+import { CV } from '../../curriculums_schema';
+import { defaultLocale } from '../../../../app.config';
 
 export default class Company extends CompanySet {
    public company_name: string;
@@ -28,6 +31,42 @@ export default class Company extends CompanySet {
       this.site_url = site_url;
 
       this.languageSets = languageSets.map((companySet: CompanySetSetup) => new CompanySet(companySet));
+   }
+
+   async getRelatedExperiences(): Promise<any[]> {
+      try {
+         const experiencesQuery = database.select('experiences_schema', 'experiences');
+         experiencesQuery.where({ company_id: this.id });
+         const { data = [], error } = await experiencesQuery.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch related experiences', 'EXPERIENCE_QUERY_ERROR');
+         }
+
+         return data.map((experience) => new Experience(experience));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'EXPERIENCE_FETCH_ERROR');
+      }
+   }
+
+   async getRelatedCVs(): Promise<CV[]> {
+      try {
+         const experiences = await this.getRelatedExperiences();
+         const cvs: Map<number, CV> = new Map();
+
+         for (const experience of experiences) {
+            const experienceCVs = await experience.getRelatedCVs();
+
+            experienceCVs.forEach((cv: CV) => {
+               if (!cv.id) return;
+               cvs.set(cv.id, cv);
+            });
+         }
+
+         return Array.from(cvs.values());
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_FETCH_ERROR');
+      }
    }
 
    static async create(data: CreateCompanyData): Promise<Company> {
@@ -59,25 +98,29 @@ export default class Company extends CompanySet {
       });
 
       return new Company({
-         ...createdCompany,
          ...isSet,
+         ...createdCompany,
       });
    }
 
-   static async getById(company_id: number, language_set: string = 'en'): Promise<Company[]> {
-      const companyQuery = database.select('companies_schema', 'company_sets');
+   static async getById(company_id: number, language_set: string = defaultLocale): Promise<Company> {
+      try {
+         const companyQuery = database.select('companies_schema', 'company_sets');
+   
+         companyQuery.where({ company_id, language_set });
+         companyQuery.populate('company_id', [ 'companies.id', 'company_name', 'location', 'logo_url', 'site_url' ]);
 
-      companyQuery.where({ company_id, language_set });
-      companyQuery.populate('company_id', ['company_name', 'location', 'logo_url', 'site_url']);
-
-      const { error, data = [] } = await companyQuery.exec();
-
-      if (error) {
-         throw new ErrorDatabase('Failed to fetch company', 'COMPANY_QUERY_ERROR');
+         const { error, data = [] } = await companyQuery.exec();
+   
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch company', 'COMPANY_QUERY_ERROR');
+         }
+   
+         const [ companyData ] = data;
+         return new Company(companyData);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'COMPANY_QUERY_ERROR');
       }
-
-      const [companyData] = data;
-      return companyData;
    }
 
    static async query(user_id: number, language_set: string): Promise<Company[]> {
@@ -160,6 +203,32 @@ export default class Company extends CompanySet {
       } catch (error) {
          console.error('Error updating company:', error);
          throw new ErrorDatabase('Failed to update company', 'COMPANY_UPDATE_ERROR');
+      }
+   }
+
+   static async delete(company_id: number): Promise<boolean> {
+      if (!company_id) {
+         throw new ErrorDatabase('Company ID is required for deletion', 'COMPANY_DELETE_ERROR');
+      }
+
+      try {
+         const deleteSetQuery = database.delete('companies_schema', 'company_sets').where({ company_id });
+         const { error: setError } = await deleteSetQuery.exec();
+
+         if (setError) {
+            throw new ErrorDatabase('Failed to delete company set', 'COMPANY_SET_DELETE_ERROR');
+         }
+
+         const deleteQuery = database.delete('companies_schema', 'companies').where({ id: company_id });
+         const { error: companyError } = await deleteQuery.exec();
+         if (companyError) {
+            throw new ErrorDatabase('Failed to delete company', 'COMPANY_DELETE_ERROR');
+         }
+   
+         return true;
+      } catch (error: any) {
+         console.error('Error deleting company:', error);
+         throw new ErrorDatabase(error.message, error.code || 'COMPANY_DELETE_ERROR');
       }
    }
 }

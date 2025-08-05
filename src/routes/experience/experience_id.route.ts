@@ -1,3 +1,4 @@
+import { defaultLocale } from '../../app.config';
 import { Experience } from '../../database/models/experiences_schema';
 import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
@@ -7,7 +8,7 @@ export default new Route({
    routePath: '/experience/:experience_id',
    controller: async (req, res) => {
       const { experience_id } = req.params;
-      const { language_set = 'en' } = req.query;
+      const { language_set = defaultLocale } = req.query;
       const experienceId = parseInt(experience_id, 10);
 
       if (isNaN(experienceId) || experienceId < 0) {

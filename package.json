@@ -1,6 +1,6 @@
 {
   "name": "feliperamos-cv",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "Chat bot integrated with an OpenAI GPT agent that replies anything about me, if you are a recruiter, please try to chat with him.",
   "main": "app.js",
   "scripts": {
@@ -11,16 +11,19 @@
     "start:slack": "node dist/src/containers/slack.service.js",
     "start:api-server": "node dist/src/containers/api-server.service.js",
     "start:socket-server": "node dist/src/containers/socket-server.service.js",
+    "start:virtual-browser": "node dist/src/containers/virtual-browser.service.js",
     "dev:watch": "nodemon --exec ts-node app.ts",
     "dev:inspect": "nodemon --exec ts-node --inspect app.ts",
     "dev:ai": "ts-node src/containers/ai.service.ts",
     "dev:slack": "ts-node src/containers/slack.service.ts",
     "dev:api-server": "ts-node src/containers/api-server.service.ts",
     "dev:socket-server": "ts-node src/containers/socket-server.service.ts",
+    "dev:virtual-browser": "ts-node src/containers/virtual-browser.service.ts",
     "watch:ai": "nodemon --exec ts-node src/containers/ai.service.ts",
     "watch:slack": "nodemon --exec ts-node src/containers/slack.service.ts",
     "watch:api-server": "nodemon --exec ts-node src/containers/api-server.service.ts",
     "watch:socket-server": "nodemon --exec ts-node src/containers/socket-server.service.ts",
+    "watch:virtual-browser": "nodemon --exec ts-node src/containers/virtual-browser.service.ts",
     "clean": "rimraf dist",
     "clean:cache": "rimraf .ts-node node_modules/.cache",
     "debug:socket-fresh": "powershell -ExecutionPolicy Bypass -File debug-socket-fresh.ps1",
@@ -64,6 +67,7 @@
     "jsonwebtoken": "^9.0.2",
     "openai": "^4.103.0",
     "pg": "^8.16.3",
+    "puppeteer": "^24.15.0",
     "socket.io": "^4.8.1"
   }
 }

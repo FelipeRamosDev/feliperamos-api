@@ -1,3 +1,4 @@
+import { defaultLocale } from '../../app.config';
 import { Company } from '../../database/models/companies_schema';
 import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
@@ -30,7 +31,7 @@ export default new Route({
             industry,
             description,
             location,
-            language_set: 'en',
+            language_set: defaultLocale,
             user_id: userId
          });
 
