@@ -7,6 +7,6 @@ export default new Table({
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'updated_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'language_set', type: 'VARCHAR(2)', notNull: true },
-      { name: 'display_name', type: 'VARCHAR(100)' },
+      { name: 'display_name', type: 'VARCHAR(100)', notNull: true },
    ]
 });
