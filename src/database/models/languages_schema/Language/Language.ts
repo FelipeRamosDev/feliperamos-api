@@ -75,8 +75,8 @@ class Language extends TableRow {
          }
 
          return new Language(created);
-      } catch (error) {
-         throw new ErrorDatabase('Failed to save Language', 'LANGUAGE_SAVE_FAILED');
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'LANGUAGE_SAVE_FAILED');
       }
    }
 
@@ -94,8 +94,8 @@ class Language extends TableRow {
          }
 
          return new Language(found);
-      } catch (error) {
-         throw new ErrorDatabase('Failed to find Language', 'LANGUAGE_FIND_FAILED');
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'LANGUAGE_FIND_FAILED');
       }
    }
 
@@ -113,8 +113,8 @@ class Language extends TableRow {
          }
 
          return new Language(updated);
-      } catch (error) {
-         throw new ErrorDatabase('Failed to update Language', 'LANGUAGE_UPDATE_FAILED');
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'LANGUAGE_UPDATE_FAILED');
       }
    }
 
@@ -127,8 +127,8 @@ class Language extends TableRow {
          }
 
          return true;
-      } catch (error) {
-         throw new ErrorDatabase('Failed to delete Language', 'LANGUAGE_DELETE_FAILED');
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'LANGUAGE_DELETE_FAILED');
       }
    }
 }
