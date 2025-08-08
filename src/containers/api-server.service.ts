@@ -34,6 +34,11 @@ import companyUpdateSet from '../routes/company/update-set.route';
 import companyGet from '../routes/company/company_id.route';
 import companyDelete from '../routes/company/delete.route';
 
+import languageCreate from '../routes/language/create.route';
+import languageGet from '../routes/language/language_id.route';
+import languageUpdate from '../routes/language/update.route';
+import languageDelete from '../routes/language/delete.route';
+
 import curriculumCreate from '../routes/curriculum/create.route';
 import curriculumCreateSet from '../routes/curriculum/create-set.route';
 import curriculumGet from '../routes/curriculum/cv_id.route';
@@ -109,6 +114,10 @@ global.service = new ServerAPI({
       companyQuery,
       companyGet,
       companyDelete,
+      languageCreate,
+      languageGet,
+      languageUpdate,
+      languageDelete,
       curriculumCreate,
       curriculumCreateSet,
       curriculumUpdate,
