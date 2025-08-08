@@ -13,5 +13,15 @@ export default new Table({
       { name: 'listening_level', type: 'VARCHAR(50)', notNull: true },
       { name: 'writing_level', type: 'VARCHAR(50)', notNull: true },
       { name: 'speaking_level', type: 'VARCHAR(50)', notNull: true },
+      {
+         name: 'language_user_id',
+         type: 'INTEGER',
+         notNull: true,
+         relatedField: {
+            field: 'id',
+            schema: 'users_schema',
+            table: 'admin_users'
+         }
+      }
    ]
 });
