@@ -5,8 +5,8 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 export default new Route({
    method: 'DELETE',
    routePath: '/language/delete',
-   // useAuth: true,
-   // allowedRoles: ['admin', 'master'],
+   useAuth: true,
+   allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { language_id } = req.body || {};
 
