@@ -8,4 +8,5 @@ export interface LanguageSetup {
    listening_level: LanguageLevel;
    writing_level: LanguageLevel;
    speaking_level: LanguageLevel;
+   language_user_id: string;
 }
