@@ -15,7 +15,7 @@ class Language extends TableRow {
    public listening_level: LanguageLevel;
    public writing_level: LanguageLevel;
    public speaking_level: LanguageLevel;
-   public language_user_id: string;
+   public language_user_id: number;
 
    constructor (setup: LanguageSetup) {
       super('languages_schema', 'languages', setup);
@@ -51,9 +51,19 @@ class Language extends TableRow {
       };
    }
 
+   toCreate() {
+      const result = this.toObject();
+
+      delete result.id;
+      delete result.created_at;
+      delete result.updated_at;
+
+      return result;
+   }
+
    async save(): Promise<Language | null> {
       try {
-         const { data = [], error } = await database.insert(this.schemaName, this.tableName).data(this.toObject()).returning().exec();
+         const { data = [], error } = await database.insert(this.schemaName, this.tableName).data(this.toCreate()).returning().exec();
          const [ created ] = data;
 
          if (error) {

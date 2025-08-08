@@ -9,7 +9,7 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const body = req.body || {};
-      const userId = req.session?.user?.id || 1;
+      const userId = req.session?.user?.id;
 
       if (!userId) {
          new ErrorResponseServerAPI('User not authenticated', 401, 'USER_NOT_AUTHENTICATED').send(res);
