@@ -6,5 +6,4 @@ export interface EducationSetup extends EducationSetSetup {
    end_date: Date;
    is_current: boolean;
    student_id: number;
-   resume_id: number;
 }

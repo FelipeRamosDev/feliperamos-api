@@ -19,16 +19,6 @@ export default new Table({
             table: 'admin_users',
             field: 'id'
          }
-      },
-      {
-         name: 'resume_id',
-         type: 'INTEGER',
-         notNull: true,
-         relatedField: {
-            schema: 'curriculums_schema',
-            table: 'cvs',
-            field: 'id'
-         }
       }
    ]
 });

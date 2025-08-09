@@ -1,3 +1,4 @@
+import { defaultLocale } from '../../../app.config';
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
@@ -10,6 +11,7 @@ export default new Table({
       { name: 'field_of_study', type: 'VARCHAR(255)' },
       { name: 'grade', type: 'VARCHAR(50)' },
       { name: 'description', type: 'TEXT' },
+      { name: 'language_set', type: 'VARCHAR(2)', defaultValue: defaultLocale },
       {
          name: 'education_id',
          type: 'INTEGER',

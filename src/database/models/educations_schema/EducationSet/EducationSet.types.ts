@@ -4,8 +4,19 @@ export interface EducationSetSetup {
    updated_at: Date;
    degree?: string;
    field_of_study?: string;
-   grade?: string | null;
-   description?: string | null;
+   grade?: string;
+   description?: string;
+   education_id: number;
+   language_set: string;
+   user_id: number;
+}
+
+export interface EducationSetCreate {
+   degree?: string;
+   field_of_study?: string;
+   grade?: string;
+   description?: string;
    education_id: number;
    user_id: number;
+   language_set: string;
 }
