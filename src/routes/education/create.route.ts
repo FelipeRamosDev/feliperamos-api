@@ -11,7 +11,7 @@ export default new Route({
       const userId = req.session.user?.id;
 
       if (!userId) {
-         new ErrorResponseServerAPI('User not found', 401, 'Unauthorized').send(res);
+         new ErrorResponseServerAPI('User not found', 401, 'ERR_UNAUTHORIZED').send(res);
          return;
       }
 
@@ -21,7 +21,7 @@ export default new Route({
 
          res.status(201).send(created);
       } catch (error) {
-         new ErrorResponseServerAPI('Failed to create education', 500, 'Server Error').send(res);
+         new ErrorResponseServerAPI('Failed to create education', 500, 'ERR_CREATE_FAILED').send(res);
       }
    }
 });
