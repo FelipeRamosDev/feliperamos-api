@@ -111,7 +111,7 @@ class Education extends EducationSet {
             toAbort.push(database.delete(this.schemaName, 'education_sets').where({ id: createdSet.id }));
          }
 
-         return new Education({ ...created, ...defaultSet.toObjectSet() });
+         return new Education({ ...defaultSet.toObjectSet(), ...created });
       } catch (error: any) {
          toAbort.forEach(item => item.exec().catch((err) => console.error(err)));
          throw new ErrorDatabase(error.message, error.code || 'ERR_SAVE_FAILED', 'Database Error');
