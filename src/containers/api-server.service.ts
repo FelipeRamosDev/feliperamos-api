@@ -49,9 +49,16 @@ import curriculumSetMaster from '../routes/curriculum/set-master.route';
 import curriculumDelete from '../routes/curriculum/delete.route';
 import curriculumPublicGet from '../routes/curriculum/public/cv_id.route';
 
+import educationCreate from '../routes/education/create.route';
+import educationGet from '../routes/education/education_id.route';
+import educationUpdate from '../routes/education/update.route';
+import educationUpdateSet from '../routes/education/update-set.route';
+import educationDelete from '../routes/education/delete.route';
+
 import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
 import userLanguages from '../routes/user/languages.route';
+import userEducations from '../routes/user/educations.route';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/ /g, '').split(',') : undefined;
@@ -128,9 +135,15 @@ global.service = new ServerAPI({
       curriculumSetMaster,
       curriculumDelete,
       curriculumPublicGet,
+      educationCreate,
+      educationGet,
+      educationUpdate,
+      educationUpdateSet,
+      educationDelete,
       userUpdate,
       userMasterCV,
-      userLanguages
+      userLanguages,
+      userEducations
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
