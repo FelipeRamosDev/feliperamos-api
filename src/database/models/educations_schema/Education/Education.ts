@@ -28,7 +28,14 @@ class Education extends EducationSet {
       this.start_date = start_date;
       this.end_date = end_date;
       this.is_current = Boolean(is_current);
-      this.student_id = student_id || this.user_id;
+
+      if (student_id != null && student_id !== undefined) {
+         this.student_id = student_id;
+      } else if (this.user_id != null && this.user_id !== undefined) {
+         this.student_id = this.user_id;
+      } else {
+         throw new ErrorDatabase('Param "student_id" is required and was not provided.', 'ERR_MISSING_STUDENT_ID');
+      }
    }
 
    toObject() {
