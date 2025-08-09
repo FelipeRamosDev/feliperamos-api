@@ -3,6 +3,7 @@ import TableRow from '../../../../services/Database/models/TableRow';
 import database from '../../..';
 import { AdminUserPublic, CreateUserProps, UserRoles } from './AdminUser.types';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
+import { Language } from '../../languages_schema';
 
 const PUBLIC_FIELDS = [
    'id',
@@ -278,6 +279,23 @@ export default class AdminUser extends TableRow {
          return new AdminUser(user);
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'USER_UPDATE_ERROR');
+      }
+   }
+
+   static async getLanguages(userId: number): Promise<Language[]> {
+      if (!userId) {
+         throw new Error('User ID is required to fetch languages.');
+      }
+
+      try {
+         const query = database.select('languages_schema', 'languages');
+
+         query.where({ language_user_id: userId });
+         const { data = [] } = await query.exec();
+
+         return data.map(item => new Language(item));
+      } catch (error: any) {
+         throw new Error(`Fetching user languages failed: ${error.message}`);
       }
    }
 }

@@ -51,6 +51,7 @@ import curriculumPublicGet from '../routes/curriculum/public/cv_id.route';
 
 import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
+import userLanguages from '../routes/user/languages.route';
 
 const SERVER_API_PORT = Number(process.env.SERVER_API_PORT || 8000);
 const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/ /g, '').split(',') : undefined;
@@ -128,7 +129,8 @@ global.service = new ServerAPI({
       curriculumDelete,
       curriculumPublicGet,
       userUpdate,
-      userMasterCV
+      userMasterCV,
+      userLanguages
    ],
    onListen: function () {
       console.log(`Server API is running on port ${this.PORT}`);
