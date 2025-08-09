@@ -295,7 +295,7 @@ export default class AdminUser extends TableRow {
 
          return data.map(item => new Language(item));
       } catch (error: any) {
-         throw new Error(`Fetching user languages failed: ${error.message}`);
+         throw new ErrorDatabase(`Fetching user languages failed: ${error.message}`, 'USER_LANGUAGES_FETCH_ERROR');
       }
    }
 }
