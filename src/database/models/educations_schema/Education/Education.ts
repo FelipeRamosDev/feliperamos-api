@@ -162,6 +162,24 @@ class Education extends EducationSet {
       }
    }
 
+   static async getManyById(education_ids: number[], language_set: string = defaultLocale): Promise<Education[]> {
+      try {
+         const query = database.select('educations_schema', 'education_sets');
+         query.where(education_ids.map(id => ({ education_id: id, language_set })));
+         query.populate('education_id', this.populateFields);
+
+         const { data = [], error } = await query.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to find educations', 'ERR_FIND_FAILED');
+         }
+
+         return data.map(item => new Education(item)).filter(education => education.language_set === language_set);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'ERR_FIND_FAILED');
+      }
+   }
+
    static async getFullById(id: number): Promise<Education | null> {
       try {
          const query = database.select('educations_schema', 'educations').where({ id });

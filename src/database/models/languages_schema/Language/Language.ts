@@ -17,6 +17,14 @@ class Language extends TableRow {
    public speaking_level: LanguageLevel;
    public language_user_id: number;
 
+   static levels = [
+      'beginner',
+      'intermediate',
+      'advanced',
+      'proficient',
+      'native'
+   ];
+
    constructor (setup: LanguageSetup) {
       super('languages_schema', 'languages', setup);
       const { default_name, local_name, locale_code, reading_level, listening_level, writing_level, speaking_level, language_user_id } = setup || {};
@@ -35,6 +43,18 @@ class Language extends TableRow {
       this.language_user_id = language_user_id;
    }
 
+   public get level() {
+      const readingScore = Language.levels.indexOf(this.reading_level) + 1;
+      const listeningScore = Language.levels.indexOf(this.listening_level) + 1;
+      const writingScore = Language.levels.indexOf(this.writing_level) + 1;
+      const speakingScore = Language.levels.indexOf(this.speaking_level) + 1;
+
+      const levelScore = (readingScore + listeningScore + writingScore + speakingScore) / 4;
+      const idx = Math.max(0, Math.min(Language.levels.length - 1, Math.floor(levelScore) - 1));
+
+      return Language.levels[idx];
+   }
+
    toObject() {
       return {
          id: this.id,
@@ -43,6 +63,7 @@ class Language extends TableRow {
          default_name: this.default_name,
          local_name: this.local_name,
          locale_code: this.locale_code,
+         level: this.level,
          reading_level: this.reading_level,
          listening_level: this.listening_level,
          writing_level: this.writing_level,
@@ -94,6 +115,21 @@ class Language extends TableRow {
          }
 
          return new Language(found);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'LANGUAGE_FIND_FAILED');
+      }
+   }
+
+   static async getManyById(language_ids: number[]): Promise<Language[]> {
+      try {
+         const wheres = language_ids.map(id => ({ id }));
+         const { data = [], error } = await database.select('languages_schema', 'languages').where(wheres).exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to find Languages', 'LANGUAGE_FIND_FAILED');
+         }
+
+         return data.map(item => new Language(item));
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'LANGUAGE_FIND_FAILED');
       }
