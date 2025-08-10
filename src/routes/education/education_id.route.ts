@@ -7,7 +7,6 @@ export default new Route({
    routePath: '/education/:education_id',
    controller: async (req, res) => {
       const { education_id } = req.params;
-      const { language_set } = req.query;
       const educationId = Number(education_id);
 
       if (!education_id) {
@@ -21,7 +20,7 @@ export default new Route({
       }
 
       try {
-         const educationRecord = await Education.findById(educationId, language_set as string | undefined);
+         const educationRecord = await Education.getFullById(educationId);
          if (!educationRecord) {
             new ErrorResponseServerAPI('Education record not found', 404, 'EDUCATION_NOT_FOUND').send(res);
             return;

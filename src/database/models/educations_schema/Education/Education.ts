@@ -10,6 +10,7 @@ class Education extends EducationSet {
    public end_date: Date;
    public is_current: boolean;
    public student_id: number;
+   public languageSets: EducationSet[] = [];
 
    static populateFields = [
       'educations.id',
@@ -28,6 +29,7 @@ class Education extends EducationSet {
       this.start_date = start_date;
       this.end_date = end_date;
       this.is_current = Boolean(is_current);
+      this.languageSets = [];
 
       if (student_id != null && student_id !== undefined) {
          this.student_id = student_id;
@@ -118,6 +120,24 @@ class Education extends EducationSet {
       }
    }
 
+   async loadLanguageSets(): Promise<this> {
+      try {
+         const query = database.select('educations_schema', 'education_sets');
+         query.where({ education_id: this.id });
+
+         const { data = [], error } = await query.exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to find education', 'ERR_FIND_FAILED');
+         }
+
+         this.languageSets = data.map(item => new EducationSet(item));
+         return this;
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'ERR_FIND_FAILED');
+      }
+   }
+
    static async findById(id: number, language_set: string = defaultLocale): Promise<Education | null> {
       try {
          const query = database.select('educations_schema', 'education_sets');
@@ -137,6 +157,29 @@ class Education extends EducationSet {
          }
    
          return new Education(education);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'ERR_FIND_FAILED');
+      }
+   }
+
+   static async getFullById(id: number): Promise<Education | null> {
+      try {
+         const query = database.select('educations_schema', 'educations').where({ id });
+
+         const { data = [], error } = await query.exec();
+         const [ education ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to find education', 'ERR_FIND_FAILED');
+         }
+
+         if (!education) {
+            return null;
+         }
+
+         const educationInstance = new Education(education);
+         await educationInstance.loadLanguageSets();
+         return educationInstance;
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'ERR_FIND_FAILED');
       }
