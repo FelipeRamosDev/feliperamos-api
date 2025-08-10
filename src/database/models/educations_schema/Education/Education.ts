@@ -10,7 +10,7 @@ class Education extends EducationSet {
    public end_date: Date;
    public is_current: boolean;
    public student_id: number;
-   public languageSets: EducationSet[] = [];
+   public languageSets: EducationSet[];
 
    static populateFields = [
       'educations.id',
