@@ -15,6 +15,8 @@ export default new Table({
       { name: 'notes', type: 'TEXT' },
       { name: 'cv_experiences', type: 'INTEGER[]' },
       { name: 'cv_skills', type: 'INTEGER[]' },
+      { name: 'cv_languages', type: 'INTEGER[]' },
+      { name: 'cv_educations', type: 'INTEGER[]' },
       { name: 'cv_owner_id', type: 'INTEGER' },
    ],
    events: {

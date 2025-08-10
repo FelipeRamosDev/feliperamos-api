@@ -23,7 +23,7 @@ export default new Route({
             return;
          }
 
-         res.status(200).send(languages);
+         res.status(200).send(languages.map(lang => lang.toObject()));
       } catch (error: any) {
          new ErrorResponseServerAPI(error.message, 500, error.code || 'Internal Server Error').send(res);
       }

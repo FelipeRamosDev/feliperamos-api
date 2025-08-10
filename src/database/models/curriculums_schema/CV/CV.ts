@@ -8,6 +8,8 @@ import database from '../../../../database';
 import { AdminUser } from '../../users_schema';
 import { AdminUserPublic } from '../../users_schema/AdminUser/AdminUser.types';
 import { defaultLocale } from '../../../../app.config';
+import { Education } from '../../educations_schema';
+import { Language } from '../../languages_schema';
 
 export default class CV extends CVSet {
    public title: string;
@@ -16,6 +18,8 @@ export default class CV extends CVSet {
    public notes?: string;
    public cv_experiences?: (Experience | number)[];
    public cv_skills?: (Skill | number)[];
+   public cv_educations?: (Education | number)[];
+   public cv_languages?: (Language | number)[];
    public languageSets: CVSet[];
    public cv_owner_id?: number;
 
@@ -26,7 +30,9 @@ export default class CV extends CVSet {
       'experience_time',
       'notes',
       'cv_experiences',
-      'cv_skills'
+      'cv_skills',
+      'cv_educations',
+      'cv_languages'
    ]
 
    constructor(setup: CVSetup & CVSetSetup) {
@@ -41,6 +47,8 @@ export default class CV extends CVSet {
          user_id,
          cv_skills = [],
          cv_experiences = [],
+         cv_educations = [],
+         cv_languages = [],
          languageSets = []
       } = setup || {};
 
@@ -51,7 +59,7 @@ export default class CV extends CVSet {
       this.languageSets = languageSets;
       this.cv_owner_id = cv_owner_id || user_id;
 
-      this.cv_experiences = cv_experiences.map(exp => {
+      this.cv_experiences = cv_experiences?.map(exp => {
          if (typeof exp === 'number') {
             return exp;
          } else if (exp instanceof Experience) {
@@ -61,13 +69,33 @@ export default class CV extends CVSet {
          }
       });
 
-      this.cv_skills = cv_skills.map(skill => {
+      this.cv_skills = cv_skills?.map(skill => {
          if (typeof skill === 'number') {
             return skill;
          } else if (skill instanceof Skill) {
             return skill;
          } else {
             return new Skill(skill);
+         }
+      });
+
+      this.cv_languages = cv_languages?.map(language => {
+         if (typeof language === 'number') {
+            return language;
+         } else if (language instanceof Language) {
+            return language;
+         } else {
+            return new Language(language);
+         }
+      });
+
+      this.cv_educations = cv_educations?.map(education => {
+         if (typeof education === 'number') {
+            return education;
+         } else if (education instanceof Education) {
+            return education;
+         } else {
+            return new Education(education);
          }
       });
    }
@@ -80,6 +108,8 @@ export default class CV extends CVSet {
          cv_owner_id: this.cv_owner_id,
          cv_experiences: this.cv_experiences,
          cv_skills: this.cv_skills,
+         cv_educations: this.cv_educations,
+         cv_languages: this.cv_languages
       }
    }
 
@@ -137,6 +167,42 @@ export default class CV extends CVSet {
          return this.cv_skills as Skill[];
       } catch (error: any) {
          throw new ErrorDatabase(error.message, error.code || 'CV_SKILLS_FETCH_ERROR');
+      }
+   }
+
+   async populateLanguages(): Promise<Language[]> {
+      if (!this.cv_languages || this.cv_languages.length === 0) {
+         this.cv_languages = [];
+         return this.cv_languages as [];
+      }
+
+      try {
+         const [languageIndex] = this.cv_languages;
+         if (typeof languageIndex === 'number') {
+            this.cv_languages = await Language.getManyById(this.cv_languages as number[]);
+         }
+
+         return this.cv_languages as Language[];
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_LANGUAGES_FETCH_ERROR');
+      }
+   }
+
+   async populateEducations(): Promise<Education[]> {
+      if (!this.cv_educations || this.cv_educations.length === 0) {
+         this.cv_educations = [];
+         return this.cv_educations as [];
+      }
+
+      try {
+         const [educationIndex] = this.cv_educations;
+         if (typeof educationIndex === 'number') {
+            this.cv_educations = await Education.getManyById(this.cv_educations as number[], this.language_set);
+         }
+
+         return this.cv_educations as Education[];
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message, error.code || 'CV_EDUCATIONS_FETCH_ERROR');
       }
    }
 
@@ -227,6 +293,8 @@ export default class CV extends CVSet {
          for (const cvData of parsedCV) {
             await cvData.populateSkills();
             await cvData.populateExperiences();
+            await cvData.populateLanguages();
+            await cvData.populateEducations();
             await cvData.populateUser();
          }
 
@@ -278,6 +346,8 @@ export default class CV extends CVSet {
 
          await cv.populateExperiences();
          await cv.populateSkills();
+         await cv.populateLanguages();
+         await cv.populateEducations();
 
          return cv;
       } catch (error: any) {
@@ -307,6 +377,8 @@ export default class CV extends CVSet {
          await cv.populateExperiences();
          await cv.populateSkills();
          await cv.populateUser();
+         await cv.populateLanguages();
+         await cv.populateEducations();
 
          return cv;
       } catch (error: any) {
