@@ -50,8 +50,9 @@ class Language extends TableRow {
       const speakingScore = Language.levels.indexOf(this.speaking_level) + 1;
 
       const levelScore = (readingScore + listeningScore + writingScore + speakingScore) / 4;
+      const idx = Math.max(0, Math.min(Language.levels.length - 1, Math.floor(levelScore) - 1));
 
-      return Language.levels[Math.floor(levelScore) - 1];
+      return Language.levels[idx];
    }
 
    toObject() {

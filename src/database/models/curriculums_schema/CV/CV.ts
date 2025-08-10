@@ -177,8 +177,7 @@ export default class CV extends CVSet {
       }
 
       try {
-         const [languageIndex] = this.cv_languages;
-         if (typeof languageIndex === 'number') {
+         if (this.cv_languages.every(item => typeof item === 'number')) {
             this.cv_languages = await Language.getManyById(this.cv_languages as number[]);
          }
 
@@ -195,8 +194,7 @@ export default class CV extends CVSet {
       }
 
       try {
-         const [educationIndex] = this.cv_educations;
-         if (typeof educationIndex === 'number') {
+         if (this.cv_educations.every(e => typeof e === 'number')) {
             this.cv_educations = await Education.getManyById(this.cv_educations as number[], this.language_set);
          }
 
