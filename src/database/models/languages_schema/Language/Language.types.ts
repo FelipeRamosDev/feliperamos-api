@@ -1,12 +1,9 @@
-export type LanguageLevel = 'beginner' | 'intermediate' | 'advanced' | 'native';
+export type LanguageLevel = 'beginner' | 'intermediate' | 'advanced' | 'proficient' | 'native';
 
 export interface LanguageSetup {
    default_name: string;
-   local_name: string;
+   locale_name: string;
    locale_code: string;
-   reading_level: LanguageLevel;
-   listening_level: LanguageLevel;
-   writing_level: LanguageLevel;
-   speaking_level: LanguageLevel;
+   proficiency: LanguageLevel;
    language_user_id: number;
 }
