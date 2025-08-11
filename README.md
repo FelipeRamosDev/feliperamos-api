@@ -1,4 +1,4 @@
-# Felipe Ramos API - Microservices Backend (v1.2.0)
+# Felipe Ramos API - Microservices Backend (v1.4.0)
 
 A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring complete admin dashboard capabilities with full CRUD operations, JWT authentication, and comprehensive database management. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, AI assistance, and Slack integration.
 
