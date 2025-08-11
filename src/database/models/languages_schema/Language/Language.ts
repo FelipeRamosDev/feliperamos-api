@@ -9,12 +9,9 @@ import type {
 
 class Language extends TableRow {
    public default_name: string;
-   public local_name: string;
+   public locale_name: string;
    public locale_code: string;
-   public reading_level: LanguageLevel;
-   public listening_level: LanguageLevel;
-   public writing_level: LanguageLevel;
-   public speaking_level: LanguageLevel;
+   public proficiency: LanguageLevel;
    public language_user_id: number;
 
    static levels = [
@@ -27,32 +24,17 @@ class Language extends TableRow {
 
    constructor (setup: LanguageSetup) {
       super('languages_schema', 'languages', setup);
-      const { default_name, local_name, locale_code, reading_level, listening_level, writing_level, speaking_level, language_user_id } = setup || {};
+      const { default_name, locale_name, locale_code, proficiency, language_user_id } = setup || {};
 
-      if (!default_name || !local_name || !locale_code || !reading_level || !listening_level || !writing_level || !speaking_level || !language_user_id) {
+      if (!default_name || !locale_name || !locale_code || !proficiency || !language_user_id) {
          throw new ErrorDatabase('All fields are required for Language', 'LANGUAGE_REQUIRED_FIELDS');
       }
 
       this.default_name = default_name;
-      this.local_name = local_name;
+      this.locale_name = locale_name;
       this.locale_code = locale_code;
-      this.reading_level = reading_level;
-      this.listening_level = listening_level;
-      this.writing_level = writing_level;
-      this.speaking_level = speaking_level;
+      this.proficiency = proficiency;
       this.language_user_id = language_user_id;
-   }
-
-   public get level() {
-      const readingScore = Language.levels.indexOf(this.reading_level) + 1;
-      const listeningScore = Language.levels.indexOf(this.listening_level) + 1;
-      const writingScore = Language.levels.indexOf(this.writing_level) + 1;
-      const speakingScore = Language.levels.indexOf(this.speaking_level) + 1;
-
-      const levelScore = (readingScore + listeningScore + writingScore + speakingScore) / 4;
-      const idx = Math.max(0, Math.min(Language.levels.length - 1, Math.floor(levelScore) - 1));
-
-      return Language.levels[idx];
    }
 
    toObject() {
@@ -61,13 +43,9 @@ class Language extends TableRow {
          created_at: this.created_at,
          updated_at: this.updated_at,
          default_name: this.default_name,
-         local_name: this.local_name,
+         locale_name: this.locale_name,
          locale_code: this.locale_code,
-         level: this.level,
-         reading_level: this.reading_level,
-         listening_level: this.listening_level,
-         writing_level: this.writing_level,
-         speaking_level: this.speaking_level,
+         proficiency: this.proficiency,
          language_user_id: this.language_user_id
       };
    }
