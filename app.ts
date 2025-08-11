@@ -20,9 +20,6 @@ async function executeCommands() {
       console.log('Starting AI service...');
       executeCommand('npm', ['run', 'dev:ai']);
 
-      console.log('Starting Slack service...');
-      executeCommand('npm', ['run', 'dev:slack']);
-
       console.log('Starting Server API service...');
       executeCommand('npm', ['run', 'dev:api-server']);
 

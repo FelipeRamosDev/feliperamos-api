@@ -1,4 +1,4 @@
-# Felipe Ramos API - Microservices Backend (v1.2.0)
+# Felipe Ramos API - Microservices Backend (v1.4.0)
 
 A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring complete admin dashboard capabilities with full CRUD operations, JWT authentication, and comprehensive database management. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, AI assistance, and Slack integration.
 
@@ -13,7 +13,16 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 
 ## 🚀 Features
 
-### New in v1.2.0 - Admin Dashboard & Database Management
+### New in v1.4.0 - ATS Optimization & Extended CV Management
+- **🗣️ Language Management**: Complete CRUD operations for language skills with proficiency levels
+- **🎓 Education Management**: Full educational background tracking with degrees, institutions, and academic achievements
+- **📋 Enhanced CV Model**: Extended curriculum vitae support with integrated languages and educations
+- **🔄 Extended Database Events**: Event-driven architecture updates for language and education changes
+- **🌐 Improved Multi-language Support**: Enhanced internationalization with language proficiency tracking
+- **📊 ATS-Ready Data Structure**: Optimized data models for Applicant Tracking System compatibility
+- **🔗 Relational Data Integration**: Seamless integration between CV, languages, and educations entities
+
+### Previous Features - v1.2.0 & v1.3.0 - Admin Dashboard & Database Management
 - **🔐 JWT Authentication**: Secure token-based authentication with role-based access control
 - **👥 User Management**: Master user creation and admin user management system
 - **📊 Skills Management**: Complete CRUD operations for skills with multi-language support
@@ -110,6 +119,8 @@ feliperamos-api/
 │   │   │   ├── users_schema/  # User management models
 │   │   │   ├── skills_schema/ # Skills management models
 │   │   │   ├── companies_schema/ # Company management models
+│   │   │   ├── languages_schema/ # Language skills management models
+│   │   │   ├── educations_schema/ # Education management models
 │   │   │   ├── curriculums_schema/ # CV/Resume management models
 │   │   │   └── experiences_schema/ # Experience management models
 │   │   ├── schemas/           # Database schema definitions
@@ -118,6 +129,8 @@ feliperamos-api/
 │   │   ├── auth/              # Authentication routes
 │   │   ├── skill/             # Skills CRUD operations
 │   │   ├── company/           # Company CRUD operations
+│   │   ├── language/          # Language skills CRUD operations
+│   │   ├── education/         # Education CRUD operations
 │   │   ├── curriculum/        # CV/Resume CRUD operations
 │   │   ├── experience/        # Experience CRUD operations
 │   │   ├── user/              # User management routes
@@ -458,6 +471,9 @@ npm run start:slack &
 - **Skills Schema**: Technical skills with proficiency levels and categories
 - **Companies Schema**: Company profiles with industry information
 - **Experiences Schema**: Work experience tracking with detailed descriptions
+- **Languages Schema**: Language skills with proficiency levels and locale support
+- **Educations Schema**: Educational background with institutions, degrees, and academic achievements
+- **Curriculums Schema**: Enhanced CV/Resume management with integrated languages and educations
 
 ### Redis Cache
 - **Session Storage**: User session persistence with JWT integration
@@ -537,6 +553,19 @@ services:
 - `POST /company/update` - Update company information (Admin/Master)
 - `POST /company/update-set` - Update company language set (Admin/Master)
 
+### Languages Management (Protected Routes)
+- `POST /language/create` - Create new language skill (Admin/Master)
+- `GET /language/:language_id` - Get language details by ID
+- `PATCH /language/update` - Update language information (Admin/Master)
+- `DELETE /language/delete` - Delete language skill (Admin/Master)
+
+### Education Management (Protected Routes)
+- `POST /education/create` - Create new education record (Admin/Master)
+- `GET /education/:education_id` - Get education details by ID
+- `PATCH /education/update` - Update education information (Admin/Master)
+- `PATCH /education/update-set` - Update education language set (Admin/Master)
+- `DELETE /education/delete` - Delete education record (Admin/Master)
+
 ### Experience Management (Protected Routes)
 - `POST /experience/create` - Create new experience (Admin/Master)
 - `POST /experience/create-set` - Create experience language set (Admin/Master)
@@ -560,6 +589,8 @@ services:
 
 ### User Management (Protected Routes)
 - `POST /user/update` - Update user profile information (Admin/Master)
+- `GET /user/languages` - Get user's language skills (Admin/Master)
+- `GET /user/educations` - Get user's education records (Admin/Master)
 
 ### AI & System Routes
 - `POST /assistant-generate` - Generate AI responses
@@ -578,27 +609,38 @@ services:
 - **Load Balancing**: Request distribution
 - **Cluster Mode**: Multi-process support
 
-## 📋 What's New in v1.3.0
+## 📋 What's New in v1.4.0
 
 ### 🎯 Major Features Added
+- **Language Management System**: Complete CRUD operations for language skills with proficiency tracking
+- **Education Management System**: Full educational background management with institutions and degrees
+- **Enhanced CV Integration**: Extended CV model to include languages and educations data
+- **ATS-Ready Data Structure**: Optimized data models for Applicant Tracking System compatibility
+
+### 🔧 Technical Improvements
+- **Extended Database Schemas**: New languages_schema and educations_schema with relational integrity
+- **Improved API Coverage**: Additional endpoints for comprehensive language and education management
+- **Enhanced Data Population**: Automated population of languages and educations in CV objects
+- **Multi-language Education Support**: Education records with language set support for internationalization
+
+### 🗂️ Database Schema Additions
+- **Languages Schema**: Language skills with proficiency levels and locale information
+- **Educations Schema**: Educational background with institutions, degrees, and academic details
+- **Enhanced CV Schema**: Extended CV fields to support cv_languages and cv_educations arrays
+
+### 🚀 Development Experience
+- **Type-Safe Language Management**: Comprehensive TypeScript interfaces for language operations
+- **Education Data Modeling**: Robust education entities with validation and error handling
+- **Improved Service Integration**: Seamless integration between languages, educations, and CV services
+- **Enhanced API Documentation**: Updated endpoint documentation with new language and education routes
+
+## 📋 Previous Versions
+
+### What's New in v1.3.0
 - **CV/Resume Management System**: Complete curriculum vitae creation, editing, and management
 - **VirtualBrowser Service**: Headless browser automation service for PDF generation
 - **Automated PDF Generation**: Real-time CV PDF creation with multi-language support
 - **Database Events System**: Event-driven architecture for automatic PDF updates
-
-### 🔧 Technical Improvements
-- **VirtualBrowser Integration**: Puppeteer-based headless browser service with PDF generation
-- **Event-Driven Architecture**: Database events triggering automatic PDF updates
-- **File System Integration**: PDF storage and management capabilities
-
-### 🗂️ Database Schema
-- **Curriculums Schema**: CV/Resume data with language sets and PDF management
-
-### 🚀 Development Experience
-- **Simplified Configuration**: Streamlined VS Code debugging setup
-- **Enhanced Docker Support**: Improved health checks and service dependencies
-- **Better Type Safety**: Enhanced TypeScript definitions and interfaces
-- **Cleaner Architecture**: Improved service organization and separation of concerns
 
 ## 🤝 Contributing
 
