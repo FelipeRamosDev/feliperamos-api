@@ -1,5 +1,5 @@
-import { NamespaceEvent } from '@/services/SocketServer';
-import socketServer from '../../socket-server.service';
+import { NamespaceEvent } from '../../../../services/SocketServer';
+import socketServer from '../../../socket-server.service';
 
 const typingStatus: Map<string, boolean> = new Map();
 

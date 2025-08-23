@@ -72,6 +72,22 @@ class VirtualBrowserPage {
       }
    }
 
+   async waitFor(selector: string) {
+      try {
+         if (!this._page) {
+            throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
+         }
+
+         if (!selector) {
+            throw new ErrorVirtualBrowser('Selector is required to wait for', 'SELECTOR_REQUIRED');
+         }
+
+         await this._page.waitForSelector(selector, { visible: true });
+      } catch (error: any) {
+         throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_WAIT_FOR_ERROR');
+      }
+   }
+
    async toPDF(filePath: string, options?: PDFOptions): Promise<Uint8Array> {
       if (!this._page) {
          throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
@@ -102,6 +118,54 @@ class VirtualBrowserPage {
       } catch (error: any) {
          console.error(`Error generating PDF: ${error.message}`);
          throw new ErrorVirtualBrowser(error.message, error.code || 'PDF_GENERATION_ERROR');
+      }
+   }
+
+   async screenshot(filePath: string): Promise<Uint8Array> {
+      try {
+         if (!this._page) {
+            throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
+         }
+
+         const screenshot = await this._page.screenshot({ path: `${filePath}.png` });
+         return screenshot;
+      } catch (error: any) {
+         throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_SCREENSHOT_ERROR');
+      }
+   }
+
+   async click(selector: string, options?: { delay?: number }): Promise<void> {
+      if (!this._page) {
+         throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
+      }
+
+      if (!selector) {
+         throw new ErrorVirtualBrowser('Selector is required for click action', 'SELECTOR_REQUIRED');
+      }
+
+      try {
+         await this._page.waitForSelector(selector, { visible: true });
+         return await this._page.click(selector, options);
+      } catch (error: any) {
+         throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_CLICK_ERROR');
+      }
+
+   }
+
+   async getElement(selector: string) {
+      if (!this._page) {
+         throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
+      }
+
+      if (!selector) {
+         throw new ErrorVirtualBrowser('Selector is required to get element', 'SELECTOR_REQUIRED');
+      }
+
+      try {
+         await this._page.waitForSelector(selector, { visible: true });
+         return await this._page.$(selector);
+      } catch (error: any) {
+         throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_GET_ELEMENT_ERROR');
       }
    }
 
