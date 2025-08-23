@@ -1,4 +1,4 @@
-import { NamespaceConfig } from '@/services/SocketServer';
+import { NamespaceConfig } from '../../../services/SocketServer';
 import startChatEvent from './events/start-chat';
 import assitantInboxEvent from './events/assistant-inbox';
 
