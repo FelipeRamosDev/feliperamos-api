@@ -2,7 +2,8 @@ import ErrorEventEndpoint from '../../../../services/EventEndpoint/ErrorEventEnd
 import { EventEndpoint } from '../../../../services';
 import service from '../../../virtual-browser.service';
 
-const LOGIN_MODAL_CLOSE_BUTTON_SELECTOR = '#base-contextual-sign-in-modal .contextual-sign-in-modal__modal-dismiss';
+const LOGIN_MODAL_SELECTOR = '#base-contextual-sign-in-modal';
+const LOGIN_MODAL_CLOSE_BUTTON_SELECTOR = `${LOGIN_MODAL_SELECTOR} .contextual-sign-in-modal__modal-dismiss`;
 const SHOW_MORE_BUTTON_SELECTOR = '.show-more-less-html__button';
 const JOB_DESCRIPTION_SELECTOR = '.description__text';
 
@@ -19,10 +20,11 @@ export default new EventEndpoint({
       try {
          const page = await service.newPage(pageName, jobURL);
 
-         try {
+         const loginModal = await page.getElement(LOGIN_MODAL_SELECTOR);
+         const isLoginModalVisible = await loginModal?.isVisible();
+
+         if (isLoginModalVisible) {
             await page.click(LOGIN_MODAL_CLOSE_BUTTON_SELECTOR);
-         } catch {
-            // Continue any way because sometimes the login modal does not appear
          }
 
          // Clicking on the "see more" button

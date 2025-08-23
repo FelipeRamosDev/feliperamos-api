@@ -152,7 +152,7 @@ class VirtualBrowserPage {
 
    }
 
-   async getElement(selector: string) {
+   async getElement(selector: string, waitForVisible: boolean = false): Promise<null | import('puppeteer').ElementHandle> {
       if (!this._page) {
          throw new ErrorVirtualBrowser('Page not initialized', 'PAGE_NOT_INITIALIZED');
       }
@@ -162,7 +162,10 @@ class VirtualBrowserPage {
       }
 
       try {
-         await this._page.waitForSelector(selector, { visible: true });
+         if (waitForVisible) {
+            await this._page.waitForSelector(selector, { visible: true });
+         }
+
          return await this._page.$(selector);
       } catch (error: any) {
          throw new ErrorVirtualBrowser(error.message, error.code || 'PAGE_GET_ELEMENT_ERROR');
