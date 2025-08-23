@@ -1,4 +1,4 @@
-export default function generateCVSummaryPrompt(jobDescription: string, currentInput: string, additionalContext: string): string {
+export default function generateCVSummaryPrompt(jobDescription: string, currentInput: string, customPrompt: string): string {
    return `
 # Prompt description
 - Generate a concise and impactful CV summary based on the provided job description.
@@ -16,7 +16,8 @@ ${jobDescription || 'No job description provided.'}
 ## Current Input
 ${currentInput || 'No current input provided.'}
 
-## Additional Context
-${additionalContext || 'No additional context provided.'}
+## Custom Prompt
+Based on the "Current Input" above, refactor the "Current Input" considering the prompt below: 
+${customPrompt || 'No custom prompt provided.'}
 `;
 }
