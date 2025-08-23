@@ -35,9 +35,12 @@ const generateSummaryEvent: NamespaceEvent = {
             });
          },
          onJoin: (room, client) => {
+            this.sendToRoom(room.id, 'custom-cv:status', 'fetching-url');
+
             socketServer.sendTo('/virtual-browser/linkedin/job-description', { jobURL }, ({ error, message, jobDescription }) => {
                if (error) {
                   console.error('Job Description Error:', { error, message });
+                  this.sendToRoom(room.id, 'custom-cv:status', 'error');
 
                   return callback({
                      error: new ErrorSocketServer(
@@ -47,10 +50,11 @@ const generateSummaryEvent: NamespaceEvent = {
                   });
                }
 
-               console.log('Job Description Success:', { jobDescription });
+               this.sendToRoom(room.id, 'custom-cv:status', 'generating-summary');
                socketServer.sendTo('/ai/generate-cv-summary', { jobDescription }, ({ error: aiError, message: aiMessage, summary }) => {
                   if (aiError) {
                      console.error('AI Error:', { aiError, aiMessage });
+                     this.sendToRoom(room.id, 'custom-cv:status', 'error');
 
                      return callback({
                         error: new ErrorSocketServer(
@@ -60,7 +64,7 @@ const generateSummaryEvent: NamespaceEvent = {
                      });
                   }
 
-                  console.log('AI Success:', { summary });
+                  this.sendToRoom(room.id, 'custom-cv:status', 'success');
                   callback({ summary });
                });
             });
