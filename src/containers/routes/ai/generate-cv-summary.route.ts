@@ -10,7 +10,7 @@ export default new EventEndpoint({
       const { jobDescription = '', threadID, customPrompt = '', currentInput = '' } = params || {};
 
       if (!(assistantBuildCV instanceof AI)) {
-         return done(new ErrorEventEndpoint(`The AI service is not available!`, 'AI_SERVICE_NOT_AVAILABLE'));
+         return done(new ErrorEventEndpoint(`The assistantBuildCV service is not available!`, 'AI_SERVICE_NOT_AVAILABLE'));
       }
 
       const prompt = generateCVSummaryPrompt(jobDescription, currentInput, customPrompt);
