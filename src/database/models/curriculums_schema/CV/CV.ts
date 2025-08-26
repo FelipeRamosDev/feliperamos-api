@@ -104,6 +104,7 @@ export default class CV extends CVSet {
       return {
          title: this.title,
          notes: this.notes,
+         experience_time: this.experience_time,
          is_master: this.is_master,
          cv_owner_id: this.cv_owner_id,
          cv_experiences: this.cv_experiences,
