@@ -9,6 +9,7 @@ export interface CVSetup extends CVSetSetup {
    title: string;
    experience_time?: number;
    is_master?: boolean;
+   is_favorite?: boolean;
    notes?: string;
    cv_experiences?: (ExperienceSetup | number)[];
    cv_skills?: (SkillSetup | number)[];
