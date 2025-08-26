@@ -1,4 +1,4 @@
-import { NamespaceEvent } from '@/services/SocketServer';
+import { NamespaceEvent } from '../../../../services/SocketServer';
 
 const startChatEvent: NamespaceEvent = {
    name: 'start-chat',
