@@ -12,6 +12,7 @@ export default new Table({
       { name: 'title', type: 'VARCHAR(255)', notNull: true },
       { name: 'experience_time', type: 'DECIMAL(2,1)' },
       { name: 'is_master', type: 'BOOLEAN', defaultValue: false },
+      { name: 'is_favorite', type: 'BOOLEAN', defaultValue: false },
       { name: 'notes', type: 'TEXT' },
       { name: 'cv_experiences', type: 'INTEGER[]' },
       { name: 'cv_skills', type: 'INTEGER[]' },

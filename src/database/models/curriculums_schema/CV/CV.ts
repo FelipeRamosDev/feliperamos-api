@@ -15,6 +15,7 @@ export default class CV extends CVSet {
    public title: string;
    public experience_time: number | null;
    public is_master: boolean;
+   public is_favorite: boolean;
    public notes?: string;
    public cv_experiences?: (Experience | number)[];
    public cv_skills?: (Skill | number)[];
@@ -27,6 +28,7 @@ export default class CV extends CVSet {
       'cvs.id',
       'title',
       'is_master',
+      'is_favorite',
       'experience_time',
       'notes',
       'cv_experiences',
@@ -42,6 +44,7 @@ export default class CV extends CVSet {
          title = '',
          experience_time = 0,
          is_master = false,
+         is_favorite = false,
          notes = '',
          cv_owner_id,
          user_id,
@@ -55,6 +58,7 @@ export default class CV extends CVSet {
       this.title = title;
       this.experience_time = experience_time;
       this.is_master = Boolean(is_master);
+      this.is_favorite = Boolean(is_favorite);
       this.notes = notes;
       this.languageSets = languageSets;
       this.cv_owner_id = cv_owner_id || user_id;
@@ -106,6 +110,7 @@ export default class CV extends CVSet {
          notes: this.notes,
          experience_time: this.experience_time,
          is_master: this.is_master,
+         is_favorite: this.is_favorite,
          cv_owner_id: this.cv_owner_id,
          cv_experiences: this.cv_experiences,
          cv_skills: this.cv_skills,
