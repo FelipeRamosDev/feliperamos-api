@@ -1,6 +1,6 @@
-# Felipe Ramos API - Microservices Backend (v1.4.0)
+# Felipe Ramos API - Microservices Backend (v1.5.0)
 
-A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring complete admin dashboard capabilities with full CRUD operations, JWT authentication, and comprehensive database management. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, AI assistance, and Slack integration.
+A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring AI-powered CV customization, LinkedIn job data extraction, and enhanced CV management with favoriting capabilities. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, advanced AI assistance, and comprehensive automated workflows.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
@@ -13,7 +13,17 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 
 ## 🚀 Features
 
-### New in v1.4.0 - ATS Optimization & Extended CV Management
+### New in v1.5.0 - AI-Powered CV Customization & LinkedIn Integration
+- **🤖 AI CV Summary Generation**: Dedicated OpenAI assistant for intelligent CV summary creation and customization
+- **💼 LinkedIn Job Data Extraction**: Automated extraction of job titles, company information, and detailed job descriptions from LinkedIn postings
+- **⭐ CV Favorites System**: Enhanced CV management with favoriting capabilities and improved filtering options
+- **🔄 Real-time CV Generation**: New Socket.IO `/custom-cv` namespace for real-time AI-powered CV customization workflows
+- **🌐 Enhanced Virtual Browser**: Advanced web scraping capabilities with modal handling and dynamic content extraction
+- **📊 Intelligent CV Matching**: AI-powered analysis to match CV content with specific job requirements
+- **🎯 ATS-Optimized Output**: AI-generated summaries optimized for Applicant Tracking Systems
+- **🔧 Custom Prompt Support**: Flexible AI prompt system for tailored CV summary generation
+
+### Previous Features - v1.4.0 - ATS Optimization & Extended CV Management
 - **🗣️ Language Management**: Complete CRUD operations for language skills with proficiency levels
 - **🎓 Education Management**: Full educational background tracking with degrees, institutions, and academic achievements
 - **📋 Enhanced CV Model**: Extended curriculum vitae support with integrated languages and educations
@@ -38,7 +48,9 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 
 ### Core Features
 - **AI-Powered Chat**: OpenAI GPT integration for intelligent career-related conversations
-- **Real-time Communication**: Socket.IO server with namespace and room management
+- **AI CV Customization**: Specialized AI assistant for tailored CV summary generation based on job requirements
+- **Real-time Communication**: Socket.IO server with namespace and room management for CV chat and customization workflows
+- **LinkedIn Integration**: Automated job data extraction from LinkedIn postings with intelligent content parsing
 - **Microservices Architecture**: Modular, scalable service-oriented design
 - **Slack Integration**: Automated Slack bot for notifications and interactions
 - **Redis Cache Layer**: High-performance caching and session management
@@ -85,9 +97,9 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **express-session 1.18+** - Session management
 
 ### AI & Integration
-- **OpenAI API 4.103+** - GPT assistant integration
+- **OpenAI API 4.103+** - GPT assistant integration with specialized CV generation capabilities
 - **Slack Bolt 4.4+** - Slack app framework
-- **Puppeteer 24.15+** - Headless browser automation for PDF generation
+- **Puppeteer 24.15+** - Headless browser automation for PDF generation and LinkedIn data extraction
 
 ### Database & Caching
 - **PostgreSQL 8.16+** - Primary database with full schema management
@@ -111,7 +123,10 @@ feliperamos-api/
 │   │   ├── socket-server.service.ts # Socket.IO server
 │   │   ├── virtual-browser.service.ts # VirtualBrowser service
 │   │   ├── namespaces/         # Socket namespaces
+│   │   │   ├── cv-chat/        # CV chat namespace and events
+│   │   │   └── custom-cv/      # AI CV customization namespace
 │   │   └── routes/             # API route definitions
+│   │       ├── ai/             # AI-powered routes for CV generation
 │   │       └── virtual-browser/ # VirtualBrowser event routes
 │   ├── database/               # Database layer
 │   │   ├── index.ts           # Database initialization
@@ -183,6 +198,7 @@ feliperamos-api/
    # OpenAI Configuration
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_ASSISTANT_ID=your_assistant_id
+   OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
@@ -266,6 +282,7 @@ feliperamos-api/
    # OpenAI Configuration
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_ASSISTANT_ID=your_assistant_id
+   OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
@@ -410,9 +427,17 @@ npm run start:slack &
 
 ### OpenAI Integration
 - **GPT Assistant**: Specialized AI trained on Felipe's professional background
+- **CV Generation Assistant**: Dedicated AI assistant for intelligent CV summary generation and customization
 - **Thread Management**: Persistent conversation contexts
 - **Message Handling**: Structured request/response processing
 - **Error Handling**: Robust error management and fallbacks
+
+### AI-Powered CV Customization
+- **Job-Specific Summaries**: Generate tailored CV summaries based on specific job requirements
+- **LinkedIn Integration**: Extract job descriptions from LinkedIn and create matching CV content
+- **ATS Optimization**: AI-generated content optimized for Applicant Tracking Systems
+- **Custom Prompts**: Flexible prompt system for personalized CV generation
+- **Real-time Generation**: Socket-based real-time CV summary creation with status updates
 
 ### Capabilities
 - Career history inquiries
@@ -420,20 +445,29 @@ npm run start:slack &
 - Project discussions
 - Professional experience details
 - Resume/CV information
+- Job-specific CV customization
+- LinkedIn job data analysis
 
 ## 🔌 Socket Server Features
 
 ### Real-time Communication
-- **Namespaces**: Organized communication channels (`/cv-chat`)
+- **Namespaces**: Organized communication channels (`/cv-chat`, `/custom-cv`)
 - **Room Management**: Dynamic room creation and management
 - **Event Handling**: Custom event system with type safety
 - **Connection Tracking**: Client connection statistics and monitoring
 
 ### Socket Events
+#### CV Chat Namespace (`/cv-chat`)
 - `start-chat` - Initialize new chat session
 - `assistant-message` - AI response delivery
 - `assistant-typing` - Typing indicators
 - `user-message` - User message handling
+
+#### Custom CV Namespace (`/custom-cv`)
+- `generate-summary` - AI-powered CV summary generation
+- `summary-status` - Real-time generation status updates
+- `summary-complete` - Completed CV summary delivery
+- `summary-error` - Error handling for failed generations
 
 ## 🖥️ VirtualBrowser Service Features
 
@@ -444,12 +478,15 @@ npm run start:slack &
 - **Viewport Configuration**: Customizable browser viewport settings
 - **Event-Driven Architecture**: Automatic PDF generation triggered by database events
 
-### PDF Generation Capabilities
+### VirtualBrowser Service Capabilities
 - **CV/Resume PDFs**: Automated CV PDF creation in multiple languages
+- **LinkedIn Job Extraction**: Automated extraction of job titles, company information, and detailed descriptions from LinkedIn postings
 - **Real-time Updates**: PDFs regenerated when CV data changes
 - **Multi-language Support**: PDFs generated for different locales
 - **File Management**: Automatic PDF storage and cleanup
 - **Template Rendering**: Web-based CV templates rendered to PDF
+- **Modal Handling**: Intelligent handling of LinkedIn login modals and UI elements
+- **Dynamic Content Loading**: Support for "see more" buttons and expandable content
 
 ### Docker Integration
 - **Containerized Browser**: Runs in Docker with proper Chromium setup
@@ -473,7 +510,7 @@ npm run start:slack &
 - **Experiences Schema**: Work experience tracking with detailed descriptions
 - **Languages Schema**: Language skills with proficiency levels and locale support
 - **Educations Schema**: Educational background with institutions, degrees, and academic achievements
-- **Curriculums Schema**: Enhanced CV/Resume management with integrated languages and educations
+- **Curriculums Schema**: Enhanced CV/Resume management with integrated languages, educations, and favoriting capabilities
 
 ### Redis Cache
 - **Session Storage**: User session persistence with JWT integration
@@ -582,6 +619,7 @@ services:
 - `POST /curriculum/update` - Update CV information (Admin/Master)
 - `POST /curriculum/update-set` - Update CV language set (Admin/Master)
 - `POST /curriculum/set-master` - Set CV as master/primary CV (Admin/Master)
+- `POST /curriculum/set-favorite` - Set/unset CV as favorite (Admin/Master)
 - `DELETE /curriculum/delete` - Delete CV (Admin/Master)
 - `GET /curriculum/public/:cv_id` - Get public CV data for display
 
@@ -590,9 +628,11 @@ services:
 - `GET /user/languages` - Get user's language skills (Admin/Master)
 - `GET /user/educations` - Get user's education records (Admin/Master)
 - `GET /user/master-cv` - Get master user's primary CV
-- `GET /user/cvs` - Get user's CVs (Admin/Master)
+- `GET /user/cvs` - Get user's CVs with filtering options (Admin/Master)
 
-### AI & System Routes
+### AI & Virtual Browser Routes
+- `POST /ai/generate-cv-summary` - Generate AI-powered CV summaries based on job requirements (Admin/Master)
+- `POST /virtual-browser/linkedin/job-infos` - Extract job information from LinkedIn URLs (Admin/Master)
 - `POST /assistant-generate` - Generate AI responses
 - `GET /health` - Service health status and diagnostics
 
@@ -609,7 +649,39 @@ services:
 - **Load Balancing**: Request distribution
 - **Cluster Mode**: Multi-process support
 
-## 📋 What's New in v1.4.0
+## 📋 What's New in v1.5.0
+
+### 🤖 AI-Powered CV Customization
+- **Dedicated CV Generation Assistant**: New OpenAI assistant (`OPENAI_ASSISTANT_BUILD_CV`) specifically trained for CV summary generation
+- **Job-Specific CV Summaries**: Generate tailored CV summaries based on specific job requirements and descriptions
+- **Real-time AI Generation**: Socket.IO `/custom-cv` namespace for real-time CV summary generation with status updates
+- **Custom Prompt Support**: Flexible AI prompt system allowing custom instructions for CV generation
+
+### 💼 LinkedIn Integration & Job Data Extraction
+- **LinkedIn Job Scraping**: Automated extraction of job titles, company information, and detailed descriptions from LinkedIn URLs
+- **Intelligent Content Parsing**: Advanced web scraping with modal handling and dynamic content expansion ("see more" buttons)
+- **Job Data API**: New `/virtual-browser/linkedin/job-infos` endpoint for LinkedIn job data extraction
+- **ATS-Optimized Matching**: AI analysis to match CV content with specific job requirements
+
+### ⭐ Enhanced CV Management
+- **CV Favorites System**: Added `is_favorite` property to CV model with filtering capabilities
+- **Improved CV Filtering**: Enhanced `/user/cvs` endpoint with favorites and advanced filtering options
+- **CV Set Favorite API**: New `/curriculum/set-favorite` endpoint for managing favorite CVs
+- **Better CV Organization**: Streamlined CV management with improved categorization
+
+### 🔄 Real-time Workflow Improvements
+- **Status Feedback System**: Real-time status updates during CV generation process
+- **Socket Event Structure**: Reorganized socket namespaces and events for better maintainability
+- **Error Handling**: Enhanced error management for AI generation and LinkedIn extraction processes
+
+### 🚀 Technical Enhancements
+- **Namespace Refactoring**: Improved socket.io namespace structure with separate custom-cv and cv-chat namespaces
+- **API Route Organization**: Better organization of AI and virtual browser routes
+- **Enhanced Type Safety**: Improved TypeScript interfaces for new AI and CV management features
+
+## 📋 Previous Versions
+
+### What's New in v1.4.0
 
 ### 🎯 Major Features Added
 - **Language Management System**: Complete CRUD operations for language skills with proficiency tracking
