@@ -264,7 +264,7 @@ export default class CV extends CVSet {
          }
 
          const user_id = user.id;
-         const [masterCV] = await this.getUserCVs(user_id, language_set, true);
+         const [masterCV] = await this.getUserCVs(user_id, { language_set, is_master: true });
 
          if (!masterCV) {
             return null;
@@ -276,16 +276,22 @@ export default class CV extends CVSet {
       }
    }
 
-   static async getUserCVs(user_id: number, language_set: string = defaultLocale, onlyMaster?: boolean): Promise<CV[]> {
+   static async getUserCVs(user_id: number, customWhere: Partial<CV> = {}): Promise<CV[]> {
+      const { language_set = defaultLocale, is_favorite, is_master } = customWhere;
+
       try {
          const getQuery = database.select('curriculums_schema', 'cv_sets');
+         const where: Partial<CV> = { user_id, language_set };
 
-         if (onlyMaster) {
-            getQuery.where({ user_id, language_set, is_master: true });
-         } else {
-            getQuery.where({ user_id, language_set });
+         if (is_master) {
+            where.is_master = true;
+         }
+         
+         if (is_favorite !== undefined) {
+            where.is_favorite = is_favorite;
          }
 
+         getQuery.where(where);
          getQuery.populate('cv_id', this.populateFields);
          const { data = [], error } = await getQuery.exec();
 

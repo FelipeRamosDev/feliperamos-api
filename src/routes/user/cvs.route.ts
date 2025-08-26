@@ -5,12 +5,12 @@ import CV from '../../database/models/curriculums_schema/CV/CV';
 
 export default new Route({
    method: 'GET',
-   routePath: '/curriculum/user-cvs',
+   routePath: '/user/cvs',
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],
    controller: async (req: Request, res: Response) => {
       const userId = req.session?.user?.id;
-      const { language_set } = req.query;
+      const { language_set, is_favorite } = req.query;
 
       if (!userId) {
          new ErrorResponseServerAPI('User ID is required', 400, 'USER_ID_REQUIRED').send(res);
@@ -18,7 +18,10 @@ export default new Route({
       }
 
       try {
-         const cvs = await CV.getUserCVs(userId, language_set as string);
+         const cvs = await CV.getUserCVs(userId, {
+            language_set: language_set as string,
+            is_favorite: is_favorite !== undefined ? Boolean(is_favorite === 'true') : undefined
+         });
 
          if (!cvs) {
             new ErrorResponseServerAPI('No CVs found for this user', 404, 'CVS_NOT_FOUND').send(res);
