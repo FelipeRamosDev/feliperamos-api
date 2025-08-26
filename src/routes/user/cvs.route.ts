@@ -20,7 +20,7 @@ export default new Route({
       try {
          const cvs = await CV.getUserCVs(userId, {
             language_set: language_set as string,
-            is_favorite: is_favorite !== undefined ? Boolean(is_favorite) : undefined
+            is_favorite: is_favorite !== undefined ? Boolean(is_favorite === 'true') : undefined
          });
 
          if (!cvs) {
