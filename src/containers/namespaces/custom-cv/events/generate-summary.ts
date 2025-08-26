@@ -90,7 +90,7 @@ const generateSummaryEvent: NamespaceEvent = {
                callback({ error: new ErrorSocketServer(`Failed to join the client's room: ${clientRoom.name}`, 'ROOM_JOIN_ERROR') });
             });
          },
-         onJoin: getJobDescriptionFromURL
+         onJoin: (room) => getJobDescriptionFromURL(room)
       });
    }
 };

@@ -21,7 +21,7 @@ export default new EventEndpoint({
             summary: output || null
          });
       }).catch((err: Error) => {
-         done(toError(err.message || `Error occurred when requesting response from OpenAI!`));
+         done(new Error(err.message || `Error occurred when requesting response from OpenAI!`));
       });
    }
 });
