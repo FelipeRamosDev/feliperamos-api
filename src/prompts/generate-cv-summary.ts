@@ -4,6 +4,7 @@ export default function generateCVSummaryPrompt(jobDescription: string, currentI
 - Generate a concise and impactful CV summary based on the provided job description.
 - Focus on highlighting relevant skills, experiences, and achievements that align with the job requirements.
 - The summary should be tailored to showcase the candidate's qualifications effectively.
+- Be careful to not include any skill that I don't have.
 
 ## Response format
 - Only reply with the generated CV summary markdown.
@@ -13,11 +14,11 @@ export default function generateCVSummaryPrompt(jobDescription: string, currentI
 ## Job Description
 ${jobDescription || 'No job description provided.'}
 
-## Current Input
-${currentInput || 'No current input provided.'}
+## Current Summary
+${currentInput || 'No current summary provided.'}
 
 ## Custom Prompt
-Based on the "Current Input" above, refactor the "Current Input" considering the prompt below: 
+Based on the "Current Summary" above, refactor the "Current Summary" considering the prompt below: 
 ${customPrompt || 'No custom prompt provided.'}
 `;
 }
