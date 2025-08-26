@@ -578,19 +578,19 @@ services:
 ### Curriculum/CV Management (Protected Routes)
 - `POST /curriculum/create` - Create new CV/resume (Admin/Master)
 - `POST /curriculum/create-set` - Create CV language set (Admin/Master)
-- `GET /curriculum/user-cvs` - Get user's CVs (Admin/Master)
 - `GET /curriculum/:cv_id` - Get CV details by ID (Admin/Master)
 - `POST /curriculum/update` - Update CV information (Admin/Master)
 - `POST /curriculum/update-set` - Update CV language set (Admin/Master)
 - `POST /curriculum/set-master` - Set CV as master/primary CV (Admin/Master)
 - `DELETE /curriculum/delete` - Delete CV (Admin/Master)
 - `GET /curriculum/public/:cv_id` - Get public CV data for display
-- `GET /user/master-cv` - Get master user's primary CV
 
 ### User Management (Protected Routes)
 - `POST /user/update` - Update user profile information (Admin/Master)
 - `GET /user/languages` - Get user's language skills (Admin/Master)
 - `GET /user/educations` - Get user's education records (Admin/Master)
+- `GET /user/master-cv` - Get master user's primary CV
+- `GET /user/cvs` - Get user's CVs (Admin/Master)
 
 ### AI & System Routes
 - `POST /assistant-generate` - Generate AI responses
