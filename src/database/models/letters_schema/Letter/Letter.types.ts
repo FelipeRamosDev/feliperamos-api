@@ -1,6 +1,3 @@
-import { CompanySetup } from "../../companies_schema/Company/Company.types";
-import { AdminUser } from "../../users_schema";
-
 export interface LetterSetup {
    id: number;
    created_at: Date;

@@ -17,7 +17,7 @@ export default class Letter extends TableRow {
          to_id
       } = setup || {};
 
-      if (!subject || !body || !from_id || !to_id) {
+      if (subject == null || body == null || from_id == null || to_id == null) {
          throw new Error('Missing required fields to create a Letter! Required params: subject, body, from_id, to_id');
       }
 
