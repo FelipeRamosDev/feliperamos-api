@@ -4,7 +4,7 @@ import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorRespons
 import { Request, Response } from 'express';
 
 export default new Route({
-   method: 'POST',
+   method: 'PATCH',
    routePath: '/skill/update',
    useAuth: true,
    allowedRoles: ['admin', 'master'],

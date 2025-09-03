@@ -1,9 +1,9 @@
-import CV from "../../database/models/curriculums_schema/CV/CV";
-import { Route } from "../../services";
-import ErrorResponseServerAPI from "../../services/ServerAPI/models/ErrorResponseServerAPI";
+import CV from '../../database/models/curriculums_schema/CV/CV';
+import { Route } from '../../services';
+import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
-   method: 'POST',
+   method: 'PATCH',
    routePath: '/curriculum/set-master',
    useAuth: true,
    allowedRoles: ['admin', 'master'],
