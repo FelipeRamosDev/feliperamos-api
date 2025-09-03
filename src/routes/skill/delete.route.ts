@@ -9,14 +9,15 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { skillId } = req.query;
+      const skillIdNumber = Number(skillId);
 
-      if (!skillId) {
+      if (!skillIdNumber || isNaN(skillIdNumber)) {
          new ErrorResponseServerAPI('Skill ID is required', 400, 'ERROR_SKILL_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const deleted = await Skill.delete(Number(skillId));
+         const deleted = await Skill.delete(skillIdNumber);
 
          if (!deleted) {
             new ErrorResponseServerAPI('Skill not found or could not be deleted', 404, 'ERROR_SKILL_NOT_FOUND').send(res);

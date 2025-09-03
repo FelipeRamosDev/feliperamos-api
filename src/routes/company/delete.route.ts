@@ -9,14 +9,15 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { companyId } = req.query;
+      const companyIdNumber = Number(companyId);
 
-      if (!companyId) {
+      if (!companyIdNumber || isNaN(companyIdNumber)) {
          new ErrorResponseServerAPI('Company ID is required', 400, 'ERROR_COMPANY_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const deleted = await Company.delete(Number(companyId));
+         const deleted = await Company.delete(companyIdNumber);
 
          if (!deleted) {
             new ErrorResponseServerAPI('Company not found or could not be deleted', 404, 'ERROR_COMPANY_NOT_FOUND').send(res);

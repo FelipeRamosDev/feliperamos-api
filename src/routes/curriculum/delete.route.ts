@@ -9,14 +9,15 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { cvId } = req.query;
+      const cvIdNumber = Number(cvId);
 
-      if (!cvId) {
+      if (!cvIdNumber || isNaN(cvIdNumber)) {
          new ErrorResponseServerAPI('CV ID is required', 400, 'ERROR_CV_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const deleted = await CV.delete(Number(cvId));
+         const deleted = await CV.delete(cvIdNumber);
 
          if (!deleted) {
             new ErrorResponseServerAPI('CV not found or could not be deleted', 404, 'ERROR_CV_NOT_FOUND').send(res);

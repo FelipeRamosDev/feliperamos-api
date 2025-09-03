@@ -9,14 +9,15 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
       const { experienceId } = req.query;
+      const experienceIdNumber = Number(experienceId);
 
-      if (!experienceId) {
+      if (!experienceIdNumber || isNaN(experienceIdNumber)) {
          new ErrorResponseServerAPI('Experience ID is required', 400, 'ERROR_EXPERIENCE_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const deleted = await Experience.delete(Number(experienceId));
+         const deleted = await Experience.delete(experienceIdNumber);
 
          if (!deleted) {
             new ErrorResponseServerAPI('Experience not found or could not be deleted', 404, 'ERROR_EXPERIENCE_NOT_FOUND').send(res);
