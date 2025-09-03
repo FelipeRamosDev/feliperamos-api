@@ -3,12 +3,12 @@ import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
-   method: 'POST',
+   method: 'DELETE',
    routePath: '/curriculum/delete',
    useAuth: true,
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
-      const { cvId } = req.body;
+      const { cvId } = req.query;
 
       if (!cvId) {
          new ErrorResponseServerAPI('CV ID is required', 400, 'ERROR_CV_ID_REQUIRED').send(res);
@@ -16,7 +16,7 @@ export default new Route({
       }
 
       try {
-         const deleted = await CV.delete(cvId);
+         const deleted = await CV.delete(Number(cvId));
 
          if (!deleted) {
             new ErrorResponseServerAPI('CV not found or could not be deleted', 404, 'ERROR_CV_NOT_FOUND').send(res);

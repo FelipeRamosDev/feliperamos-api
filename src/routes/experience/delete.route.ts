@@ -3,12 +3,12 @@ import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
-   method: 'POST',
+   method: 'DELETE',
    routePath: '/experience/delete',
    useAuth: true,
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
-      const { experienceId } = req.body;
+      const { experienceId } = req.query;
 
       if (!experienceId) {
          new ErrorResponseServerAPI('Experience ID is required', 400, 'ERROR_EXPERIENCE_ID_REQUIRED').send(res);
@@ -16,8 +16,8 @@ export default new Route({
       }
 
       try {
-         const deleted = await Experience.delete(experienceId);
-         
+         const deleted = await Experience.delete(Number(experienceId));
+
          if (!deleted) {
             new ErrorResponseServerAPI('Experience not found or could not be deleted', 404, 'ERROR_EXPERIENCE_NOT_FOUND').send(res);
             return;
