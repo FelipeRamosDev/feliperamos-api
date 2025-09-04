@@ -1,5 +1,5 @@
 import TableRow from '../../../../services/Database/models/TableRow';
-import { OpportunitySetup } from './Opportunity.types';
+import { OpportunitySearchParams, OpportunitySetup } from './Opportunity.types';
 import { CV } from '../../curriculums_schema';
 import { Company } from '../../companies_schema';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
@@ -14,8 +14,8 @@ export default class Opportunity extends TableRow {
    public employment_type?: string;
    public cv_id?: number;
    public company_id?: number;
-   public relatedCV?: CV;
-   public company?: Company;
+   public relatedCV?: CV | null;
+   public company?: Company | null;
    public opportunity_user_id: number;
 
    constructor (setup: OpportunitySetup) {
@@ -81,6 +81,58 @@ export default class Opportunity extends TableRow {
          return new Opportunity(opportunity);
       } catch (error: any) {
          throw new ErrorDatabase(error.message || 'Error saving opportunity', error.code || 'ERROR_SAVE_OPPORTUNITY');
+      }
+   }
+
+   async populateCV(): Promise<CV | null> {
+      try {
+         if (!this.cv_id) return null;
+
+         this.relatedCV = await CV.getById(this.cv_id);
+         return this.relatedCV;
+      } catch (error) {
+         console.error('Error populating CV:', error);
+         return null;
+      }
+   }
+
+   async populateCompany(): Promise<Company | null> {
+      try {
+         if (!this.company_id) return null;
+
+         this.company = await Company.getById(this.company_id);
+         return this.company;
+      } catch (error) {
+         console.error('Error populating Company:', error);
+         return null;
+      }
+   }
+
+   static async search({ where, sort = 'created_at', order = 'DESC', userID }: OpportunitySearchParams) {
+      try {
+         const query = database.select('opportunities_schema', 'opportunities');
+
+         if (where || userID) {
+            query.where({ ...where, opportunity_user_id: userID });
+         }
+
+         if (sort && order) {
+            query.sort({ [sort]: order });
+         }
+
+         const { data = [], error } = await query.exec();
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         const opportunities = data.map(item => new Opportunity(item));
+
+         await Promise.all(opportunities.map(op => op.populateCV()));
+         await Promise.all(opportunities.map(op => op.populateCompany()));
+
+         return opportunities;
+      } catch (error) {
+         throw new ErrorDatabase('Error searching opportunities', 'ERROR_SEARCH_OPPORTUNITIES');
       }
    }
 }
