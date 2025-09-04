@@ -2,13 +2,13 @@ import { NamespaceEvent, SocketNamespace, SocketRoom } from '../../../../service
 import ErrorSocketServer from '../../../../services/SocketServer/ErrorSocketServer';
 import socketServer from '../../../socket-server.service';
 
-function scrapJob(
+function scrapeJob(
    this: SocketNamespace, // Specify the type of `this` context
    room: SocketRoom,
    jobURL: string,
    callback: (response: any) => void
 ) {
-   this.sendToRoom(room.id, 'opportunities:scrap-linkedin-job:status', 'fetching-url');
+   this.sendToRoom(room.id, 'opportunities:scrape-linkedin-job:status', 'fetching-url');
 
    socketServer.sendTo('/virtual-browser/linkedin/job-infos', { jobURL }, (response = {}) => {
       const { jobDescription, jobTitle, jobCompany } = response;
@@ -16,7 +16,7 @@ function scrapJob(
 
       if (error) {
          console.error('LinkedIn Job Scrap Error:', { error, message });
-         this.sendToRoom(room.id, 'opportunities:scrap-linkedin-job:status', 'error');
+         this.sendToRoom(room.id, 'opportunities:scrape-linkedin-job:status', 'error');
 
          return callback({
             error: new ErrorSocketServer(
@@ -30,8 +30,8 @@ function scrapJob(
    });
 }
 
-const scrapLinkedInJob: NamespaceEvent = {
-   name: 'scrap-linkedin-job',
+const scrapeLinkedInJob: NamespaceEvent = {
+   name: 'scrape-linkedin-job',
    handler(socket, data, callback) {
       const { jobURL } = data || {};
 
@@ -40,17 +40,17 @@ const scrapLinkedInJob: NamespaceEvent = {
       const existingRoom = this.getRoom(clientID);
 
       if (!client) {
-         this.sendToRoom(clientID, 'opportunities:scrap-linkedin-job:status', 'error');
+         this.sendToRoom(clientID, 'opportunities:scrape-linkedin-job:status', 'error');
          return callback({ error: new ErrorSocketServer(`Client not found`, 'CLIENT_NOT_FOUND') });
       }
 
       if (existingRoom) {
-         return scrapJob.call(this, existingRoom, jobURL, callback);
+         return scrapeJob.call(this, existingRoom, jobURL, callback);
       }
 
       this.createRoom({
          id: socket.id,
-         name: `opportunities-scrap-linkedin-job-${socket.id}`,
+         name: `opportunities-scrape-linkedin-job-${socket.id}`,
          onCreate: (room) => {
             room.addClient(client).catch((error) => {
                console.error(`Error adding client ${client.id} to room ${room.name}:`, error);
@@ -59,10 +59,10 @@ const scrapLinkedInJob: NamespaceEvent = {
             });
          },
          onJoin: (room) => {
-            scrapJob.call(this, room, jobURL, callback);
+            scrapeJob.call(this, room, jobURL, callback);
          }
       });
    }
 }
 
-export default scrapLinkedInJob;
+export default scrapeLinkedInJob;

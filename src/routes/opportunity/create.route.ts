@@ -13,10 +13,14 @@ export default new Route({
       const { jobTitle, jobDescription, location, seniorityLevel, employmentType, companyName } = req.body;
       const userID = req.session.user?.id;
 
+      if (!userID) {
+         new ErrorResponseServerAPI('User not authenticated', 401, 'USER_NOT_AUTHENTICATED').send(res);
+         return;
+      }
+
       try {
          const company = await Company.create({
             company_name: companyName,
-            location: 'Unknown Location',
             user_id: userID,
             language_set: defaultLocale
          });
@@ -28,7 +32,7 @@ export default new Route({
             seniority_level: seniorityLevel,
             employment_type: employmentType,
             company_id: company.id,
-            opportunity_user_id: userID!
+            opportunity_user_id: userID
          });
 
          const saved = await opportunity.save();
