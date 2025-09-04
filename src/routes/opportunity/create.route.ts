@@ -3,6 +3,7 @@ import { Route } from '../../services';
 import { Opportunity } from '../../database/models/opportunities_schema';
 import { Company } from '../../database/models/companies_schema';
 import { defaultLocale } from '../../app.config';
+import { CV } from '../../database/models/curriculums_schema';
 
 export default new Route({
    method: 'POST',
@@ -10,7 +11,7 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    useAuth: true,
    controller: async (req, res) => {
-      const { jobTitle, jobDescription, location, seniorityLevel, employmentType, companyName } = req.body;
+      const { jobUrl, jobTitle, jobDescription, jobLocation, jobSeniority, jobEmploymentType, companyName, cvSummary, cvTemplate } = req.body;
       const userID = req.session.user?.id;
 
       if (!userID) {
@@ -19,6 +20,21 @@ export default new Route({
       }
 
       try {
+         const template = await CV.getById(cvTemplate, defaultLocale);
+         if (!template) {
+            new ErrorResponseServerAPI('CV Template not found', 404, 'CV_TEMPLATE_NOT_FOUND').send(res);
+            return;
+         }
+
+         const cv = await new CV({
+            ...template.rawData,
+            title: `${jobTitle} at ${companyName}`,
+            job_title: jobTitle,
+            summary: cvSummary,
+            is_favorite: false,
+            is_master: false,
+         }).save();
+
          const company = await Company.create({
             company_name: companyName,
             user_id: userID,
@@ -26,13 +42,15 @@ export default new Route({
          });
 
          const opportunity = new Opportunity({
+            job_url: jobUrl,
             job_title: jobTitle,
             job_description: jobDescription,
-            location,
-            seniority_level: seniorityLevel,
-            employment_type: employmentType,
+            location: jobLocation,
+            seniority_level: jobSeniority,
+            employment_type: jobEmploymentType,
             company_id: company.id,
-            opportunity_user_id: userID
+            opportunity_user_id: userID,
+            cv_id: cv.id
          });
 
          const saved = await opportunity.save();
