@@ -112,7 +112,7 @@ export default class Opportunity extends TableRow {
       try {
          const query = database.select('opportunities_schema', 'opportunities');
 
-         if (where || userID) {
+         if ((where && Object.keys(where).length > 0) || userID) {
             query.where({ ...where, opportunity_user_id: userID });
          }
 
@@ -131,8 +131,8 @@ export default class Opportunity extends TableRow {
          await Promise.all(opportunities.map(op => op.populateCompany()));
 
          return opportunities;
-      } catch (error) {
-         throw new ErrorDatabase('Error searching opportunities', 'ERROR_SEARCH_OPPORTUNITIES');
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message || 'Error searching opportunities', error.code || 'ERROR_SEARCH_OPPORTUNITIES');
       }
    }
 }

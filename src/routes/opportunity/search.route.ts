@@ -13,8 +13,17 @@ export default new Route({
       const userID = req.session.user?.id;
 
       try {
+         let parsedWhere;
+
+         try {
+            parsedWhere = JSON.parse(where as string || '{}');
+         } catch (parseError) {
+            new ErrorResponseServerAPI('Malformed JSON in "where" parameter', 400, 'MALFORMED_JSON_WHERE').send(res);
+            return;
+         }
+
          const results = await Opportunity.search({
-            where: JSON.parse(where as string || '{}'),
+            where: parsedWhere,
             sort,
             order,
             userID
