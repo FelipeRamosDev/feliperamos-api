@@ -54,6 +54,9 @@ import educationUpdate from '../routes/education/update.route';
 import educationUpdateSet from '../routes/education/update-set.route';
 import educationDelete from '../routes/education/delete.route';
 
+import opportunitiesCreate from '../routes/opportunity/create.route';
+import opportunitiesSearch from '../routes/opportunity/search.route';
+
 import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
 import userLanguages from '../routes/user/languages.route';
@@ -139,6 +142,8 @@ global.service = new ServerAPI({
       educationUpdate,
       educationUpdateSet,
       educationDelete,
+      opportunitiesCreate,
+      opportunitiesSearch,
       userUpdate,
       userMasterCV,
       userLanguages,
