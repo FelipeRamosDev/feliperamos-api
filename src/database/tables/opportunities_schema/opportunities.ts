@@ -6,6 +6,7 @@ export default new Table({
       { name: 'id', primaryKey: true, autoIncrement: true },
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'updated_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
+      { name: 'job_url', type: 'VARCHAR(255)' },
       { name: 'job_title', type: 'VARCHAR(255)' },
       { name: 'job_description', type: 'TEXT' },
       { name: 'location', type: 'VARCHAR(255)' },

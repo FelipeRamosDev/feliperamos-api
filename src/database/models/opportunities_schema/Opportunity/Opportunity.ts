@@ -6,11 +6,12 @@ import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import database from '../../../../database';
 
 export default class Opportunity extends TableRow {
-   public job_title: string;
-   public job_description: string;
-   public location: string;
-   public seniority_level: string;
-   public employment_type: string;
+   public job_url?: string;
+   public job_title?: string;
+   public job_description?: string;
+   public location?: string;
+   public seniority_level?: string;
+   public employment_type?: string;
    public cv_id?: number;
    public company_id?: number;
    public relatedCV?: CV;
@@ -21,6 +22,7 @@ export default class Opportunity extends TableRow {
       super('opportunities_schema', 'opportunities', setup);
 
       const {
+         job_url,
          job_title,
          job_description,
          location,
@@ -33,6 +35,7 @@ export default class Opportunity extends TableRow {
          opportunity_user_id
       } = setup || {};
 
+      this.job_url = job_url;
       this.job_title = job_title;
       this.job_description = job_description;
       this.location = location;
@@ -53,6 +56,7 @@ export default class Opportunity extends TableRow {
 
    toSave() {
       return {
+         job_url: this.job_url,
          job_title: this.job_title,
          job_description: this.job_description,
          location: this.location,

@@ -11,7 +11,7 @@ function scrapeJob(
    this.sendToRoom(room.id, 'opportunities:scrape-linkedin-job:status', 'fetching-url');
 
    socketServer.sendTo('/virtual-browser/linkedin/job-infos', { jobURL }, (response = {}) => {
-      const { jobDescription, jobTitle, jobCompany } = response;
+      const { jobDescription, jobTitle, jobCompany, jobLocation, jobSeniority, jobEmploymentType } = response;
       const { error, message } = response;
 
       if (error) {
@@ -26,7 +26,7 @@ function scrapeJob(
          });
       }
 
-      callback({ jobDescription, jobTitle, jobCompany });
+      callback({ jobDescription, jobTitle, jobCompany, jobLocation, jobSeniority, jobEmploymentType });
    });
 }
 
