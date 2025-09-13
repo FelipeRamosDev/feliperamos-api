@@ -11,7 +11,7 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    useAuth: true,
    controller: async (req, res) => {
-      const { jobUrl, jobTitle, jobDescription, jobLocation, jobSeniority, jobEmploymentType, companyName, cvSummary, cvTemplate } = req.body;
+      const { jobURL, jobTitle, jobDescription, jobLocation, jobSeniority, jobEmploymentType, companyName, cvSummary, cvTemplate } = req.body;
       const userID = req.session.user?.id;
 
       if (!userID) {
@@ -42,7 +42,7 @@ export default new Route({
          });
 
          const opportunity = new Opportunity({
-            job_url: jobUrl,
+            job_url: jobURL,
             job_title: jobTitle,
             job_description: jobDescription,
             location: jobLocation,
