@@ -25,7 +25,7 @@ export default new Route({
 
          res.status(200).send(opportunity);
       } catch (error: any) {
-         new ErrorResponseServerAPI(error.message || '', error.code || 'ERR').send(res)
+         new ErrorResponseServerAPI(error.message || '', error.code || 'UPDATE_OPPORTUNITY_ERROR').send(res)
       }
    }
 });

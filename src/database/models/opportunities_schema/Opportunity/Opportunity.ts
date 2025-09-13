@@ -175,10 +175,6 @@ export default class Opportunity extends TableRow {
    }
 
    static async delete(id: number, userID: number, deleteRelated?: boolean): Promise<Opportunity | null> {
-      if (!id || isNaN(id)) {
-         throw new ErrorDatabase('Invalid opportunity ID', 'INVALID_OPPORTUNITY_ID');
-      }
-
       try {
          if (deleteRelated) {
             const [opportunity] = await this.search({ where: { id }, userID });
