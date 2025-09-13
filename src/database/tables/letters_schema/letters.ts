@@ -18,7 +18,7 @@ export default new Table({
          }
       },
       {
-         name: 'to_id',
+         name: 'company_id',
          type: 'INTEGER',
          relatedField: {
             schema: 'companies_schema',

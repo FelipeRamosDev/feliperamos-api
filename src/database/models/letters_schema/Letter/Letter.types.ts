@@ -5,5 +5,5 @@ export interface LetterSetup {
    subject: string;
    body: string;
    from_id: number;
-   to_id: number;
+   company_id: number;
 }
