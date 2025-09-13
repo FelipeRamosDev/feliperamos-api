@@ -108,6 +108,24 @@ export default class Opportunity extends TableRow {
       }
    }
 
+   async deleteRelated() {
+      try {
+         if (this.cv_id) {
+            await CV.delete(this.cv_id);
+         }
+      } catch (error) {
+         throw new ErrorDatabase('Error deleting related CV', 'ERROR_DELETE_RELATED_CV');
+      }
+
+      try {
+         if (this.company_id) {
+            await Company.delete(this.company_id);
+         }
+      } catch (error) {
+         throw new ErrorDatabase('Error deleting related Company', 'ERROR_DELETE_RELATED_COMPANY');
+      }
+   }
+
    static async search({ where, sort = 'created_at', order = 'DESC', userID }: OpportunitySearchParams) {
       try {
          const query = database.select('opportunities_schema', 'opportunities');
@@ -133,6 +151,57 @@ export default class Opportunity extends TableRow {
          return opportunities;
       } catch (error: any) {
          throw new ErrorDatabase(error.message || 'Error searching opportunities', error.code || 'ERROR_SEARCH_OPPORTUNITIES');
+      }
+   }
+
+   static async update(id: number, updates: Partial<OpportunitySetup>): Promise<Opportunity | null> {
+      try {
+         const { data = [], error } = await database.update('opportunities_schema', 'opportunities').set(updates).where({ id }).returning().exec();
+
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         const [ opportunity ] = data;
+
+         if (!opportunity) {
+            return null;
+         }
+
+         return new Opportunity(opportunity);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message || 'Error updating opportunity', error.code || 'ERROR_UPDATE_OPPORTUNITY');
+      }
+   }
+
+   static async delete(id: number, userID: number, deleteRelated?: boolean): Promise<Opportunity | null> {
+      if (!id || isNaN(id)) {
+         throw new ErrorDatabase('Invalid opportunity ID', 'INVALID_OPPORTUNITY_ID');
+      }
+
+      try {
+         if (deleteRelated) {
+            const [opportunity] = await this.search({ where: { id }, userID });
+            if (!opportunity) {
+               return null;
+            }
+
+            await opportunity.deleteRelated();
+         }
+
+         const { data = [], error } = await database.delete('opportunities_schema', 'opportunities').where({ id }).returning().exec();
+         if (error) {
+            throw new ErrorDatabase(error.message, error.code);
+         }
+
+         const [ deletedOpportunity ] = data;
+         if (!deletedOpportunity) {
+            return null;
+         }
+
+         return new Opportunity(deletedOpportunity);
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message || 'Error deleting opportunity', error.code || 'ERROR_DELETE_OPPORTUNITY');
       }
    }
 }

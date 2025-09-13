@@ -19,7 +19,7 @@ export interface OpportunitySetup {
 }
 
 export interface OpportunitySearchParams {
-   where?: Partial<OpportunitySetup>;
+   where?: Partial<Opportunity>;
    sort?: keyof Opportunity;
    order?: OpportunityOrderOptions;
    userID?: number;
