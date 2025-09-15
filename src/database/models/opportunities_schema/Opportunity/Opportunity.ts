@@ -129,9 +129,18 @@ export default class Opportunity extends TableRow {
    static async search({ where, sort = 'created_at', order = 'DESC', userID }: OpportunitySearchParams) {
       try {
          const query = database.select('opportunities_schema', 'opportunities');
+         let whereClause: Record<string, any> = {};
 
-         if ((where && Object.keys(where).length > 0) || userID) {
-            query.where({ ...where, opportunity_user_id: userID });
+         if (where && Object.keys(where).length > 0) {
+            whereClause = { ...where };
+         }
+
+         if (userID) {
+            whereClause.opportunity_user_id = userID;
+         }
+
+         if (Object.keys(whereClause).length > 0) {
+            query.where(whereClause);
          }
 
          if (sort && order) {

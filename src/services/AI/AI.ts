@@ -23,7 +23,7 @@ export default class AI extends Microservice {
     * Constructs an AI instance.
     * @param setup - Configuration object containing API key, assistant ID, and model.
     */
-   constructor (setup: AISetup) {
+   constructor(setup: AISetup) {
       super(setup)
       const { apiKey, assistantID, model = 'gpt-4.1-nano' } = setup || {};
 
@@ -116,7 +116,7 @@ export default class AI extends Microservice {
             input: input as any,
             ...opt
          });
-   
+
          return response.output_text;
       } catch (err) {
          throw ErrorModel.toError('Error caught during GPT response creating.');
@@ -135,7 +135,7 @@ export default class AI extends Microservice {
       if (!this.isAssistant || this._assistantID === undefined) {
          throw new Error(`You need to provide the "assistantID" on the AI instance construction.`);
       }
-      
+
       try {
          const thread = this.getThread(threadID) || await this.createThread(threadID);
 
@@ -168,7 +168,7 @@ export default class AI extends Microservice {
             threadID: thread.id,
             output: contentBlock.text.value
          };
-        } catch (err) {
+      } catch (err) {
          throw err;
       }
    }

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { AI } from '../services';
 import assistantGenerateRoute from './routes/ai/assistant-generate.route';
 import generateCvSummaryRoute from './routes/ai/generate-cv-summary.route';
+import generateLetterRoute from './routes/ai/generate-letter.route';
 
 const { OPENAI_API_KEY, OPENAI_ASSISTANT_ID, OPENAI_ASSISTANT_BUILD_CV } = process.env;
 if (!OPENAI_API_KEY) {
@@ -14,7 +15,8 @@ global.service = new AI({
    assistantID: OPENAI_ASSISTANT_ID,
    endpoints: [
       assistantGenerateRoute,
-      generateCvSummaryRoute
+      generateCvSummaryRoute,
+      generateLetterRoute
    ],
    onServiceReady: function () {
       console.log(`[${this.containerName}] AI service is ready!`);

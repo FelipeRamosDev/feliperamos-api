@@ -25,6 +25,15 @@ export default new Table({
             table: 'companies',
             field: 'id'
          }
+      },
+      {
+         name: 'opportunity_id',
+         type: 'INTEGER',
+         relatedField: {
+            schema: 'opportunities_schema',
+            table: 'opportunities',
+            field: 'id'
+         }
       }
    ]
 });
