@@ -10,6 +10,7 @@ export default function generateCVSummaryPrompt(jobDescription: string, currentI
 - Only reply with the generated CV summary markdown.
 - Do not include any additional text or explanations.
 - The summary should be ATS optimized in bullet list format.
+- Never include references on the response. Ex.: 【4:0†Felipe_Ramos-CV_3_en.pdf】
 
 ## Job Description
 ${jobDescription || 'No job description provided.'}
