@@ -39,7 +39,7 @@ export default class Letter extends TableRow {
          from_id: this.from_id,
          company_id: this.company_id,
          opportunity_id: this.opportunity_id,
-      }
+      };
    }
 
    async save() {

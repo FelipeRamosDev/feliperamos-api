@@ -17,7 +17,6 @@ export default new Route({
       }
 
       try {
-         // Simulate cover letter creation
          const letter = new Letter({
             from_id: userId,
             subject,
