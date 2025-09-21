@@ -70,7 +70,21 @@ export default class Letter extends TableRow {
    }
 
    get pdfPath() {
-      const relativePath = `letter/${this.from?.name?.replace(/ /g, '_')}_cover_letter_${this.id}_${this?.language_set || defaultLocale}.pdf`;
+      // Construct the sender's name for the path
+      let senderName = 'unknown_user';
+
+      if (this.from) {
+         const first = this.from.first_name || '';
+         const last = this.from.last_name || '';
+         if (first || last) {
+            senderName = `${first} ${last}`.trim();
+         }
+      } else if (this.from_name) {
+         senderName = this.from_name;
+      }
+
+      senderName = senderName.replace(/ /g, '_');
+      const relativePath = `letter/${senderName}_cover_letter_${this.id}_${this?.language_set || defaultLocale}.pdf`;
       return path.join(process.env.PUBLIC_PATH || '', relativePath);
    }
 

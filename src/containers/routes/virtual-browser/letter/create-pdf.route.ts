@@ -33,8 +33,8 @@ export default new EventEndpoint({
          }
 
          const pdfBuffer = await page.toPDF(letter.pdfPath);
-         if (!pdfBuffer) {
-            return done(new EventEndpoint.Error('Failed to generate PDF', 'PDF_GENERATION_FAILED'));
+         if (!pdfBuffer || !letter.pdfPath || typeof letter.pdfPath !== 'string' || letter.pdfPath.trim() === '') {
+            return done(new EventEndpoint.Error('Invalid PDF path', 'INVALID_PDF_PATH'));
          }
 
          await page.close();
