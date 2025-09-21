@@ -6,6 +6,7 @@ export default new Table({
       { name: 'id', primaryKey: true, autoIncrement: true },
       { name: 'created_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
       { name: 'updated_at', type: 'TIMESTAMP', defaultValue: 'CURRENT_TIMESTAMP' },
+      { name: 'type', type: 'VARCHAR(50)', defaultValue: 'cover-letter' },
       { name: 'subject', type: 'VARCHAR(255)', notNull: true },
       { name: 'body', type: 'TEXT', notNull: true },
       {

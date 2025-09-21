@@ -1,3 +1,4 @@
+import { LetterTypes } from '../../database/models/letters_schema/Letter/Letter.types';
 import { Letter } from '../../database/models/letters_schema';
 import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
@@ -8,21 +9,11 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    useAuth: true, 
    controller: async (req, res) => {
-      const { query } = req.query;
       const userId = req.session.user?.id;
-      let queryObj = {};
-
-      if (query) {
-         try {
-            queryObj = JSON.parse(query as string);
-         } catch (err) {
-            new ErrorResponseServerAPI('Invalid query parameter: must be valid JSON', 400, 'INVALID_QUERY_PARAMETER').send(res);
-            return;
-         }
-      }
+      const type = String(req.query['where[type]'] || 'cover-letter') as LetterTypes;
 
       try {
-         const letters = await Letter.find({ ...queryObj, from_id: userId });
+         const letters = await Letter.find({ type, from_id: userId });
          res.status(200).send(letters);
       } catch (error: any) {
          new ErrorResponseServerAPI(error.message || 'Failed to fetch cover letters', 500, 'FAILED_TO_FETCH_COVER_LETTERS').send(res);

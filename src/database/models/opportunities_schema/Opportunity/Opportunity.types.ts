@@ -1,5 +1,6 @@
 import { CompanySetup } from '../../companies_schema/Company/Company.types';
 import { CVSetup } from '../../curriculums_schema/CV/CV.types';
+import { LetterSetup } from '../../letters_schema/Letter/Letter.types';
 import Opportunity from './Opportunity';
 
 export type OpportunityOrderOptions = 'ASC' | 'DESC';
@@ -16,6 +17,7 @@ export interface OpportunitySetup {
    relatedCV?: CVSetup;
    company?: CompanySetup;
    opportunity_user_id: number;
+   coverLetter?: LetterSetup;
 }
 
 export interface OpportunitySearchParams {

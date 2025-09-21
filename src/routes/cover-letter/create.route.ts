@@ -8,7 +8,7 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    useAuth: true,
    controller: async (req, res) => {
-      const { subject, body, opportunity_id, company_id } = req.body;
+      const { type, subject, body, opportunity_id, company_id } = req.body;
       const userId = req.session.user?.id;
 
       if (!userId) {
@@ -19,6 +19,7 @@ export default new Route({
       try {
          const letter = new Letter({
             from_id: userId,
+            type,
             subject,
             body,
             opportunity_id,
