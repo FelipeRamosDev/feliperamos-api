@@ -31,5 +31,20 @@
 			"export default ${1:eventName};"
 		],
 		"description": "Socket.IO namespace event handler"
+	},
+	"CreateHTTPRoute": {
+		"scope": "javascript,typescript",
+		"prefix": "http-route",
+		"body": [
+			"import { Route } from '${1:path}services';",
+			"",
+			"export default new Route({",
+			"   method: '${2:GET}',",
+			"   routePath: '${3:/path/here}',",
+			"   async controller(req, res) {",
+			"   },",
+			"});"
+		],
+		"description": "Create a new HTTP route"
 	}
 }

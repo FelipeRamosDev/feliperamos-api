@@ -4,6 +4,7 @@ import { CV } from '../../curriculums_schema';
 import { Company } from '../../companies_schema';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import database from '../../../../database';
+import { Letter } from '../../letters_schema';
 
 export default class Opportunity extends TableRow {
    public job_url?: string;
@@ -17,6 +18,7 @@ export default class Opportunity extends TableRow {
    public relatedCV?: CV | null;
    public company?: Company | null;
    public opportunity_user_id: number;
+   public coverLetter?: Letter | null;
 
    constructor (setup: OpportunitySetup) {
       super('opportunities_schema', 'opportunities', setup);
@@ -32,7 +34,8 @@ export default class Opportunity extends TableRow {
          company_id,
          relatedCV,
          company,
-         opportunity_user_id
+         opportunity_user_id,
+         coverLetter
       } = setup || {};
 
       this.job_url = job_url;
@@ -47,6 +50,10 @@ export default class Opportunity extends TableRow {
 
       if (relatedCV) {
          this.relatedCV = new CV(relatedCV);
+      }
+
+      if (coverLetter) {
+         this.coverLetter = new Letter(coverLetter);
       }
 
       if (company) {
@@ -92,6 +99,18 @@ export default class Opportunity extends TableRow {
          return this.relatedCV;
       } catch (error) {
          console.error('Error populating CV:', error);
+         return null;
+      }
+   }
+
+   async populateCoverLetter(): Promise<Letter | null> {
+      try {
+         const [coverLetter] = await Letter.find({ opportunity_id: this.id });
+
+         this.coverLetter = coverLetter;
+         return this.coverLetter;
+      } catch (error) {
+         console.error('Error populating Cover Letter:', error);
          return null;
       }
    }
@@ -155,6 +174,7 @@ export default class Opportunity extends TableRow {
          const opportunities = data.map(item => new Opportunity(item));
 
          await Promise.all(opportunities.map(op => op.populateCV()));
+         await Promise.all(opportunities.map(op => op.populateCoverLetter()));
          await Promise.all(opportunities.map(op => op.populateCompany()));
 
          return opportunities;
