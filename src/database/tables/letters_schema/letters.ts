@@ -1,3 +1,4 @@
+import { createLetterPDF } from '../../../helpers/database.helper';
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
@@ -36,6 +37,20 @@ export default new Table({
             field: 'id'
          }
       }
-   ]
+   ],
+   events: {
+      async onAfterInsert(query) {
+         const created = query.firstRow;
+         if (!created) return;
+
+         createLetterPDF(created.id);
+      },
+      async onAfterUpdate(query) {
+         const created = query.firstRow;
+         if (!created) return;
+
+         createLetterPDF(created.id);
+      }
+   }
 });
 

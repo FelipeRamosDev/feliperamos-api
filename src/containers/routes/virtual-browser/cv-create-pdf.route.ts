@@ -34,7 +34,7 @@ export default new EventEndpoint({
             await existingPage.close();
          }
 
-         const page = await service.newPage(pageId, frontendURL(`/${language_set}/curriculum/pdf/${cv_id}`));
+         const page = await service.newPage(pageId, frontendURL(`/${language_set}/pdf/curriculum/${cv_id}`));
          if (!page) {
             return done(new EventEndpoint.Error('Failed to create PDF template page!', 'PAGE_CREATION_FAILED'));
          }
