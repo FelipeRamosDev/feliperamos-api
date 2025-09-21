@@ -31,8 +31,8 @@ export default class Letter extends TableRow {
          job_title
       } = setup || {};
 
-      if (subject == null || body == null || from_id == null || company_id == null || opportunity_id == null) {
-         throw new Error('Missing required fields to create a Letter! Required params: subject, body, from_id, company_id, opportunity_id');
+      if (type == null || subject == null || body == null || from_id == null || company_id == null || opportunity_id == null) {
+         throw new Error('Missing required fields to create a Letter! Required params: type, subject, body, from_id, company_id, opportunity_id');
       }
 
       this.type = type;

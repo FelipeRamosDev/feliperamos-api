@@ -12,11 +12,6 @@ export default new Route({
       const data = req.body;
       const letterId = Number(id);
 
-      if (!id) {
-         new ErrorResponseServerAPI('Letter ID is required', 400, 'MISSING_LETTER_ID').send(res);
-         return;
-      }
-
       if (!data || !Object.keys(data).length) {
          new ErrorResponseServerAPI('No data provided for update', 400, 'NO_DATA_PROVIDED').send(res);
          return;
