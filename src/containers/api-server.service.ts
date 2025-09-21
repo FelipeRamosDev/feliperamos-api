@@ -60,6 +60,7 @@ import opportunitiesUpdate from '../routes/opportunity/update.route';
 import opportunitiesDelete from '../routes/opportunity/delete.route';
 
 import letterCreate from '../routes/cover-letter/create.route';
+import letterSearch from '../routes/cover-letter/search.route';
 
 import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
@@ -159,6 +160,7 @@ global.service = new ServerAPI({
       opportunitiesDelete,
 
       letterCreate,
+      letterSearch,
 
       userUpdate,
       userMasterCV,

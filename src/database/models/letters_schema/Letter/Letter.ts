@@ -56,4 +56,18 @@ export default class Letter extends TableRow {
          throw new ErrorDatabase('Failed to save Letter to database!', 'FAILED_TO_SAVE_LETTER');
       }
    }
+
+   static async find(query: Partial<LetterSetup> = {}): Promise<Letter[]> {
+      try {
+         const { data = [], error } = await database.select('letters_schema', 'letters').where(query).exec();
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch Letters from database!', 'FAILED_TO_FETCH_LETTERS');
+         }
+
+         return data.map(item => new Letter(item));
+      } catch (error) {
+         throw new ErrorDatabase('Failed to fetch Letters from database!', 'FAILED_TO_FETCH_LETTERS');
+      }
+   }
 }
