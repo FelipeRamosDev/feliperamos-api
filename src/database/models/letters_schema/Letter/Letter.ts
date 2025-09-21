@@ -4,12 +4,18 @@ import { LetterSetup, LetterTypes } from './Letter.types';
 import database from '../../../../database';
 import { Company } from '../../companies_schema';
 import { Opportunity } from '../../opportunities_schema';
+import { AdminUser } from '../../users_schema';
+import { defaultLocale } from '../../../../app.config';
+import path from 'path';
 
 export default class Letter extends TableRow {
+   public language_set?: string;
    public type: LetterTypes;
    public subject: string;
    public body: string;
    public from_id: number;
+   public from?: Partial<AdminUser>;
+   public from_name?: string;
    public company_id: number;
    public company_name?: string;
    public opportunity_id: number;
@@ -25,13 +31,15 @@ export default class Letter extends TableRow {
          subject,
          body,
          from_id,
+         from_name,
+         from,
          company_id,
          company_name,
          opportunity_id,
          job_title
       } = setup || {};
 
-      if (type == null || subject == null || body == null || from_id == null || company_id == null || opportunity_id == null) {
+      if (subject == null || body == null || from_id == null || company_id == null || opportunity_id == null) {
          throw new Error('Missing required fields to create a Letter! Required params: type, subject, body, from_id, company_id, opportunity_id');
       }
 
@@ -43,6 +51,11 @@ export default class Letter extends TableRow {
       this.company_name = company_name;
       this.opportunity_id = opportunity_id;
       this.job_title = job_title;
+      this.from_name = from_name;
+      
+      if (from) {
+         this.from = new AdminUser(from);
+      }
    }
 
    get toSave() {
@@ -54,6 +67,25 @@ export default class Letter extends TableRow {
          company_id: this.company_id,
          opportunity_id: this.opportunity_id,
       };
+   }
+
+   get pdfPath() {
+      // Construct the sender's name for the path
+      let senderName = 'unknown_user';
+
+      if (this.from) {
+         const first = this.from.first_name || '';
+         const last = this.from.last_name || '';
+         if (first || last) {
+            senderName = `${first} ${last}`.trim();
+         }
+      } else if (this.from_name) {
+         senderName = this.from_name;
+      }
+
+      senderName = senderName.replace(/ /g, '_');
+      const relativePath = `letter/${senderName}_cover_letter_${this.id}_${this?.language_set || defaultLocale}.pdf`;
+      return path.join(process.env.PUBLIC_PATH || '', relativePath);
    }
 
    async populateCompany() {
@@ -92,6 +124,23 @@ export default class Letter extends TableRow {
       }
    }
 
+   async populateUser() {
+      try {
+         const { data = [], error } = await database.select('users_schema', 'admin_users').where({ id: this.from_id }).exec();
+         const [ user ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to populate user for Letter!', 'FAILED_TO_POPULATE_LETTER_USER');
+         }
+
+         if (user) {
+            this.from = new AdminUser(user).toPublic();
+         }
+      } catch (error) {
+         throw new ErrorDatabase('Failed to populate user for Letter!', 'FAILED_TO_POPULATE_LETTER_USER');
+      }
+   }
+
    async save() {
       try {
          const { data = [], error } = await database.insert(this.schemaName, this.tableName).data(this.toSave).returning().exec();
@@ -113,6 +162,8 @@ export default class Letter extends TableRow {
 
          queryBuilder.populate('company_id', ['letters.id', 'company_name']);
          queryBuilder.populate('opportunity_id', ['letters.id', 'job_title']);
+         queryBuilder.populate('from_id', ['letters.id', 'first_name', 'last_name', 'email']);
+         queryBuilder.sort({ created_at: 'DESC' });
 
          const { data = [], error } = await queryBuilder.exec();
 
@@ -122,10 +173,40 @@ export default class Letter extends TableRow {
 
          return data.map(item => new Letter({
             ...item,
-            company_name: item.company_name
+            company_name: item.company_name,
+            from_name: `${item.first_name} ${item.last_name}`,
          }));
+      } catch (error: any) {
+         throw new ErrorDatabase(error.message || 'Failed to fetch Letters from database!', error.code || 'FAILED_TO_FETCH_LETTERS');
+      }
+   }
+
+   static async findById(id: number): Promise<Letter | null> {
+      try {
+         if (!id || isNaN(Number(id))) {
+            throw new ErrorDatabase('Invalid Letter ID for findById!', 'INVALID_LETTER_ID');
+         }
+
+         const { data = [], error } = await database.select('letters_schema', 'letters').where({ id }).exec();
+         const [ letter ] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to fetch Letter from database!', 'FAILED_TO_FETCH_LETTER');
+         }
+
+         if (!letter) {
+            return null;
+         }
+
+         const letterDoc = new Letter(letter);
+
+         await letterDoc.populateCompany();
+         await letterDoc.populateOpportunity();
+         await letterDoc.populateUser();
+
+         return letterDoc;
       } catch (error) {
-         throw new ErrorDatabase('Failed to fetch Letters from database!', 'FAILED_TO_FETCH_LETTERS');
+         throw new ErrorDatabase('Failed to fetch Letter from database!', 'FAILED_TO_FETCH_LETTER');
       }
    }
 

@@ -9,21 +9,18 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    useAuth: true,
    controller: async (req, res) => {
-      let { where, sort, order }: OpportunitySearchParams = req.query;
+      let { sort, order }: OpportunitySearchParams = req.query;
       const userID = req.session.user?.id;
+      const company_id = req.query['where[company_id]'];
+      const where: Record<string, any> = {};
 
       try {
-         let parsedWhere;
-
-         try {
-            parsedWhere = JSON.parse(where as string || '{}');
-         } catch (parseError) {
-            new ErrorResponseServerAPI('Malformed JSON in "where" parameter', 400, 'MALFORMED_JSON_WHERE').send(res);
-            return;
+         if (company_id) {
+            where.company_id = Number(company_id);
          }
-
+         
          const results = await Opportunity.search({
-            where: parsedWhere,
+            where,
             sort,
             order,
             userID

@@ -1,3 +1,5 @@
+import { AdminUser } from "../../users_schema";
+
 export type LetterTypes = 'cover-letter' | 'email' | 'other';
 
 export interface LetterSetup {
@@ -5,6 +7,8 @@ export interface LetterSetup {
    subject: string;
    body: string;
    from_id: number;
+   from?: AdminUser;
+   from_name?: string;
    company_id?: number;
    company_name?: string;
    company_site_url?: string;
