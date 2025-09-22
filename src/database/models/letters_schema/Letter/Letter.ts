@@ -238,7 +238,7 @@ export default class Letter extends TableRow {
    }
 
    static async delete(id: number): Promise<Letter | null> {
-      if (!id || isNaN(Number(id))) {
+      if (!id || isNaN(id)) {
          throw new ErrorDatabase('Invalid Letter ID for delete!', 'INVALID_LETTER_ID');
       }
 

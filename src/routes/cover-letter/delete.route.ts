@@ -29,7 +29,7 @@ export default new Route({
             return;
          }
 
-         res.status(204).send(deleted);
+         res.status(200).send(deleted);
       } catch (error) {
          new ErrorResponseServerAPI('Failed to delete cover letter', 500, 'ERROR_DELETING_COVER_LETTER').send(res);
          return;
