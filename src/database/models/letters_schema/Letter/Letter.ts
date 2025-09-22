@@ -23,7 +23,7 @@ export default class Letter extends TableRow {
    public company?: Company;
    public opportunity?: Opportunity;
 
-   constructor (setup: LetterSetup) {
+   constructor(setup: LetterSetup) {
       super('letters_schema', 'letters', setup);
 
       const {
@@ -52,7 +52,7 @@ export default class Letter extends TableRow {
       this.opportunity_id = opportunity_id;
       this.job_title = job_title;
       this.from_name = from_name;
-      
+
       if (from) {
          this.from = new AdminUser(from);
       }
@@ -91,7 +91,7 @@ export default class Letter extends TableRow {
    async populateCompany() {
       try {
          const { data = [], error } = await database.select('companies_schema', 'companies').where({ id: this.company_id }).exec();
-         const [ company ] = data;
+         const [company] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to populate company for Letter!', 'FAILED_TO_POPULATE_LETTER_COMPANY');
@@ -109,7 +109,7 @@ export default class Letter extends TableRow {
    async populateOpportunity() {
       try {
          const { data = [], error } = await database.select('opportunities_schema', 'opportunities').where({ id: this.opportunity_id }).exec();
-         const [ opportunity ] = data;
+         const [opportunity] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to populate opportunity for Letter!', 'FAILED_TO_POPULATE_LETTER_OPPORTUNITY');
@@ -127,7 +127,7 @@ export default class Letter extends TableRow {
    async populateUser() {
       try {
          const { data = [], error } = await database.select('users_schema', 'admin_users').where({ id: this.from_id }).exec();
-         const [ user ] = data;
+         const [user] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to populate user for Letter!', 'FAILED_TO_POPULATE_LETTER_USER');
@@ -144,7 +144,7 @@ export default class Letter extends TableRow {
    async save() {
       try {
          const { data = [], error } = await database.insert(this.schemaName, this.tableName).data(this.toSave).returning().exec();
-         const [ created ] = data;
+         const [created] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to save Letter to database!', 'FAILED_TO_SAVE_LETTER');
@@ -188,7 +188,7 @@ export default class Letter extends TableRow {
          }
 
          const { data = [], error } = await database.select('letters_schema', 'letters').where({ id }).exec();
-         const [ letter ] = data;
+         const [letter] = data;
 
          if (error) {
             throw new ErrorDatabase('Failed to fetch Letter from database!', 'FAILED_TO_FETCH_LETTER');
@@ -217,7 +217,7 @@ export default class Letter extends TableRow {
          }
 
          const { data: updatedData = [], error } = await database.update('letters_schema', 'letters').set(data).where({ id }).returning().exec();
-         const [ updated ] = updatedData;
+         const [updated] = updatedData;
          const letter = new Letter(updated);
 
          if (error) {
@@ -234,6 +234,29 @@ export default class Letter extends TableRow {
          return letter;
       } catch (error) {
          throw new ErrorDatabase('Failed to update Letter in database!', 'FAILED_TO_UPDATE_LETTER');
+      }
+   }
+
+   static async delete(id: number): Promise<Letter | null> {
+      if (!id || isNaN(id)) {
+         throw new ErrorDatabase('Invalid Letter ID for delete!', 'INVALID_LETTER_ID');
+      }
+
+      try {
+         const { data = [], error } = await database.delete('letters_schema', 'letters').where({ id }).returning().exec();
+         const [deleted] = data;
+
+         if (error) {
+            throw new ErrorDatabase('Failed to delete Letter from database!', 'FAILED_TO_DELETE_LETTER');
+         }
+
+         if (!deleted) {
+            return null;
+         }
+
+         return new Letter(deleted);
+      } catch (error) {
+         throw new ErrorDatabase('Failed to delete Letter from database!', 'FAILED_TO_DELETE_LETTER');
       }
    }
 }
