@@ -143,6 +143,18 @@ export default class Opportunity extends TableRow {
       } catch (error) {
          throw new ErrorDatabase('Error deleting related Company', 'ERROR_DELETE_RELATED_COMPANY');
       }
+
+      try {
+         if (!this.coverLetter?.id) {
+            await this.populateCoverLetter();
+         }
+
+         if (this.coverLetter?.id) {
+            await Letter.delete(this.coverLetter.id);
+         }
+      } catch (error) {
+         throw new ErrorDatabase('Error deleting related Cover Letter', 'ERROR_DELETE_RELATED_COVER_LETTER');
+      }
    }
 
    static async search({ where, sort = 'created_at', order = 'DESC', userID }: OpportunitySearchParams) {
