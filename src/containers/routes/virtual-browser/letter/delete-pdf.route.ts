@@ -13,13 +13,13 @@ export default new EventEndpoint({
          const deleted = await deleteFile(pdfPath);
 
          if (!deleted) {
-            return done(new ErrorEventEndpoint('Failed to delete CV PDF', 'CV_DELETE_PDF_ERROR'));
+            return done(new ErrorEventEndpoint('Failed to delete Letter PDF', 'LETTER_DELETE_PDF_ERROR'));
          }
 
          done({ success: true });
       } catch (error) {
-         console.error('Error deleting CV PDF:', error);
-         return done(new ErrorEventEndpoint('Failed to delete CV PDF', 'CV_DELETE_PDF_ERROR'));
+         console.error('Error deleting Letter PDF:', error);
+         return done(new ErrorEventEndpoint('Failed to delete Letter PDF', 'LETTER_DELETE_PDF_ERROR'));
       }
    }
 });
