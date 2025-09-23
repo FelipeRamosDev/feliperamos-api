@@ -1,4 +1,5 @@
-import { createLetterPDF } from '../../../helpers/database.helper';
+import { Letter } from '../../../database/models/letters_schema';
+import { createLetterPDF, deleteLetterPDF } from '../../../helpers/database.helper';
 import Table from '../../../services/Database/models/Table';
 
 export default new Table({
@@ -50,6 +51,16 @@ export default new Table({
          if (!created) return;
 
          createLetterPDF(created.id);
+      },
+      async onAfterDelete(query) {
+         const deleted = query.firstRow;
+         if (!deleted) return;
+
+         const deletedModel = new Letter(deleted);
+         await deletedModel.populateUser();
+         
+         if (!deletedModel.from?.name) return;
+         deleteLetterPDF(deleted.id, deletedModel.from?.name);
       }
    }
 });

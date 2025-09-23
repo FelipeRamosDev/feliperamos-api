@@ -259,4 +259,19 @@ export default class Letter extends TableRow {
          throw new ErrorDatabase('Failed to delete Letter from database!', 'FAILED_TO_DELETE_LETTER');
       }
    }
+
+   static letterPdfPath(userFullName: string, letterId: number, languageSet: string = defaultLocale): string {
+   if (!userFullName) {
+      throw new Error('Invalid userFullName provided');
+   }
+
+   if (!letterId || typeof letterId !== 'number') {
+      throw new Error('Invalid letterId provided');
+   }
+
+   const userName = userFullName.replace(/ /g, '_');
+
+   const relativePath = `letter/${userName}_cover_letter_${letterId}_${languageSet}.pdf`;
+   return path.join(process.env.PUBLIC_PATH || '', relativePath);
+}
 }
