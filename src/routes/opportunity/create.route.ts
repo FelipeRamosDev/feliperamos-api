@@ -11,7 +11,7 @@ export default new Route({
    allowedRoles: ['admin', 'master'],
    useAuth: true,
    controller: async (req, res) => {
-      const { jobURL, jobTitle, jobDescription, jobLocation, jobSeniority, jobEmploymentType, companyName, cvSummary, cvTemplate } = req.body;
+      const { jobURL, jobTitle, jobDescription, jobLocation, jobSeniority, jobEmploymentType, jobCompany, cvSummary, cvTemplate } = req.body;
       const userID = req.session.user?.id;
 
       if (!userID) {
@@ -28,7 +28,7 @@ export default new Route({
 
          const cv = await new CV({
             ...template.rawData,
-            title: `${jobTitle} at ${companyName}`,
+            title: `${jobTitle} at ${jobCompany}`,
             job_title: jobTitle,
             summary: cvSummary,
             is_favorite: false,
@@ -36,7 +36,7 @@ export default new Route({
          }).save();
 
          const company = await Company.create({
-            company_name: companyName,
+            company_name: jobCompany,
             user_id: userID,
             language_set: defaultLocale
          });

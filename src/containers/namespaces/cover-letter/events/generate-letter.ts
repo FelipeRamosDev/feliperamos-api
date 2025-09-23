@@ -23,8 +23,11 @@ const generateLetter: NamespaceEvent = {
          });
       }
 
+      this.sendToClient(socket.id, 'letter:generate-letter:status', 'generating');
       const [ opportunity ] = await Opportunity.search({ where: { id: opportunityId }});
+
       if (!opportunity) {
+         this.sendToClient(socket.id, 'letter:generate-letter:status', 'error');
          return callback(new ErrorSocketServer('Opportunity not found', 'OPPORTUNITY_NOT_FOUND'));
       }
 
@@ -35,6 +38,7 @@ const generateLetter: NamespaceEvent = {
          additionalMessage
       }, (response) => {
          if (!response.success) {
+            this.sendToClient(socket.id, 'letter:generate-letter:status', 'error');
             return callback(new ErrorSocketServer('Error generating cover letter', 'AI_GENERATE_LETTER_ERROR'));
          }
 
@@ -44,7 +48,8 @@ const generateLetter: NamespaceEvent = {
             letterSubject: `Application for ${opportunity.job_title} position`,
             letterBody: response.output
          });
-      })
+         this.sendToClient(socket.id, 'letter:generate-letter:status', 'success');
+      });
    }
 }
 
