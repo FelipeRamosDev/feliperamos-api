@@ -1,6 +1,6 @@
 {
   "name": "feliperamos-api",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Chat bot integrated with an OpenAI GPT agent that replies anything about me, if you are a recruiter, please try to chat with him.",
   "main": "app.js",
   "scripts": {
