@@ -3,7 +3,7 @@ import { Route } from '../../services';
 import CVSet from '../../database/models/curriculums_schema/CVSet/CVSet';
 
 export default new Route({
-   method: 'POST',
+   method: 'PATCH',
    routePath: '/curriculum/update-set',
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],

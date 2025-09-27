@@ -1,4 +1,5 @@
-import path from "path";
+import { defaultLocale } from '@/app.config';
+import path from 'path';
 
 export function frontendURL(path: string, queryParams: Record<string, string | number | boolean> = {}): string {
    const url = new URL(process.env.FRONTEND_URL || 'http://localhost:3000');

@@ -8,6 +8,9 @@ const SHOW_MORE_BUTTON_SELECTOR = '.show-more-less-html__button';
 const JOB_COMPANY_NAME = '.topcard__org-name-link';
 const JOB_TITLE_SELECTOR = '.top-card-layout__title';
 const JOB_DESCRIPTION_SELECTOR = '.description__text';
+const JOB_LOCATION_SELECTOR = '.top-card-layout__second-subline .topcard__flavor-row .topcard__flavor:nth-child(2)';
+const JOB_SENIORITY_SELECTOR = '.description__job-criteria-item:nth-child(1) .description__job-criteria-text--criteria';
+const JOB_EMPLOYMENT_TYPE_SELECTOR = '.description__job-criteria-item:nth-child(2) .description__job-criteria-text--criteria';
 
 export default new EventEndpoint({
    path: '/virtual-browser/linkedin/job-infos',
@@ -41,12 +44,24 @@ export default new EventEndpoint({
          const descr = await page.getElement(JOB_DESCRIPTION_SELECTOR);
          const jobDescription = await descr?.evaluate((el) => (el as HTMLElement)?.innerText);
 
+         const location = await page.getElement(JOB_LOCATION_SELECTOR);
+         const jobLocation = await location?.evaluate((el) => (el as HTMLElement)?.innerText);
+         
+         const seniority = await page.getElement(JOB_SENIORITY_SELECTOR);
+         const jobSeniority = await seniority?.evaluate((el) => (el as HTMLElement)?.innerText);
+
+         const employmentType = await page.getElement(JOB_EMPLOYMENT_TYPE_SELECTOR);
+         const jobEmploymentType = await employmentType?.evaluate((el) => (el as HTMLElement)?.innerText);
+
          page.close().catch(err => console.error('Error closing page:', err));
 
          done({
             jobCompany: (jobCompany || '').trim(),
             jobTitle: (jobTitle || '').trim(),
-            jobDescription: (jobDescription || '').trim()
+            jobDescription: (jobDescription || '').trim(),
+            jobLocation: (jobLocation || '').trim(),
+            jobSeniority: (jobSeniority || '').trim(),
+            jobEmploymentType: (jobEmploymentType || '').trim(),
          });
       } catch (error: any) {
          service.closePage(pageName).catch(err => console.error('Error closing page:', err));

@@ -9,7 +9,7 @@ import { defaultLocale } from '../../../../app.config';
 
 export default class Company extends CompanySet {
    public company_name: string;
-   public location: string;
+   public location?: string;
    public logo_url: string;
    public site_url: string;
    public languageSets: CompanySetSetup[];
@@ -72,8 +72,8 @@ export default class Company extends CompanySet {
    static async create(data: CreateCompanyData): Promise<Company> {
       const { company_name, location, logo_url, site_url, ...companySetData } = Object(data);
 
-      if (!company_name || !location) {
-         throw new ErrorDatabase('Company name and location are required to create a new company.', 'COMPANY_CREATION_ERROR');
+      if (!company_name) {
+         throw new ErrorDatabase('Company name is required to create a new company.', 'COMPANY_CREATION_ERROR');
       }
 
       const created = await database.insert('companies_schema', 'companies').data({

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { ServerAPI, SocketServer } from '../services';
-import { cvChatNS, customCVNS } from './namespaces';
+import { cvChatNS, opportunitiesNS, coverLetterNS } from './namespaces';
 
 const {
    SSL_KEY_PATH,
@@ -30,7 +30,7 @@ const server = new ServerAPI({
 const socketServer = new SocketServer({
    id: 'socket-server',
    serverAPI: server,
-   namespaces: [ cvChatNS, customCVNS ],
+   namespaces: [ cvChatNS, opportunitiesNS, coverLetterNS ],
    onError(error) {
       console.error('Socket Server encountered an error:', error);
       process.exit(1);

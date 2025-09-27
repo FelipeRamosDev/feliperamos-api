@@ -1,4 +1,4 @@
-# Felipe Ramos API - Microservices Backend (v1.5.0)
+# Felipe Ramos API - Microservices Backend (v1.6.0)
 
 A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring AI-powered CV customization, LinkedIn job data extraction, and enhanced CV management with favoriting capabilities. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, advanced AI assistance, and comprehensive automated workflows.
 

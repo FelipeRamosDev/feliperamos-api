@@ -20,6 +20,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 # Create shared directories
 RUN mkdir -p /app/shared/cv
+RUN mkdir -p /app/shared/letter
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./

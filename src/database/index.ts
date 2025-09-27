@@ -7,6 +7,9 @@ import users_schema from './schemas/users_schema';
 import curriculums_schema from './schemas/curriculums_schema';
 import languages_schema from './schemas/languages_schema';
 import educations_schema from './schemas/educations_schema';
+import opportunities_schema from './schemas/opportunities_schema';
+import letters_schemas from './schemas/letters_schemas';
+import comments_schemas from './schemas/comments_schemas';
 
 const database = new PostgresDB({
    dbName: process.env.POSTGRES_DB,
@@ -21,7 +24,10 @@ const database = new PostgresDB({
       experiences_schema,
       languages_schema,
       curriculums_schema,
-      educations_schema
+      educations_schema,
+      opportunities_schema,
+      letters_schemas,
+      comments_schemas
    ]
 });
 

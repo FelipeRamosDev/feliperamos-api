@@ -25,7 +25,7 @@ const generateSummaryEvent: NamespaceEvent = {
       }
 
       const generateSummary = async (room: SocketRoom, jobDescr: string, jobTitle?: string, jobCompany?: string) => {
-         this.sendToRoom(room.id, 'custom-cv:status', 'generating-summary');
+         this.sendToRoom(room.id, 'opportunities:generate-summary:status', 'generating-summary');
 
          socketServer.sendTo('/ai/generate-cv-summary', {
             jobDescription: jobDescr,
@@ -35,7 +35,7 @@ const generateSummaryEvent: NamespaceEvent = {
          }, ({ error, message, summary, threadID }) => {
             if (error) {
                console.error('AI Error:', { error, message });
-               this.sendToRoom(room.id, 'custom-cv:status', 'error');
+               this.sendToRoom(room.id, 'opportunities:generate-summary:status', 'error');
 
                return callback({
                   error: new ErrorSocketServer(
@@ -45,18 +45,18 @@ const generateSummaryEvent: NamespaceEvent = {
                });
             }
 
-            this.sendToRoom(room.id, 'custom-cv:status', 'success');
+            this.sendToRoom(room.id, 'opportunities:generate-summary:status', 'success');
             callback({ summary, jobDescription: jobDescr, jobTitle, jobCompany, aiThread: threadID });
          });
       }
 
       const getJobDescriptionFromURL = (room: SocketRoom) => {
-         this.sendToRoom(room.id, 'custom-cv:status', 'fetching-url');
+         this.sendToRoom(room.id, 'opportunities:generate-summary:status', 'fetching-url');
 
          socketServer.sendTo('/virtual-browser/linkedin/job-infos', { jobURL }, ({ error, message, jobTitle, jobCompany, jobDescription: jobDescr }) => {
             if (error) {
                console.error('Job Description Error:', { error, message });
-               this.sendToRoom(room.id, 'custom-cv:status', 'error');
+               this.sendToRoom(room.id, 'opportunities:generate-summary:status', 'error');
 
                return callback({
                   error: new ErrorSocketServer(
@@ -82,7 +82,7 @@ const generateSummaryEvent: NamespaceEvent = {
 
       const clientRoom = this.createRoom({
          id: socket.id,
-         name: `custom-cv-generate-summary-${socket.id}`,
+         name: `opportunities-generate-summary-${socket.id}`,
          onCreate: (room) => {
             room.addClient(client).catch((error) => {
                console.error(`Error adding client ${client.id} to room ${clientRoom.name}:`, error);

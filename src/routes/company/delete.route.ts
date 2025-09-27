@@ -3,20 +3,21 @@ import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
-   method: 'POST',
+   method: 'DELETE',
    routePath: '/company/delete',
    useAuth: true,
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
-      const { companyId } = req.body;
+      const { companyId } = req.query;
+      const companyIdNumber = Number(companyId);
 
-      if (!companyId) {
+      if (!companyIdNumber || isNaN(companyIdNumber)) {
          new ErrorResponseServerAPI('Company ID is required', 400, 'ERROR_COMPANY_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const deleted = await Company.delete(companyId);
+         const deleted = await Company.delete(companyIdNumber);
 
          if (!deleted) {
             new ErrorResponseServerAPI('Company not found or could not be deleted', 404, 'ERROR_COMPANY_NOT_FOUND').send(res);

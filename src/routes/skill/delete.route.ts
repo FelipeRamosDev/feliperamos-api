@@ -3,20 +3,21 @@ import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
-   method: 'POST',
+   method: 'DELETE',
    routePath: '/skill/delete',
    useAuth: true,
    allowedRoles: ['admin', 'master'],
    controller: async (req, res) => {
-      const { skillId } = req.body;
+      const { skillId } = req.query;
+      const skillIdNumber = Number(skillId);
 
-      if (!skillId) {
+      if (!skillIdNumber || isNaN(skillIdNumber)) {
          new ErrorResponseServerAPI('Skill ID is required', 400, 'ERROR_SKILL_ID_REQUIRED').send(res);
          return;
       }
 
       try {
-         const deleted = await Skill.delete(skillId);
+         const deleted = await Skill.delete(skillIdNumber);
 
          if (!deleted) {
             new ErrorResponseServerAPI('Skill not found or could not be deleted', 404, 'ERROR_SKILL_NOT_FOUND').send(res);
