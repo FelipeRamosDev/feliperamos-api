@@ -25,7 +25,7 @@ export default class AI extends Microservice {
     */
    constructor(setup: AISetup) {
       super(setup)
-      const { apiKey, assistantID, model = 'gpt-4.1-nano' } = setup || {};
+      const { apiKey, assistantID, model = 'gpt-4.1-mini' } = setup || {};
 
       this._threads = new Map();
       this._apiKey = apiKey;
