@@ -2,7 +2,7 @@ import { EventEndpoint } from '../../../../services';
 import service from '../../../../containers/virtual-browser.service';
 import { frontendURL } from '../../../../helpers/parse.helper';
 import { Letter } from '../../../../database/models/letters_schema';
-import ErrorEventEndpoint from '@/services/EventEndpoint/ErrorEventEndpoint';
+import ErrorEventEndpoint from '../../../../services/EventEndpoint/ErrorEventEndpoint';
 
 export default new EventEndpoint({
    path: '/virtual-browser/letter/create-pdf',
