@@ -70,22 +70,11 @@ export default class Letter extends TableRow {
    }
 
    get pdfPath() {
-      // Construct the sender's name for the path
-      let senderName = 'unknown_user';
-
-      if (this.from) {
-         const first = this.from.first_name || '';
-         const last = this.from.last_name || '';
-         if (first || last) {
-            senderName = `${first} ${last}`.trim();
-         }
-      } else if (this.from_name) {
-         senderName = this.from_name;
+      if (!this.id || isNaN(this.id) || !this.from_name) {
+         throw new ErrorDatabase('Cannot generate PDF path for Letter without an ID!', 'LETTER_PDF_PATH_NO_ID');
       }
 
-      senderName = senderName.replace(/ /g, '_');
-      const relativePath = `letter/${senderName}_cover_letter_${this.id}_${this?.language_set || defaultLocale}.pdf`;
-      return path.join(process.env.PUBLIC_PATH || '', relativePath);
+      return Letter.letterPdfPath(this.from_name, this.id, this.language_set || defaultLocale);
    }
 
    async populateCompany() {
@@ -261,17 +250,17 @@ export default class Letter extends TableRow {
    }
 
    static letterPdfPath(userFullName: string, letterId: number, languageSet: string = defaultLocale): string {
-   if (!userFullName) {
-      throw new Error('Invalid userFullName provided');
+      if (!userFullName) {
+         throw new Error('Invalid userFullName provided');
+      }
+
+      if (!letterId || typeof letterId !== 'number') {
+         throw new Error('Invalid letterId provided');
+      }
+
+      const userName = userFullName.replace(/ /g, '_');
+
+      const relativePath = `letter/${userName}_cover_letter_${letterId}_${languageSet}.pdf`;
+      return path.join(process.env.PUBLIC_PATH || '', relativePath);
    }
-
-   if (!letterId || typeof letterId !== 'number') {
-      throw new Error('Invalid letterId provided');
-   }
-
-   const userName = userFullName.replace(/ /g, '_');
-
-   const relativePath = `letter/${userName}_cover_letter_${letterId}_${languageSet}.pdf`;
-   return path.join(process.env.PUBLIC_PATH || '', relativePath);
-}
 }

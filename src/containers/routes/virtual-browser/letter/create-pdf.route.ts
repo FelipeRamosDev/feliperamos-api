@@ -2,6 +2,7 @@ import { EventEndpoint } from '../../../../services';
 import service from '../../../../containers/virtual-browser.service';
 import { frontendURL } from '../../../../helpers/parse.helper';
 import { Letter } from '../../../../database/models/letters_schema';
+import ErrorEventEndpoint from '@/services/EventEndpoint/ErrorEventEndpoint';
 
 export default new EventEndpoint({
    path: '/virtual-browser/letter/create-pdf',
@@ -11,7 +12,7 @@ export default new EventEndpoint({
       const pageURL = frontendURL(`/${language_set}/pdf/letter/${letter_id}`);
 
       if (!letter_id) {
-         return done(new EventEndpoint.Error('Letter ID is required', 'LETTER_ID_REQUIRED'));
+         return done(new ErrorEventEndpoint('Letter ID is required', 'LETTER_ID_REQUIRED'));
       }
 
       try {
@@ -23,24 +24,24 @@ export default new EventEndpoint({
 
          const page = await service.newPage(pageId, pageURL);
          if (!page) {
-            return done(new EventEndpoint.Error('Failed to create PDF template page!', 'PAGE_CREATION_FAILED'));
+            return done(new ErrorEventEndpoint('Failed to create PDF template page!', 'PAGE_CREATION_FAILED'));
          }
 
          const letter = await Letter.findById(letter_id);
 
          if (!letter) {
-            return done(new EventEndpoint.Error('Letter not found', 'LETTER_NOT_FOUND'));
+            return done(new ErrorEventEndpoint('Letter not found', 'LETTER_NOT_FOUND'));
          }
 
          const pdfBuffer = await page.toPDF(letter.pdfPath);
          if (!pdfBuffer || !letter.pdfPath || typeof letter.pdfPath !== 'string' || letter.pdfPath.trim() === '') {
-            return done(new EventEndpoint.Error('Invalid PDF path', 'INVALID_PDF_PATH'));
+            return done(new ErrorEventEndpoint('Invalid PDF path', 'INVALID_PDF_PATH'));
          }
 
          await page.close();
          return done({ success: true });
       } catch (error) {
-         done(new EventEndpoint.Error('An error occurred while creating the PDF', 'PDF_CREATION_ERROR'));
+         done(new ErrorEventEndpoint('An error occurred while creating the PDF', 'PDF_CREATION_ERROR'));
       }
    }
 });
