@@ -29,6 +29,7 @@ export default class AdminUser extends TableRow {
    public password: string;
    public first_name: string;
    public last_name: string;
+   public name: string;
    public birth_date?: Date;
    public country?: string;
    public state?: string;
@@ -70,6 +71,7 @@ export default class AdminUser extends TableRow {
       this.password = password;
       this.first_name = first_name;
       this.last_name = last_name;
+      this.name = this.fullName();
       this.birth_date = birth_date;
       this.country = country;
       this.state = state;
@@ -82,7 +84,7 @@ export default class AdminUser extends TableRow {
       this.whatsapp_number = whatsapp_number;
    }
 
-   get name() {
+   fullName() {
       return `${this.first_name} ${this.last_name}`;
    }
 

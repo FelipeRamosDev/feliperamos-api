@@ -3,7 +3,7 @@ import { Route } from '../../services';
 import ErrorResponseServerAPI from '../../services/ServerAPI/models/ErrorResponseServerAPI';
 
 export default new Route({
-   method: 'POST',
+   method: 'PATCH',
    routePath: '/curriculum/update',
    useAuth: true,
    allowedRoles: [ 'admin', 'master' ],

@@ -54,6 +54,16 @@ import educationUpdate from '../routes/education/update.route';
 import educationUpdateSet from '../routes/education/update-set.route';
 import educationDelete from '../routes/education/delete.route';
 
+import opportunitiesCreate from '../routes/opportunity/create.route';
+import opportunitiesSearch from '../routes/opportunity/search.route';
+import opportunitiesUpdate from '../routes/opportunity/update.route';
+import opportunitiesDelete from '../routes/opportunity/delete.route';
+
+import letterCreate from '../routes/cover-letter/create.route';
+import letterSearch from '../routes/cover-letter/search.route';
+import letterUpdate from '../routes/cover-letter/update.route';
+import letterDelete from '../routes/cover-letter/delete.route';
+
 import userUpdate from '../routes/user/update.route';
 import userMasterCV from '../routes/user/master-cv.route';
 import userLanguages from '../routes/user/languages.route';
@@ -99,6 +109,7 @@ global.service = new ServerAPI({
       loginRoute,
       authUserRoute,
       healthRoute,
+   
       experienceCreate,
       experienceCreateSet,
       experienceQuery,
@@ -107,6 +118,7 @@ global.service = new ServerAPI({
       experienceUpdateSet,
       experienceDelete,
       experienceGetPublic,
+
       skillCreate,
       skillCreateSet,
       skillQuery,
@@ -115,6 +127,7 @@ global.service = new ServerAPI({
       skillDelete,
       skillUpdateSet,
       skillGetPublic,
+
       companyCreate,
       companyCreateSet,
       companyUpdate,
@@ -122,10 +135,12 @@ global.service = new ServerAPI({
       companyQuery,
       companyGet,
       companyDelete,
+
       languageCreate,
       languageGet,
       languageUpdate,
       languageDelete,
+
       curriculumCreate,
       curriculumCreateSet,
       curriculumUpdate,
@@ -134,11 +149,23 @@ global.service = new ServerAPI({
       curriculumSetMaster,
       curriculumDelete,
       curriculumPublicGet,
+
       educationCreate,
       educationGet,
       educationUpdate,
       educationUpdateSet,
       educationDelete,
+
+      opportunitiesCreate,
+      opportunitiesSearch,
+      opportunitiesUpdate,
+      opportunitiesDelete,
+
+      letterCreate,
+      letterSearch,
+      letterUpdate,
+      letterDelete,
+
       userUpdate,
       userMasterCV,
       userLanguages,
