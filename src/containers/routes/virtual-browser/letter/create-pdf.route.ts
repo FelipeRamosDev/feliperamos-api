@@ -28,14 +28,17 @@ export default new EventEndpoint({
          }
 
          const letter = await Letter.findById(letter_id);
-
          if (!letter) {
             return done(new ErrorEventEndpoint('Letter not found', 'LETTER_NOT_FOUND'));
          }
 
-         const pdfBuffer = await page.toPDF(letter.pdfPath);
-         if (!pdfBuffer || !letter.pdfPath || typeof letter.pdfPath !== 'string' || letter.pdfPath.trim() === '') {
+         if (!letter.pdfPath || typeof letter.pdfPath !== 'string' || letter.pdfPath.trim() === '') {
             return done(new ErrorEventEndpoint('Invalid PDF path', 'INVALID_PDF_PATH'));
+         }
+
+         const pdfBuffer = await page.toPDF(letter.pdfPath);
+         if (!pdfBuffer) {
+            return done(new ErrorEventEndpoint('Failed to generate PDF buffer', 'PDF_BUFFER_GENERATION_FAILED'));
          }
 
          await page.close();

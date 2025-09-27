@@ -70,11 +70,12 @@ export default class Letter extends TableRow {
    }
 
    get pdfPath() {
-      if (!this.id || isNaN(this.id) || !this.from_name) {
-         throw new ErrorDatabase('Cannot generate PDF path for Letter without an ID!', 'LETTER_PDF_PATH_NO_ID');
+      const fromName = this.from_name || this.from?.name;
+      if (!this.id || isNaN(this.id) || !fromName) {
+         return;
       }
 
-      return Letter.letterPdfPath(this.from_name, this.id, this.language_set || defaultLocale);
+      return Letter.letterPdfPath(fromName, this.id, this.language_set || defaultLocale);
    }
 
    async populateCompany() {
