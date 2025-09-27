@@ -48,6 +48,7 @@ const generateLetter: NamespaceEvent = {
             letterSubject: `Application for ${opportunity.job_title} position`,
             letterBody: response.output
          });
+
          this.sendToClient(socket.id, 'letter:generate-letter:status', 'success');
       });
    }
