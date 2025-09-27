@@ -1,6 +1,6 @@
-# Felipe Ramos API - Microservices Backend (v1.6.0)
+# Felipe Ramos API - Microservices Backend (v1.6.1)
 
-A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career chat. Now featuring AI-powered CV customization, LinkedIn job data extraction, and enhanced CV management with favoriting capabilities. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, advanced AI assistance, and comprehensive automated workflows.
+A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career management platform. Now featuring comprehensive cover letter generation, job opportunity management, AI-powered CV customization, LinkedIn job data extraction, and enhanced career application workflows. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, advanced AI assistance, and comprehensive automated career management workflows.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
@@ -13,11 +13,21 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 
 ## 🚀 Features
 
-### New in v1.5.0 - AI-Powered CV Customization & LinkedIn Integration
+### New in v1.6.0 - Cover Letter & Job Opportunity Management
+- **📝 AI-Powered Cover Letter Generation**: Complete cover letter creation system with OpenAI integration for personalized, job-specific cover letters
+- **💼 Job Opportunity Management**: Comprehensive CRUD operations for job opportunities with LinkedIn integration and automated data extraction
+- **📊 Enhanced LinkedIn Scraping**: Advanced job data extraction including location, seniority, employment type, and detailed job descriptions
+- **🎯 CV Summary Generation**: AI-powered CV summary generation tailored to specific job opportunities and requirements
+- **📄 Automated PDF Generation**: Real-time PDF creation for cover letters with file management and cleanup
+- **🔄 Real-time Status Updates**: Socket-based status broadcasting for cover letter generation and job opportunity processing
+- **🗄️ Advanced Database Schema**: New schemas for opportunities, letters, and comments with comprehensive relationship mapping
+- **🔧 RESTful API Standardization**: Improved HTTP method standards and enhanced error handling across all endpoints
+
+### Previous Features - v1.5.0 - AI-Powered CV Customization & LinkedIn Integration
 - **🤖 AI CV Summary Generation**: Dedicated OpenAI assistant for intelligent CV summary creation and customization
 - **💼 LinkedIn Job Data Extraction**: Automated extraction of job titles, company information, and detailed job descriptions from LinkedIn postings
 - **⭐ CV Favorites System**: Enhanced CV management with favoriting capabilities and improved filtering options
-- **🔄 Real-time CV Generation**: New Socket.IO `/custom-cv` namespace for real-time AI-powered CV customization workflows
+- **🔄 Real-time CV Generation**: Socket.IO namespaces for real-time AI-powered CV customization workflows
 - **🌐 Enhanced Virtual Browser**: Advanced web scraping capabilities with modal handling and dynamic content extraction
 - **📊 Intelligent CV Matching**: AI-powered analysis to match CV content with specific job requirements
 - **🎯 ATS-Optimized Output**: AI-generated summaries optimized for Applicant Tracking Systems
@@ -47,18 +57,20 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **📝 Public API Endpoints**: Read-only public endpoints for portfolio data display
 
 ### Core Features
-- **AI-Powered Chat**: OpenAI GPT integration for intelligent career-related conversations
-- **AI CV Customization**: Specialized AI assistant for tailored CV summary generation based on job requirements
-- **Real-time Communication**: Socket.IO server with namespace and room management for CV chat and customization workflows
-- **LinkedIn Integration**: Automated job data extraction from LinkedIn postings with intelligent content parsing
-- **Microservices Architecture**: Modular, scalable service-oriented design
+- **AI-Powered Career Platform**: Comprehensive OpenAI GPT integration for intelligent career-related conversations, CV customization, and cover letter generation
+- **Cover Letter Management**: Complete cover letter creation, management, and PDF generation system with AI-powered personalization
+- **Job Opportunity Tracking**: Full job opportunity lifecycle management with LinkedIn integration and automated data extraction
+- **AI CV Customization**: Specialized AI assistant for tailored CV summary generation based on specific job requirements
+- **Real-time Communication**: Socket.IO server with namespace and room management for cover letters, opportunities, and CV chat workflows
+- **LinkedIn Integration**: Advanced job data extraction from LinkedIn postings with intelligent content parsing and modal handling
+- **Microservices Architecture**: Modular, scalable service-oriented design with enhanced database schemas
 - **Slack Integration**: Automated Slack bot for notifications and interactions
 - **Redis Cache Layer**: High-performance caching and session management
-- **PostgreSQL Database**: Robust relational data storage with schema management
-- **Docker Support**: Containerized deployment with Docker Compose
+- **PostgreSQL Database**: Robust relational data storage with comprehensive schema management for career data
+- **Docker Support**: Containerized deployment with Docker Compose and shared storage volumes
 - **SSL/HTTPS Support**: Production-ready security configuration
 - **Cluster Management**: Multi-process support for high availability
-- **RESTful APIs**: Well-structured API endpoints with comprehensive documentation
+- **RESTful APIs**: Well-structured API endpoints with comprehensive documentation and standardized HTTP methods
 
 ## 🏗️ Architecture
 
@@ -97,9 +109,9 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **express-session 1.18+** - Session management
 
 ### AI & Integration
-- **OpenAI API 4.103+** - GPT assistant integration with specialized CV generation capabilities
+- **OpenAI API 4.103+** - GPT assistant integration with specialized CV generation and cover letter creation capabilities
 - **Slack Bolt 4.4+** - Slack app framework
-- **Puppeteer 24.15+** - Headless browser automation for PDF generation and LinkedIn data extraction
+- **Puppeteer 24.15+** - Headless browser automation for PDF generation, cover letter creation, and LinkedIn data extraction
 
 ### Database & Caching
 - **PostgreSQL 8.16+** - Primary database with full schema management
@@ -124,9 +136,10 @@ feliperamos-api/
 │   │   ├── virtual-browser.service.ts # VirtualBrowser service
 │   │   ├── namespaces/         # Socket namespaces
 │   │   │   ├── cv-chat/        # CV chat namespace and events
-│   │   │   └── custom-cv/      # AI CV customization namespace
+│   │   │   ├── cover-letter/   # Cover letter generation namespace
+│   │   │   └── opportunities/  # Job opportunities namespace
 │   │   └── routes/             # API route definitions
-│   │       ├── ai/             # AI-powered routes for CV generation
+│   │       ├── ai/             # AI-powered routes for CV and cover letter generation
 │   │       └── virtual-browser/ # VirtualBrowser event routes
 │   ├── database/               # Database layer
 │   │   ├── index.ts           # Database initialization
@@ -137,7 +150,10 @@ feliperamos-api/
 │   │   │   ├── languages_schema/ # Language skills management models
 │   │   │   ├── educations_schema/ # Education management models
 │   │   │   ├── curriculums_schema/ # CV/Resume management models
-│   │   │   └── experiences_schema/ # Experience management models
+│   │   │   ├── experiences_schema/ # Experience management models
+│   │   │   ├── opportunities_schema/ # Job opportunities management models
+│   │   │   ├── letters_schema/ # Cover letters management models
+│   │   │   └── comments_schema/ # Comments system models
 │   │   ├── schemas/           # Database schema definitions
 │   │   └── tables/            # Table structure definitions
 │   ├── routes/                # API endpoint implementations
@@ -148,6 +164,8 @@ feliperamos-api/
 │   │   ├── education/         # Education CRUD operations
 │   │   ├── curriculum/        # CV/Resume CRUD operations
 │   │   ├── experience/        # Experience CRUD operations
+│   │   ├── opportunity/       # Job opportunities CRUD operations
+│   │   ├── cover-letter/      # Cover letters CRUD operations
 │   │   ├── user/              # User management routes
 │   │   └── health.route.ts    # Health check endpoint
 │   ├── services/              # Core service classes
@@ -199,6 +217,7 @@ feliperamos-api/
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_ASSISTANT_ID=your_assistant_id
    OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id
+   OPENAI_MODEL=gpt-4o-mini
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
@@ -283,6 +302,7 @@ feliperamos-api/
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_ASSISTANT_ID=your_assistant_id
    OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id
+   OPENAI_MODEL=gpt-4o-mini
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
@@ -428,25 +448,34 @@ npm run start:slack &
 ### OpenAI Integration
 - **GPT Assistant**: Specialized AI trained on Felipe's professional background
 - **CV Generation Assistant**: Dedicated AI assistant for intelligent CV summary generation and customization
+- **Cover Letter Generation**: AI-powered personalized cover letter creation based on job opportunities
 - **Thread Management**: Persistent conversation contexts
 - **Message Handling**: Structured request/response processing
 - **Error Handling**: Robust error management and fallbacks
 
-### AI-Powered CV Customization
-- **Job-Specific Summaries**: Generate tailored CV summaries based on specific job requirements
-- **LinkedIn Integration**: Extract job descriptions from LinkedIn and create matching CV content
+### AI-Powered Career Content Generation
+- **Job-Specific CV Summaries**: Generate tailored CV summaries based on specific job requirements
+- **Personalized Cover Letters**: Create compelling cover letters matched to job opportunities and company profiles
+- **LinkedIn Integration**: Extract job descriptions from LinkedIn and create matching content
 - **ATS Optimization**: AI-generated content optimized for Applicant Tracking Systems
-- **Custom Prompts**: Flexible prompt system for personalized CV generation
-- **Real-time Generation**: Socket-based real-time CV summary creation with status updates
+- **Custom Prompts**: Flexible prompt system for personalized content generation
+- **Real-time Generation**: Socket-based real-time content creation with status updates
 
-### Capabilities
+### Enhanced AI Capabilities
+- **Model Optimization**: Updated to use gpt-4o-mini for improved performance and cost efficiency
+- **Advanced Prompt Engineering**: Sophisticated prompt templates for cover letters and CV summaries
+- **Multi-format Output**: Support for various document formats and templates
+- **Context Awareness**: AI understands job requirements, company culture, and career progression
+
+### Core Capabilities
 - Career history inquiries
 - Skills and expertise questions
 - Project discussions
 - Professional experience details
-- Resume/CV information
-- Job-specific CV customization
-- LinkedIn job data analysis
+- Resume/CV information and customization
+- Cover letter creation and personalization
+- Job-specific content optimization
+- LinkedIn job data analysis and matching
 
 ## 🔌 Socket Server Features
 
@@ -463,11 +492,17 @@ npm run start:slack &
 - `assistant-typing` - Typing indicators
 - `user-message` - User message handling
 
-#### Custom CV Namespace (`/custom-cv`)
-- `generate-summary` - AI-powered CV summary generation
-- `summary-status` - Real-time generation status updates
+#### Cover Letter Namespace (`/cover-letter`)
+- `generate-letter` - AI-powered cover letter generation
+- `letter-status` - Real-time generation status updates
+- `letter-complete` - Completed cover letter delivery
+- `letter-error` - Error handling for failed generations
+
+#### Opportunities Namespace (`/opportunities`)
+- `generate-summary` - AI-powered CV summary generation for specific opportunities
+- `summary-status` - Real-time CV summary generation status updates
 - `summary-complete` - Completed CV summary delivery
-- `summary-error` - Error handling for failed generations
+- `summary-error` - Error handling for failed CV summary generations
 
 ## 🖥️ VirtualBrowser Service Features
 
@@ -511,6 +546,9 @@ npm run start:slack &
 - **Languages Schema**: Language skills with proficiency levels and locale support
 - **Educations Schema**: Educational background with institutions, degrees, and academic achievements
 - **Curriculums Schema**: Enhanced CV/Resume management with integrated languages, educations, and favoriting capabilities
+- **Opportunities Schema**: Job opportunities with company relationships, LinkedIn integration, and CV associations
+- **Letters Schema**: Cover letter storage with user, company, and opportunity relationships
+- **Comments Schema**: Commentary system for opportunities and letters with full relationship mapping
 
 ### Redis Cache
 - **Session Storage**: User session persistence with JWT integration
@@ -578,8 +616,9 @@ services:
 - `POST /skill/create-set` - Create skill language set (Admin/Master)
 - `GET /skill/query` - Query user skills (Admin/Master)
 - `GET /skill/:skill_id` - Get skill details by ID
-- `POST /skill/update` - Update skill information (Admin/Master)
-- `POST /skill/update-set` - Update skill language set (Admin/Master)
+- `PATCH /skill/update` - Update skill information (Admin/Master)
+- `PATCH /skill/update-set` - Update skill language set (Admin/Master)
+- `DELETE /skill/delete` - Delete skill (Admin/Master)
 - `GET /skill/public/user-skills` - Get public skills for master user
 
 ### Companies Management (Protected Routes)
@@ -587,8 +626,9 @@ services:
 - `POST /company/create-set` - Create company language set (Admin/Master)
 - `GET /company/query` - Query user companies (Admin/Master)
 - `GET /company/:company_id` - Get company details by ID
-- `POST /company/update` - Update company information (Admin/Master)
-- `POST /company/update-set` - Update company language set (Admin/Master)
+- `PATCH /company/update` - Update company information (Admin/Master)
+- `PATCH /company/update-set` - Update company language set (Admin/Master)
+- `DELETE /company/delete` - Delete company (Admin/Master)
 
 ### Languages Management (Protected Routes)
 - `POST /language/create` - Create new language skill (Admin/Master)
@@ -608,33 +648,48 @@ services:
 - `POST /experience/create-set` - Create experience language set (Admin/Master)
 - `GET /experience/query` - Query user experiences (Admin/Master)
 - `GET /experience/:experience_id` - Get experience details by ID
-- `POST /experience/update` - Update experience information (Admin/Master)
-- `POST /experience/update-set` - Update experience language set (Admin/Master)
+- `PATCH /experience/update` - Update experience information (Admin/Master)
+- `PATCH /experience/update-set` - Update experience language set (Admin/Master)
+- `DELETE /experience/delete` - Delete experience (Admin/Master)
 - `GET /experience/public/user-experiences` - Get public experiences for master user
 
 ### Curriculum/CV Management (Protected Routes)
 - `POST /curriculum/create` - Create new CV/resume (Admin/Master)
 - `POST /curriculum/create-set` - Create CV language set (Admin/Master)
 - `GET /curriculum/:cv_id` - Get CV details by ID (Admin/Master)
-- `POST /curriculum/update` - Update CV information (Admin/Master)
-- `POST /curriculum/update-set` - Update CV language set (Admin/Master)
-- `POST /curriculum/set-master` - Set CV as master/primary CV (Admin/Master)
-- `POST /curriculum/set-favorite` - Set/unset CV as favorite (Admin/Master)
+- `PATCH /curriculum/update` - Update CV information (Admin/Master)
+- `PATCH /curriculum/update-set` - Update CV language set (Admin/Master)
+- `PATCH /curriculum/set-master` - Set CV as master/primary CV (Admin/Master)
 - `DELETE /curriculum/delete` - Delete CV (Admin/Master)
 - `GET /curriculum/public/:cv_id` - Get public CV data for display
 
+### Job Opportunity Management (Protected Routes)
+- `POST /opportunity/create` - Create new job opportunity (Admin/Master)
+- `GET /opportunity/search` - Search job opportunities with advanced filtering (Admin/Master)
+- `PATCH /opportunity/update` - Update opportunity information (Admin/Master)
+- `DELETE /opportunity/delete` - Delete job opportunity (Admin/Master)
+
+### Cover Letter Management (Protected Routes)
+- `POST /cover-letter/create` - Create new cover letter (Admin/Master)
+- `GET /cover-letter/search/:id` - Search cover letters with filtering options, use 'all' for all letters (Admin/Master)
+- `PATCH /cover-letter/update/:id` - Update cover letter information (Admin/Master)
+- `DELETE /cover-letter/delete/:id` - Delete cover letter (Admin/Master)
+
 ### User Management (Protected Routes)
-- `POST /user/update` - Update user profile information (Admin/Master)
+- `PATCH /user/update` - Update user profile information (Admin/Master)
 - `GET /user/languages` - Get user's language skills (Admin/Master)
 - `GET /user/educations` - Get user's education records (Admin/Master)
 - `GET /user/master-cv` - Get master user's primary CV
 - `GET /user/cvs` - Get user's CVs with filtering options (Admin/Master)
 
-### AI & Virtual Browser Routes
-- `POST /ai/generate-cv-summary` - Generate AI-powered CV summaries based on job requirements (Admin/Master)
+### General
 - `POST /virtual-browser/linkedin/job-infos` - Extract job information from LinkedIn URLs (Admin/Master)
-- `POST /assistant-generate` - Generate AI responses
 - `GET /health` - Service health status and diagnostics
+
+### Socket-based AI Routes (Event Endpoints)
+- `/ai/generate-cv-summary` - Generate AI-powered CV summaries based on job requirements (Socket event)
+- `/ai/generate-letter` - Generate AI-powered cover letters for specific opportunities (Socket event)
+- `/ai/assistant-generate` - Generate AI responses (Socket event)
 
 ## 🚀 Production Deployment
 
@@ -649,37 +704,55 @@ services:
 - **Load Balancing**: Request distribution
 - **Cluster Mode**: Multi-process support
 
-## 📋 What's New in v1.5.0
+## 📋 What's New in v1.6.0
 
-### 🤖 AI-Powered CV Customization
-- **Dedicated CV Generation Assistant**: New OpenAI assistant (`OPENAI_ASSISTANT_BUILD_CV`) specifically trained for CV summary generation
-- **Job-Specific CV Summaries**: Generate tailored CV summaries based on specific job requirements and descriptions
-- **Real-time AI Generation**: Socket.IO `/custom-cv` namespace for real-time CV summary generation with status updates
-- **Custom Prompt Support**: Flexible AI prompt system allowing custom instructions for CV generation
+### 📝 Cover Letter Management System
+- **AI-Powered Cover Letter Generation**: Complete cover letter creation system with OpenAI integration for personalized, job-specific cover letters
+- **Cover Letter CRUD Operations**: Full API endpoints for creating, searching, updating, and deleting cover letters with advanced filtering
+- **PDF Generation**: Automatic PDF generation for cover letters with file management and cleanup
+- **Real-time Status Updates**: Socket-based status updates during cover letter generation process
+- **Letter Templates**: Flexible cover letter templates with AI-powered customization
 
-### 💼 LinkedIn Integration & Job Data Extraction
-- **LinkedIn Job Scraping**: Automated extraction of job titles, company information, and detailed descriptions from LinkedIn URLs
-- **Intelligent Content Parsing**: Advanced web scraping with modal handling and dynamic content expansion ("see more" buttons)
-- **Job Data API**: New `/virtual-browser/linkedin/job-infos` endpoint for LinkedIn job data extraction
-- **ATS-Optimized Matching**: AI analysis to match CV content with specific job requirements
+### 💼 Job Opportunity Management
+- **LinkedIn Job Scraping**: Enhanced automated scraping of LinkedIn job postings with comprehensive data extraction for job URL, location, seniority, and employment type
+- **Opportunity CRUD Operations**: Full API support for creating, searching, updating, and deleting job opportunities
+- **CV Summary Generation**: AI-powered CV summary generation tailored to specific job opportunities
+- **Enhanced Search Capabilities**: Advanced filtering, sorting, and user scoping for opportunity searches
+- **Company Integration**: Seamless integration with company profiles for comprehensive job tracking
 
-### ⭐ Enhanced CV Management
-- **CV Favorites System**: Added `is_favorite` property to CV model with filtering capabilities
-- **Improved CV Filtering**: Enhanced `/user/cvs` endpoint with favorites and advanced filtering options
-- **CV Set Favorite API**: New `/curriculum/set-favorite` endpoint for managing favorite CVs
-- **Better CV Organization**: Streamlined CV management with improved categorization
+### 🗄️ Database Schema Enhancements
+- **Opportunities Schema**: Complete table structure with job details, company relationships, and CV associations
+- **Letters Schema**: Cover letter storage with user, company, and opportunity relationships
+- **Comments Schema**: Commentary system for opportunities and letters
+- **Enhanced Relationship Mapping**: Improved data validation and type safety across all models
 
-### 🔄 Real-time Workflow Improvements
-- **Status Feedback System**: Real-time status updates during CV generation process
-- **Socket Event Structure**: Reorganized socket namespaces and events for better maintainability
-- **Error Handling**: Enhanced error management for AI generation and LinkedIn extraction processes
+### � API & Service Improvements
+- **RESTful API Standardization**: Fixed HTTP method standards (POST → PATCH/DELETE where appropriate)
+- **Improved Route Parameter Handling**: Enhanced validation and error handling
+- **Socket Integration**: New namespaces for `cover-letter` and `opportunities` with real-time event handling
+- **AI Service Integration**: Updated AI model configuration (gpt-4o-mini) with enhanced prompt engineering
+
+### �️ Developer Experience
+- **Code Organization**: VSCode snippets for faster development and improved project structure
+- **Namespace Restructuring**: Consolidated socket namespaces with deprecated `custom-cv` removed
+- **Type Safety**: Enhanced TypeScript definitions across all new features
+- **Infrastructure**: Docker improvements with shared directory for letter storage
 
 ### 🚀 Technical Enhancements
-- **Namespace Refactoring**: Improved socket.io namespace structure with separate custom-cv and cv-chat namespaces
-- **API Route Organization**: Better organization of AI and virtual browser routes
-- **Enhanced Type Safety**: Improved TypeScript interfaces for new AI and CV management features
+- **Configuration Updates**: Updated tsconfig.json for Node16 module compatibility
+- **Enhanced Error Handling**: Comprehensive error management for AI generation and job processing
+- **Performance Improvements**: Optimized database queries and API response times
+- **Security Updates**: Enhanced authentication and authorization for new endpoints
 
 ## 📋 Previous Versions
+
+### What's New in v1.5.0 - AI-Powered CV Customization & LinkedIn Integration
+- **Dedicated CV Generation Assistant**: New OpenAI assistant specifically trained for CV summary generation
+- **Job-Specific CV Summaries**: Generate tailored CV summaries based on specific job requirements and descriptions
+- **LinkedIn Job Scraping**: Automated extraction of job titles, company information, and detailed descriptions from LinkedIn URLs
+- **CV Favorites System**: Added favoriting capabilities with improved filtering options
+- **Real-time AI Generation**: Socket.IO namespaces for real-time CV summary generation with status updates
+- **Custom Prompt Support**: Flexible AI prompt system allowing custom instructions for CV generation
 
 ### What's New in v1.4.0
 
