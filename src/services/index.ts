@@ -5,6 +5,7 @@ export { default as Thread } from './ClusterManager/Thread';
 export { default as InstanceBase } from './ClusterManager/InstanceBase';
 
 export { default as AI } from './AI/AI';
+export { default as AICore } from './AICore/AICore';
 export { default as SlackApp } from './SlackApp/SlackApp';
 export { default as Microservice } from './Microservice/Microservice';
 export { default as EventEndpoint } from './EventEndpoint/EventEndpoint';
