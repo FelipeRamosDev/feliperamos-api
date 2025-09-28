@@ -1,5 +1,5 @@
 import { ResponseInputAudio, ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses.mjs';
-import { AICoreCellSetup, AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
+import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
 import AIChatResponse from './AIChatResponse';
 import { readFileSync } from 'fs';
 import path from 'path';
@@ -65,17 +65,15 @@ export default class AICoreInputCell {
       }
 
       try {
-         const fileData = readFileSync(path.join(process.cwd(), filePath), 'base64');
-   
-         if (!fileData) {
-            throw new ErrorAICore(`Failed to read file data from path: ${filePath}`, 'AICORE_INPUT_CELL_FILE_READ_ERROR');
-         }
-   
+         const projectRoot = process.cwd();
+         const absolutePath = path.join(projectRoot, filePath);
+         const fileData = readFileSync(absolutePath, 'base64');
+
          const fileContent: ResponseInputFile = {
             type: 'input_file',
             file_data: fileData,
          };
-   
+
          this.content.push(fileContent);
          return this;
       } catch (error: any) {

@@ -8,7 +8,7 @@ import { ResponseCreateParamsNonStreaming } from 'openai/resources/responses/res
 export default class AIChatResponse {
    private _aiChat: AICoreChat;
    private _model: AIModels;
-   private _systemPrompt?: string
+   private _systemPrompt?: string;
    private _options: ResponseCreateParamsNonStreaming;
    private _input: AICoreInputCell[];
 
@@ -19,7 +19,7 @@ export default class AIChatResponse {
 
       this._aiChat = aiChat;
       this._model = model || this._aiChat.model;
-      this._systemPrompt = `${this._aiChat.systemPrompt}\n${systemPrompt}`.trim() || undefined;
+      this._systemPrompt = [this._aiChat.systemPrompt, systemPrompt].filter(s => typeof s === 'string' && s.trim().length > 0).join('\n') || undefined;
       this._options = { model: this._model, instructions: this._systemPrompt, input: [] };
       this._input = [];
    }

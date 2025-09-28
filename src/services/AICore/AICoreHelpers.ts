@@ -13,4 +13,4 @@ export default class AICoreHelpers {
       const content = fs.readFileSync(absolutePath, 'utf-8');
       return content;
    }
-} 
+}
