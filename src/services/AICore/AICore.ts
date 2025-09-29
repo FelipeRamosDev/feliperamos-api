@@ -8,8 +8,7 @@ export default class AICore extends Microservice {
    private _client: OpenAI;
    private _apiKey?: string;
    private _chats: Map<number, AICoreChat>;
-   
-   // publics
+
    public model: AIModels;
 
    constructor(setup: AICoreSetup = {}) {
@@ -49,7 +48,7 @@ export default class AICore extends Microservice {
 
    async startChat(options: AICoreChatOptions): Promise<AICoreChat> {
       const chat = new AICoreChat(this, options);
-      
+
       try {
          await chat.start();
 
