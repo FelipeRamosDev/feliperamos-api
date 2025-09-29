@@ -11,4 +11,3 @@ const aiCore = new AICore({
    containerName: 'ai-service',
    apiKey: OPENAI_API_KEY
 });
-
