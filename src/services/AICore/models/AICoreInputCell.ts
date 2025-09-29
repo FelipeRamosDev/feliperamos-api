@@ -1,25 +1,29 @@
 import { ResponseInputAudio, ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses.mjs';
 import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
-import AIChatResponse from './AIChatResponse';
+import AICoreResponse from '../AICoreResponse';
 import { readFileSync } from 'fs';
 import path from 'path';
 import ErrorAICore from '../ErrorAICore';
 
 export default class AICoreInputCell {
-   private _aiResponse: AIChatResponse;
+   private _aiResponse: AICoreResponse;
 
+   public id?: string;
+   public type?: string;
    public role: CellRole;
    public content: CellMessageContent;
 
-   constructor(aiResponse: AIChatResponse, setup: AICoreInputCellSetup) {
-      const { role, textContent, content = [] } = setup || {};
+   constructor(aiResponse: AICoreResponse, setup: AICoreInputCellSetup) {
+      const { id, type = 'message', role, textContent, content = [] } = setup || {};
 
       if (!aiResponse) {
-         throw new ErrorAICore(`It's required to provide a valid "parent" AIChatResponse instance to create a new AICoreInputCell instance!`);
+         throw new ErrorAICore(`It's required to provide a valid "parent" AICoreResponse instance to create a new AICoreInputCell instance!`);
       }
 
       this._aiResponse = aiResponse;
 
+      this.id = id;
+      this.type = type;
       this.role = role;
       this.content = content;
 
@@ -28,12 +32,14 @@ export default class AICoreInputCell {
       }
    }
 
-   public get aiResponse(): AIChatResponse {
+   public get aiResponse(): AICoreResponse {
       return this._aiResponse;
    }
 
    toObject() {
       return {
+         id: this.id,
+         type: this.type,
          role: this.role,
          content: this.content
       };
