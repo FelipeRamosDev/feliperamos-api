@@ -3,7 +3,7 @@ import AICoreOutputCell from './models/AICoreOutputCell';
 import AICoreChat from './AICoreChat';
 import ErrorAICore from './ErrorAICore';
 import AICoreInputCell from './models/AICoreInputCell';
-import { ResponseCreateParamsNonStreaming, ResponseCreateParamsStreaming, ResponseOutputItem, ResponseOutputMessage } from 'openai/resources/responses/responses.mjs';
+import { ResponseCreateParamsNonStreaming, ResponseCreateParamsStreaming, ResponseOutputItem, ResponseOutputMessage } from 'openai/resources/responses/responses';
 import AIChatHistoryItem from './models/AIChatHistoryItem';
 
 export default class AICoreResponse {
@@ -71,7 +71,6 @@ export default class AICoreResponse {
       });
 
       this._input.push(cell);
-      // this.aiChat.newHistoryItem(cell);
       return cell;
    }
 
