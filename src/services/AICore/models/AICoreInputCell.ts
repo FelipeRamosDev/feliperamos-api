@@ -1,4 +1,4 @@
-import { ResponseInputAudio, ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses.mjs';
+import { ResponseInputAudio, ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses';
 import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
 import AICoreResponse from '../AICoreResponse';
 import { readFileSync } from 'fs';
@@ -86,5 +86,35 @@ export default class AICoreInputCell {
          throw new ErrorAICore(error.message || `Failed to read file data from path: ${filePath}.`, error.code || 'AICORE_INPUT_CELL_FILE_READ_ERROR');
       }
    }
-}
 
+   attachImage(imageUrl: string, detail: ResponseInputImage['detail'] = 'auto'): void {
+      if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim().length === 0) {
+         throw new ErrorAICore('Invalid image URL provided to attachImage method.', 'AICORE_INPUT_CELL_INVALID_IMAGE_URL');
+      }
+
+      if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+         const imageContent: ResponseInputImage = {
+            type: 'input_image',
+            image_url: imageUrl,
+            detail
+         };
+
+         this.content.push(imageContent);
+      } else try {
+         const projectRoot = process.cwd();
+         imageUrl = path.join(projectRoot, imageUrl);
+         const image64 = readFileSync(imageUrl, 'base64');
+         const image64URL = 'data:image/jpeg;base64,' + image64;
+
+         const imageContent: ResponseInputImage = {
+            type: 'input_image',
+            image_url: image64URL,
+            detail
+         };
+
+         this.content.push(imageContent);
+      } catch (error: any) {
+         throw new ErrorAICore(error.message || `Failed to read image file from path: ${imageUrl}.`, error.code || 'AICORE_INPUT_CELL_IMAGE_READ_ERROR');
+      }
+   }
+}
