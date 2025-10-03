@@ -3,7 +3,7 @@ import path from 'path';
 import ErrorAICore from './ErrorAICore';
 
 export default class AICoreHelpers {
-   static async loadMarkdown(mdPath: string) {
+   static loadMarkdown(mdPath: string) {
       const absolutePath = path.join(process.cwd(), mdPath);
 
       if (!fs.existsSync(absolutePath)) {
@@ -11,7 +11,7 @@ export default class AICoreHelpers {
       }
 
       try {
-         const content = await fs.promises.readFile(absolutePath, 'utf-8');
+         const content = fs.readFileSync(absolutePath, 'utf-8');
          return content;
       } catch (error) {
          throw new ErrorAICore(`Error reading markdown file: ${error}`, 'AICORE_CHAT_MD_READ_ERROR');

@@ -1,5 +1,5 @@
 import { CellRole } from '../AICore.types';
-import type { ResponseOutputMessage, ResponseOutputRefusal, ResponseOutputText } from 'openai/resources/responses/responses.mjs';
+import type { ResponseOutputMessage, ResponseOutputRefusal, ResponseOutputText } from 'openai/resources/responses/responses';
 import AICoreChat from '../AICoreChat';
 import ErrorAICore from '../ErrorAICore';
 

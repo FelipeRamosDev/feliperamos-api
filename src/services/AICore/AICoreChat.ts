@@ -7,28 +7,35 @@ import AICoreResponse from './AICoreResponse';
 import AICoreInputCell from './models/AICoreInputCell';
 import AIChatHistoryItem from './models/AIChatHistoryItem';
 import { AICoreChatOptions, AIModels } from './AICore.types';
+import { Chat } from '../../database/models/messages_schemas';
+import { defaultSystemType } from '../../app.config';
 
 export default class AICoreChat {
    private _aiCore: AICore;
    private _options: AICoreChatOptions;
    private _history: Map<string, AIChatHistoryItem>;
+   private _stored?: () => Chat;
 
-   public id: number;
+   public id?: number;
+   public system_type: string;
    public label?: string;
    public model: AIModels;
    public systemPrompt?: string;
    public isInitialized: boolean;
 
    constructor(aiCore: AICore, options: AICoreChatOptions) {
+      const { id } = options;
+
       this._aiCore = aiCore;
       this._options = options;
       this._history = new Map<string, AIChatHistoryItem>();
 
-      const { id, label, model, systemMessage, smPath, history = [] } = this._options || {};
+      const { label, system_type = defaultSystemType, model, systemMessage, smPath, history = [] } = this._options || {};
       const smLoaded = smPath ? AICoreHelpers.loadMarkdown(smPath) : '';
       const textSM = smLoaded || systemMessage;
 
-      this.id = id || Date.now();
+      this.id = id;
+      this.system_type = system_type;
       this.label = label;
       this.model = model || this._aiCore.model;
       this.isInitialized = false;
@@ -50,6 +57,42 @@ export default class AICoreChat {
 
    public get history(): AIChatHistoryItem[] {
       return Array.from(this._history.values());
+   }
+
+   public get stored(): Chat | undefined {
+      return this._stored?.();
+   }
+   
+   toObject() {
+      return {
+         id: this.id,
+         label: this.label,
+         system_type: this.system_type,
+         model: this.model,
+         systemPrompt: this.systemPrompt,
+         isInitialized: this.isInitialized
+      };
+   }
+
+   async start() {
+      try {
+         const createdChat = await Chat.create({
+            label: this.label,
+            system_type: this.system_type,
+            model: this.model,
+            instructions: this.systemPrompt,
+         });
+
+         this.id = createdChat.id;
+         this._stored = () => createdChat;
+
+         this.isInitialized = true;
+         this.aiCore.setChat(this);
+
+         return this;
+      } catch (error) {
+         throw new ErrorAICore(`Failed to initialize AICoreChat with id "${this.id}".`, 'AICORE_CHAT_INIT_ERROR');
+      }
    }
 
    response(model: AIModels = this.model, systemPrompt?: string): AICoreResponse {
@@ -90,17 +133,5 @@ export default class AICoreChat {
 
    delHistory(id: string): boolean {
       return this._history.delete(id);
-   }
-
-   async start() {
-      try {
-         console.log(`AICoreChat with id "${this.id || 'new'}" and label "${this.label}" initialized successfully.`);
-         this.isInitialized = true;
-         this.id = this.history.length + 1;
-
-         return this;
-      } catch (error) {
-         throw new ErrorAICore(`Failed to initialize AICoreChat with id "${this.id}".`, 'AICORE_CHAT_INIT_ERROR');
-      }
    }
 }
