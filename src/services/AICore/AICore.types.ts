@@ -1,10 +1,20 @@
-import { AllModels } from 'openai/src/resources.js';
 import { MicroserviceSetup } from '../Microservice/Microservice.types';
 import AICoreOutputCell from './models/AICoreOutputCell';
-import { ResponseCompletedEvent, ResponseCreatedEvent, ResponseErrorEvent, ResponseInProgressEvent, ResponseInputAudio, ResponseInputFile, ResponseInputImage, ResponseInputText, ResponseStreamEvent } from 'openai/resources/responses/responses.mjs';
 import type { OpenAI, OpenAIError } from 'openai';
 import AICoreInputCell from './models/AICoreInputCell';
-import { ResponseTextDeltaEvent } from 'openai/lib/responses/EventTypes.mjs';
+import { ResponseTextDeltaEvent } from 'openai/lib/responses/EventTypes';
+import { AllModels } from 'openai/resources';
+import {
+   ResponseCompletedEvent,
+   ResponseCreatedEvent,
+   ResponseErrorEvent,
+   ResponseInProgressEvent,
+   ResponseInputAudio,
+   ResponseInputFile,
+   ResponseInputImage,
+   ResponseInputText,
+   ResponseStreamEvent
+} from 'openai/resources/responses/responses';
 
 export type AIModels = AllModels;
 export type CellRole = 'user' | 'assistant' | 'system' | 'developer';
@@ -18,6 +28,7 @@ export interface AICoreSetup extends MicroserviceSetup {
 
 export interface AICoreChatOptions {
    id?: number;
+   system_type: string;
    label?: string;
    model?: AIModels;
    systemMessage?: string;
