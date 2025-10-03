@@ -1,6 +1,6 @@
 import { EventEndpoint } from '../../../services';
 import ErrorEventEndpoint from '../../../services/EventEndpoint/ErrorEventEndpoint';
-import aiService from '../../ai.service'
+import aiService from '../../ai.service';
 
 export default new EventEndpoint({
    path: '/ai/get-chat',
