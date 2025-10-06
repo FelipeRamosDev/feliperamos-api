@@ -1,27 +1,29 @@
-import { ResponseInputAudio, ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses';
+import { ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses';
 import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
-import AICoreResponse from '../AICoreResponse';
-import { readFileSync } from 'fs';
-import path from 'path';
+import AICoreResult from '../AICoreResult';
 import ErrorAICore from '../ErrorAICore';
 import AICoreHelpers from '../AICoreHelpers';
+import AIChatResult from '../AIChatResult';
+import AIAgentResult from '../AIAgentResult';
+import { AgentInputItem } from '@openai/agents';
+import AgentInputItemModel from './AgentInputItemModel';
 
 export default class AICoreInputCell {
-   private _aiResponse: AICoreResponse;
+   private _aiResult: AIAgentResult | AIChatResult | AICoreResult;
 
    public id?: string;
    public type?: string;
    public role: CellRole;
    public content: CellMessageContent;
 
-   constructor(aiResponse: AICoreResponse, setup: AICoreInputCellSetup) {
+   constructor(aiResult: AIAgentResult | AIChatResult | AICoreResult, setup: AICoreInputCellSetup) {
       const { id, type = 'message', role, textContent, content = [] } = setup || {};
 
-      if (!aiResponse) {
-         throw new ErrorAICore(`It's required to provide a valid "parent" AICoreResponse instance to create a new AICoreInputCell instance!`);
+      if (!aiResult) {
+         throw new ErrorAICore(`It's required to provide a valid "parent" AICoreResult instance to create a new AICoreInputCell instance!`);
       }
 
-      this._aiResponse = aiResponse;
+      this._aiResult = aiResult;
 
       this.id = id;
       this.type = type;
@@ -33,17 +35,21 @@ export default class AICoreInputCell {
       }
    }
 
-   public get aiResponse(): AICoreResponse {
-      return this._aiResponse;
+   toObject(): AgentInputItem | Partial<AICoreInputCell> {
+      if (this._aiResult.constructor.name === 'AIAgentResult') {
+         return this.toAgentInputItem();
+      } else {
+         return {
+            id: this.id,
+            type: this.type,
+            role: this.role,
+            content: this.content
+         };
+      }
    }
 
-   toObject() {
-      return {
-         id: this.id,
-         type: this.type,
-         role: this.role,
-         content: this.content
-      };
+   toAgentInputItem(): AgentInputItem {
+      return new AgentInputItemModel(this.role, this.content).toAgentInputItem();
    }
 
    addText(content: string): AICoreInputCell {

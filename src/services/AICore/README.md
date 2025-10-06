@@ -13,7 +13,7 @@ AICore/
 ├── AICore.ts              # Main service class
 ├── AICore.types.ts        # Type definitions
 ├── AICoreChat.ts          # Chat session management
-├── AICoreResponse.ts      # Response handling and streaming
+├── AICoreResult.ts      # Response handling and streaming
 ├── AICoreHelpers.ts       # Utility functions
 ├── ErrorAICore.ts         # Custom error handling
 └── models/
@@ -81,7 +81,7 @@ constructor(aiCore: AICore, options: AICoreChatOptions)
 
 #### Methods
 
-##### `response(model?: AIModels, systemPrompt?: string): AICoreResponse`
+##### `response(model?: AIModels, systemPrompt?: string): AICoreResult`
 Creates a new response builder for this chat.
 
 ##### `getHistoryItem(id: string): AIChatHistoryItem | null`
@@ -99,7 +99,7 @@ Removes a history item.
 ##### `start(): Promise<AICoreChat>`
 Initializes the chat session.
 
-### AICoreResponse
+### AICoreResult
 
 Handles response creation and streaming for chat interactions.
 
@@ -110,13 +110,13 @@ constructor(aiChat: AICoreChat, model: AIModels, systemPrompt?: string)
 
 #### Methods
 
-##### `options(options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming): AICoreResponse`
+##### `options(options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming): AICoreResult`
 Sets OpenAI API options.
 
-##### `model(model: AIModels): AICoreResponse`
+##### `model(model: AIModels): AICoreResult`
 Sets the AI model for this response.
 
-##### `systemPrompt(systemPrompt: string): AICoreResponse`
+##### `systemPrompt(systemPrompt: string): AICoreResult`
 Sets the system prompt for this response.
 
 ##### `addCell(role: CellRole, textContent?: string): AICoreInputCell`

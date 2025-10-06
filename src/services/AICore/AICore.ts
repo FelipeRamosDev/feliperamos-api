@@ -10,10 +10,11 @@ export default class AICore extends Microservice {
    private _chats: Map<number, AICoreChat>;
 
    public model: AIModels;
+   public static defaultModel: AIModels = 'gpt-4.1-mini';
 
    constructor(setup: AICoreSetup = {}) {
       super(setup);
-      const { apiKey, model = 'gpt-4.1-mini' } = setup;
+      const { apiKey, model = AICore.defaultModel } = setup;
 
       this._apiKey = apiKey;
       this._client = new OpenAI({ apiKey });
