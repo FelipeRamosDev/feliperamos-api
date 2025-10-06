@@ -15,15 +15,27 @@ import {
    ResponseInputText,
    ResponseStreamEvent
 } from 'openai/resources/responses/responses';
+import { AgentInputItem } from 'node_modules/@openai/agents-core/dist/types/aliases';
 
 export type AIModels = AllModels;
-export type CellRole = 'user' | 'assistant' | 'system' | 'developer';
+export type CellRole = 'user' | 'assistant' | 'system';
 export type CellMessageContent = (ResponseInputText | ResponseInputImage | ResponseInputFile | ResponseInputAudio)[];
 export type OpenAIResponseType = Awaited<ReturnType<OpenAI['responses']['create']>>;
 
 export interface AICoreSetup extends MicroserviceSetup {
    apiKey?: string;
    model?: AIModels;
+}
+
+export interface AICoreResultSetup {
+   model?: AIModels;
+   systemPrompt?: string;
+}
+
+export interface AIChatResultSetup extends AICoreResultSetup {
+}
+
+export interface AIAgentResultSetup extends AICoreResultSetup {
 }
 
 export interface AICoreChatOptions {
@@ -60,4 +72,11 @@ export interface AICoreResponseStreamCallbacks {
    onError?: (error: ResponseErrorEvent | OpenAIError) => void;
    onComplete?: (event: ResponseCompletedEvent) => void;
    onOutputTextDelta?: (event: ResponseTextDeltaEvent) => void;
+}
+
+export interface AIAgentSetup {
+   apiKey?: string;
+   name: string;
+   model?: AIModels;
+   instructions?: string;
 }

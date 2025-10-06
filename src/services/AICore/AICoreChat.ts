@@ -3,12 +3,12 @@ import AICore from './AICore';
 import ErrorAICore from './ErrorAICore';
 import AICoreHelpers from './AICoreHelpers';
 import AICoreOutputCell from './models/AICoreOutputCell';
-import AICoreResponse from './AICoreResponse';
 import AICoreInputCell from './models/AICoreInputCell';
 import AIChatHistoryItem from './models/AIChatHistoryItem';
 import { AICoreChatOptions, AIModels } from './AICore.types';
 import { Chat } from '../../database/models/messages_schemas';
 import { defaultSystemType } from '../../app.config';
+import AIChatResult from './AIChatResult';
 
 export default class AICoreChat {
    private _aiCore: AICore;
@@ -95,8 +95,8 @@ export default class AICoreChat {
       }
    }
 
-   response(model: AIModels = this.model, systemPrompt?: string): AICoreResponse {
-      return new AICoreResponse(this, model, systemPrompt || this.systemPrompt);
+   response(model: AIModels = this.model, systemPrompt?: string): AIChatResult {
+      return new AIChatResult({ model, systemPrompt }, this);
    }
 
    getHistoryItem(id: string): AIChatHistoryItem | null {
