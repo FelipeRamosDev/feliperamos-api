@@ -15,7 +15,6 @@ import {
    ResponseInputText,
    ResponseStreamEvent
 } from 'openai/resources/responses/responses';
-import { AgentInputItem } from 'node_modules/@openai/agents-core/dist/types/aliases';
 
 export type AIModels = AllModels;
 export type CellRole = 'user' | 'assistant' | 'system';
@@ -58,6 +57,10 @@ export interface AICoreInputCellSetup extends AICoreCellSetup {
    textContent?: string;
 }
 
+export interface AICoreOutputCellSetup extends AICoreCellSetup {
+   
+}
+
 export interface AICoreCellSetup {
    id?: string;
    type?: string;
@@ -80,3 +83,13 @@ export interface AIAgentSetup {
    model?: AIModels;
    instructions?: string;
 }
+
+export type AIAgentOutputContent = string | CellMessageContent | Array<{
+   type: 'output_text' | 'refusal' | 'audio' | 'image';
+   text?: string;
+   refusal?: string;
+   audio?: string | { id: string };
+   image?: string;
+   format?: string | null;
+   transcript?: string | null;
+}>;

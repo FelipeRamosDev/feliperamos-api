@@ -1,11 +1,11 @@
 import { ResponseCreateParamsNonStreaming, ResponseCreateParamsStreaming, ResponseOutputItem } from 'openai/resources/responses/responses';
-import { AIChatResultSetup, AICoreResponseStreamCallbacks, CellRole } from './AICore.types';
-import AICoreChat from './AICoreChat';
+import { AIChatResultSetup, AICoreResponseStreamCallbacks, CellRole } from '../AICore.types';
+import AICoreChat from '../AICoreChat';
 import AICoreResult from './AICoreResult';
-import AIChatHistoryItem from './models/AIChatHistoryItem';
-import ErrorAICore from './ErrorAICore';
-import AICoreOutputCell from './models/AICoreOutputCell';
-import AICoreInputCell from './models/AICoreInputCell';
+import AIChatHistoryItem from '../models/AIChatHistoryItem';
+import ErrorAICore from '../ErrorAICore';
+import AICoreOutputCell from '../models/AICoreOutputCell';
+import AICoreInputCell from '../models/AICoreInputCell';
 
 export default class AIChatResult extends AICoreResult {
    private _aiChat?: AICoreChat;
@@ -58,7 +58,7 @@ export default class AIChatResult extends AICoreResult {
       outputCells
          .filter(cell => cell.type === 'message')
          .forEach(cell => {
-            this.aiChat?.newHistoryItem(new AICoreOutputCell(this.aiChat, { ...cell, id: cell.id }));
+            this.aiChat?.newHistoryItem(new AICoreOutputCell({ ...cell, id: cell.id }));
          });
    }
 
@@ -77,7 +77,7 @@ export default class AIChatResult extends AICoreResult {
             .filter(cell => cell.type === 'message')
             .map(cell => (
                this.aiChat?.newHistoryItem(
-                  new AICoreOutputCell(this.aiChat, { 
+                  new AICoreOutputCell({ 
                      ...cell, 
                      id: cell.id 
                   })

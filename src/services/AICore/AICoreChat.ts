@@ -8,7 +8,7 @@ import AIChatHistoryItem from './models/AIChatHistoryItem';
 import { AICoreChatOptions, AIModels } from './AICore.types';
 import { Chat } from '../../database/models/messages_schemas';
 import { defaultSystemType } from '../../app.config';
-import AIChatResult from './AIChatResult';
+import AIChatResult from './models/AIChatResult';
 
 export default class AICoreChat {
    private _aiCore: AICore;

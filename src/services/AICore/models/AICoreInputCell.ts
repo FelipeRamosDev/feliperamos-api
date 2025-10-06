@@ -1,10 +1,10 @@
 import { ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses';
 import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
-import AICoreResult from '../AICoreResult';
+import AICoreResult from '../models/AICoreResult';
 import ErrorAICore from '../ErrorAICore';
 import AICoreHelpers from '../AICoreHelpers';
-import AIChatResult from '../AIChatResult';
-import AIAgentResult from '../AIAgentResult';
+import AIChatResult from '../models/AIChatResult';
+import AIAgentResult from '../models/AIAgentResult';
 import { AgentInputItem } from '@openai/agents';
 import AgentInputItemModel from './AgentInputItemModel';
 
