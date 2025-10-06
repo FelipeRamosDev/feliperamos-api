@@ -1,7 +1,7 @@
-import { AICoreResultSetup, AIModels, CellRole } from './AICore.types';
-import ErrorAICore from './ErrorAICore';
-import AICoreInputCell from './models/AICoreInputCell';
-import AICore from './AICore';
+import { AICoreResultSetup, AIModels, CellRole } from '../AICore.types';
+import ErrorAICore from '../ErrorAICore';
+import AICoreInputCell from '../models/AICoreInputCell';
+import AICore from '../AICore';
 
 export default class AICoreResult {
    private _instructions?: string;
@@ -15,6 +15,7 @@ export default class AICoreResult {
 
       this._input = [];
       this._model = model;
+      this._instructions = '';
       this.parentInstructions;
    }
 
@@ -28,6 +29,10 @@ export default class AICoreResult {
 
    public get instructions(): string | undefined {
       return this._instructions;
+   }
+
+   public get fullInstructions(): string | undefined {
+      return [this.parentInstructions, this._instructions].filter(s => typeof s === 'string' && s.trim().length > 0).join('\n\n') || undefined;
    }
 
    setModel(model?: AIModels): this {
@@ -44,7 +49,8 @@ export default class AICoreResult {
          return this;
       }
 
-      this._instructions = [this.parentInstructions, instructions].filter(s => typeof s === 'string' && s.trim().length > 0).join('\n') || undefined;
+      this._instructions = instructions;
+      this.addCell('system', this.instructions);
       return this;
    }
 

@@ -1,8 +1,9 @@
-import { NonStreamRunOptions, run, StreamRunOptions } from '@openai/agents';
-import AIAgent from './AIAgent';
-import { AIAgentResultSetup } from './AICore.types';
+import { NonStreamRunOptions, run, StreamedRunResult, StreamRunOptions } from '@openai/agents';
+import AIAgent from '../AIAgent';
+import { AIAgentResultSetup } from '../AICore.types';
 import AICoreResult from './AICoreResult';
-import ErrorAICore from './ErrorAICore';
+import ErrorAICore from '../ErrorAICore';
+import AgentOutputItemModel from './AgentOutputItemModel';
 
 export default class AIAgentResult<TContext = {}> extends AICoreResult {
    private _aiAgent: AIAgent<TContext>;
@@ -10,7 +11,7 @@ export default class AIAgentResult<TContext = {}> extends AICoreResult {
 
    constructor (setup: AIAgentResultSetup = {}, aiAgent: AIAgent<TContext>) {
       super(setup);
-      const { model = AIAgent.defaultModel } = setup || {};
+      const { model } = setup || {};
 
       this._aiAgent = aiAgent;
       this._options = {};
@@ -24,7 +25,10 @@ export default class AIAgentResult<TContext = {}> extends AICoreResult {
    }
 
    public get parsedInput() {
-      return this.input.map(cell => cell.toAgentInputItem());
+      const history = this.aiAgent.history.map(item => item.toAgentInputItem());
+      const input = this.input.map(cell => cell.toAgentInputItem());
+
+      return [...history, ...input];
    }
    public get options(): NonStreamRunOptions | StreamRunOptions {
       return this._options;
@@ -41,6 +45,8 @@ export default class AIAgentResult<TContext = {}> extends AICoreResult {
       }
 
       try {
+         this.aiAgent.setHistoryBulk(this.input);
+
          const result = await run(this.aiAgent.agent, this.parsedInput, this.options as NonStreamRunOptions);
          return result;
       } catch (error: any) {
@@ -48,20 +54,22 @@ export default class AIAgentResult<TContext = {}> extends AICoreResult {
       }
    }
 
-   public async stream(onText: (text: string) => void) {
+   public async stream(onChunk: (text: string) => void): Promise<StreamedRunResult<undefined, any>> {
       if (!this.aiAgent) {
          throw new ErrorAICore(`No aiAgent associated with this result.`, 'ERROR_NO_AGENT_ASSOCIATED');
       }
 
       return new Promise(async (resolve, reject) => {
          this.setOptions({ stream: true });
+         this.aiAgent.setHistoryBulk(this.input);
 
          try {
             const result = await run(this.aiAgent.agent, this.parsedInput, this.options as StreamRunOptions);
             const textStream = result.toTextStream({ compatibleWithNodeStreams: true });
 
-            textStream.on('data', (chunk) => onText?.(chunk));
+            textStream.on('data', (chunk) => onChunk?.(chunk));
             result.completed.then(() => {
+               this.aiAgent.setHistoryBulk(result.output as AgentOutputItemModel[]);
                resolve(result);
             }).catch(reject);
          } catch (error: any) {
