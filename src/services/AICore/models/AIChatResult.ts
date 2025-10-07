@@ -47,7 +47,7 @@ export default class AIChatResult extends AICoreResult {
             throw new ErrorAICore('No response received from AI service.', 'AICORE_CHAT_RESPONSE_NO_RESPONSE');
          }
 
-         this.aiChat?.setHistoryBulk(response.output as ResponseOutputMessage[])
+         this.aiChat?.setHistoryBulk(response.output as ResponseOutputMessage[]);
          return response;
       } catch (error: any) {
          throw new ErrorAICore(error.message || `Failed to create AI chat response.`, 'AICORE_CHAT_RESPONSE_CREATE_ERROR');

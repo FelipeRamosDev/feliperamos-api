@@ -52,12 +52,12 @@ export default class AICoreResult {
       return this;
    }
 
-   setInstructions(instructions: string): AICoreInputCell {
+   addInstructions(instructions: string): AICoreInputCell {
       if (!instructions || typeof instructions !== 'string' || instructions.trim().length === 0) {
-         throw new ErrorAICore('Invalid instructions provided to setInstructions method. Instructions must be a non-empty string.', 'AICORE_RESULT_INVALID_INSTRUCTIONS');
+         throw new ErrorAICore('Invalid instructions provided to addInstructions method. Instructions must be a non-empty string.', 'AICORE_RESULT_INVALID_INSTRUCTIONS');
       }
 
-      this._instructions = instructions;
+      this._instructions += instructions;
       const cell = this.addCell('system', this.instructions);
       return cell;
    }
