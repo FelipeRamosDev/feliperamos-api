@@ -121,6 +121,6 @@ export default class AICoreChat {
       const agent = new AIAgent(agentSetup, this);
 
       this._agents.setAgent(agent);
-      return agent;      
+      return agent;
    }
 }
