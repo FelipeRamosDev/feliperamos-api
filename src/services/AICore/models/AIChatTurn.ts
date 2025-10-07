@@ -1,15 +1,15 @@
 import { ResponseCreateParamsNonStreaming, ResponseCreateParamsStreaming, ResponseOutputMessage } from 'openai/resources/responses/responses';
-import { AIChatResultSetup, AICoreResponseStreamCallbacks } from '../AICore.types';
+import { AIChatTurnSetup, AICoreResponseStreamCallbacks } from '../AICore.types';
 import AICoreChat from '../AICoreChat';
-import AICoreResult from './AICoreResult';
+import AICoreTurn from './AICoreTurn';
 import ErrorAICore from '../ErrorAICore';
 import AIHistoryItem from './AIHistoryItem';
 
-export default class AIChatResult extends AICoreResult {
+export default class AIChatTurn extends AICoreTurn {
    private _aiChat?: AICoreChat;
    private _options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming;
 
-   constructor (setup: AIChatResultSetup, aiChat?: AICoreChat) {
+   constructor (setup: AIChatTurnSetup, aiChat?: AICoreChat) {
       super(setup, aiChat);
       const { model } = setup || {};
 
@@ -17,7 +17,7 @@ export default class AIChatResult extends AICoreResult {
       this.setModel(model || this.aiChat?.model);
       this._options = { model: this.model, instructions: this.instructions, input: [] };
 
-      this.parentInstructions = this.aiChat?.systemPrompt;
+      this.parentInstructions = this.aiChat?.instructions;
    }
 
    private get aiChat(): AICoreChat | undefined {
@@ -28,7 +28,7 @@ export default class AIChatResult extends AICoreResult {
       return this.aiChat?.history || [];
    }
 
-   options(options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming): AIChatResult {
+   options(options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming): AIChatTurn {
       this._options = { ...this._options, ...options };
       return this;
    }
@@ -58,7 +58,7 @@ export default class AIChatResult extends AICoreResult {
       const { onEvent, onCreated, onInProgress, onComplete, onOutputTextDelta, onError } = callbacks || {};
 
       if (!this.aiChat) {
-         throw new ErrorAICore('AIChatResult is not associated with any AICoreChat instance.', 'AICORE_CHAT_RESPONSE_NO_CHAT');
+         throw new ErrorAICore('AIChatTurn is not associated with any AICoreChat instance.', 'AICORE_CHAT_RESPONSE_NO_CHAT');
       }
 
       try {

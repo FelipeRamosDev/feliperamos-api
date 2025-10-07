@@ -2,19 +2,16 @@ import TableRow from '../../../../services/Database/models/TableRow';
 import { ChatSetup } from './Chat.types';
 import ErrorDatabase from '../../../../services/Database/ErrorDatabase';
 import database from '../../../../database';
-import { defaultSystemType } from '../../../../app.config';
 
 export default class Chat extends TableRow {
-   public system_type: string;
    public instructions?: string;
    public label?: string;
    public model?: string;
 
    constructor(setup: ChatSetup) {
       super('messages_schemas', 'chats', setup);
-      const { system_type = defaultSystemType, instructions, label, model } = setup;
+      const { instructions, label, model } = setup;
 
-      this.system_type = system_type;
       this.instructions = instructions;
       this.label = label;
       this.model = model;

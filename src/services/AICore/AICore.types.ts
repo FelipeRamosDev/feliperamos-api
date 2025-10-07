@@ -13,8 +13,10 @@ import {
    ResponseInputImage,
    ResponseInputText,
    ResponseOutputMessage,
+   ResponsePrompt,
    ResponseStreamEvent
 } from 'openai/resources/responses/responses';
+import { Agent, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
 
 export type AIModels = AllModels;
 export type CellRole = 'user' | 'assistant' | 'system';
@@ -31,18 +33,17 @@ export interface AICoreResultSetup {
    systemPrompt?: string;
 }
 
-export interface AIChatResultSetup extends AICoreResultSetup {
+export interface AIChatTurnSetup extends AICoreResultSetup {
 }
 
-export interface AIAgentResultSetup extends AICoreResultSetup {
+export interface AIAgentTurnSetup extends AICoreResultSetup {
 }
 
 export interface AICoreChatOptions {
    id?: number;
-   system_type: string;
    label?: string;
    model?: AIModels;
-   systemMessage?: string;
+   instructions?: string;
    smPath?: string;
    history?: (ResponseOutputMessage | AICoreInputCell)[];
 }
@@ -80,8 +81,21 @@ export interface AICoreResponseStreamCallbacks {
 export interface AIAgentSetup {
    apiKey?: string;
    name: string;
+   label?: string;
    model?: AIModels;
    instructions?: string;
+   handoffDescription?: string;
+   handoffOutputTypeWarningEnabled?: boolean;
+   handoffs?: (Agent<any, any> | Handoff<any, "text">)[];
+   inputGuardrails?: InputGuardrail[];
+   mcpServers?: MCPServer[];
+   modelSettings?: ModelSettings;
+   outputGuardrails?: OutputGuardrail<"text">[];
+   outputType?: "text";
+   prompt?: ((runContext: RunContext, agent: Agent<any, "text">) => Promise<ResponsePrompt> | ResponsePrompt);
+   resetToolChoice?: boolean;
+   tools?: Tool<any>[];
+   toolUseBehavior?: ToolUseBehavior;
 }
 
 export type AIAgentOutputContent = string | CellMessageContent | Array<{
