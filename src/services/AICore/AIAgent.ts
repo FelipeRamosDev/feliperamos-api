@@ -1,13 +1,12 @@
 import { Agent } from '@openai/agents';
 import { AIAgentResultSetup, AIAgentSetup, AIModels } from './AICore.types';
 import ErrorAICore from './ErrorAICore';
-import AICore from './AICore';
 import AIAgentResult from './models/AIAgentResult';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
 import { defaultModel } from '../../app.config';
 
-export default class AIAgent<TContext = {}> {
+export default class AIAgent<TContext = any> {
    private _agent: Agent<TContext>;
    private _history: AIHistory;
 
@@ -59,7 +58,7 @@ export default class AIAgent<TContext = {}> {
       return this._history.getItem.bind(this._history);
    }
 
-   public turn(setup?: AIAgentResultSetup): AIAgentResult<TContext> {
+   public turn(setup?: AIAgentResultSetup): AIAgentResult {
       return new AIAgentResult(setup, this);
    }
 }
