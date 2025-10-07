@@ -4,23 +4,24 @@ import { AIAgentResultSetup } from '../AICore.types';
 import AICoreResult from './AICoreResult';
 import ErrorAICore from '../ErrorAICore';
 import AgentOutputItemModel from './AgentOutputItemModel';
+import { defaultModel } from '../../../app.config';
 
-export default class AIAgentResult<TContext = {}> extends AICoreResult {
-   private _aiAgent: AIAgent<TContext>;
+export default class AIAgentResult extends AICoreResult {
+   private _aiAgent: AIAgent;
    private _options: NonStreamRunOptions | StreamRunOptions;
 
-   constructor (setup: AIAgentResultSetup = {}, aiAgent: AIAgent<TContext>) {
-      super(setup);
+   constructor (setup: AIAgentResultSetup = {}, aiAgent: AIAgent) {
+      super(setup, aiAgent);
       const { model } = setup || {};
 
       this._aiAgent = aiAgent;
       this._options = {};
 
       this.parentInstructions = this.aiAgent.instructions;
-      this.setModel(model || this.aiAgent.model || AIAgent.defaultModel);
+      this.setModel(model || this.aiAgent.model || defaultModel);
    }
 
-   private get aiAgent(): AIAgent<TContext> {
+   private get aiAgent(): AIAgent {
       return this._aiAgent;
    }
 
@@ -46,8 +47,9 @@ export default class AIAgentResult<TContext = {}> extends AICoreResult {
 
       try {
          this.aiAgent.setHistoryBulk(this.input);
-
          const result = await run(this.aiAgent.agent, this.parsedInput, this.options as NonStreamRunOptions);
+
+         this.aiAgent.setHistoryBulk(result.output as AgentOutputItemModel[]);
          return result;
       } catch (error: any) {
          throw new ErrorAICore(error.message || 'Failed to run aiAgent.', 'ERROR_RUNNING_AGENT');

@@ -1,7 +1,7 @@
+import { ResponseOutputMessage } from 'openai/resources/responses/responses.js';
 import ErrorAICore from '../ErrorAICore';
 import AgentOutputItemModel from './AgentOutputItemModel';
 import AICoreInputCell from './AICoreInputCell';
-import AICoreOutputCell from './AICoreOutputCell';
 import AIHistoryItem from './AIHistoryItem';
 
 export default class AIHistory extends Map<string, AIHistoryItem> {
@@ -13,7 +13,7 @@ export default class AIHistory extends Map<string, AIHistoryItem> {
       return this.get(id);
    }
 
-   setItem(value: AICoreInputCell | AICoreOutputCell | AgentOutputItemModel): AIHistoryItem {
+   setItem(value: AICoreInputCell | ResponseOutputMessage | AgentOutputItemModel): AIHistoryItem {
       try {
          const newItem = new AIHistoryItem(value);
    
@@ -24,7 +24,7 @@ export default class AIHistory extends Map<string, AIHistoryItem> {
       }
    }
 
-   setBulk(items: (AICoreInputCell | AICoreOutputCell | AgentOutputItemModel)[] = []): void {
+   setBulk(items: (AICoreInputCell | ResponseOutputMessage | AgentOutputItemModel)[] = []): void {
       try {
          items.forEach((item) => this.setItem(item));
       } catch (error: any) {

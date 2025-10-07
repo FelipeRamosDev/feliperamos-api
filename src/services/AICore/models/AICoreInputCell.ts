@@ -1,4 +1,4 @@
-import { ResponseInputFile, ResponseInputImage, ResponseInputText } from 'openai/resources/responses/responses';
+import { ResponseInputFile, ResponseInputImage, ResponseInputItem, ResponseInputText } from 'openai/resources/responses/responses';
 import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
 import AICoreResult from '../models/AICoreResult';
 import ErrorAICore from '../ErrorAICore';
@@ -7,10 +7,9 @@ import AIChatResult from '../models/AIChatResult';
 import AIAgentResult from '../models/AIAgentResult';
 import { AgentInputItem } from '@openai/agents';
 import AgentInputItemModel from './AgentInputItemModel';
+import ResponseInputItemModel from './ResponseInputItemModel';
 
 export default class AICoreInputCell {
-   private _aiResult: AIAgentResult | AIChatResult | AICoreResult;
-
    public id?: string;
    public type?: string;
    public role: CellRole;
@@ -23,8 +22,6 @@ export default class AICoreInputCell {
          throw new ErrorAICore(`It's required to provide a valid "parent" AICoreResult instance to create a new AICoreInputCell instance!`);
       }
 
-      this._aiResult = aiResult;
-
       this.id = id;
       this.type = type;
       this.role = role;
@@ -35,21 +32,12 @@ export default class AICoreInputCell {
       }
    }
 
-   toObject(): AgentInputItem | Partial<AICoreInputCell> {
-      if (this._aiResult.constructor.name === 'AIAgentResult') {
-         return this.toAgentInputItem();
-      } else {
-         return {
-            id: this.id,
-            type: this.type,
-            role: this.role,
-            content: this.content
-         };
-      }
-   }
-
    toAgentInputItem(): AgentInputItem {
       return new AgentInputItemModel(this.role, this.content).toAgentInputItem();
+   }
+   
+   toResponseInputItem(): ResponseInputItem {
+      return new ResponseInputItemModel(this.role, this.content as CellMessageContent).toResponseInputItem();
    }
 
    addText(content: string): AICoreInputCell {

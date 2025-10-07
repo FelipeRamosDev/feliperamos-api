@@ -1,5 +1,4 @@
 import { MicroserviceSetup } from '../Microservice/Microservice.types';
-import AICoreOutputCell from './models/AICoreOutputCell';
 import type { OpenAI, OpenAIError } from 'openai';
 import AICoreInputCell from './models/AICoreInputCell';
 import { ResponseTextDeltaEvent } from 'openai/lib/responses/EventTypes';
@@ -13,6 +12,7 @@ import {
    ResponseInputFile,
    ResponseInputImage,
    ResponseInputText,
+   ResponseOutputMessage,
    ResponseStreamEvent
 } from 'openai/resources/responses/responses';
 
@@ -44,7 +44,7 @@ export interface AICoreChatOptions {
    model?: AIModels;
    systemMessage?: string;
    smPath?: string;
-   history?: (AICoreOutputCell | AICoreInputCell)[];
+   history?: (ResponseOutputMessage | AICoreInputCell)[];
 }
 
 export interface AICoreCellSetup {
