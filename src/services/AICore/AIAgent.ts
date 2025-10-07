@@ -1,21 +1,41 @@
 import { Agent } from '@openai/agents';
-import { AIAgentResultSetup, AIAgentSetup, AIModels } from './AICore.types';
+import { AIAgentTurnSetup, AIAgentSetup, AIModels } from './AICore.types';
 import ErrorAICore from './ErrorAICore';
-import AIAgentResult from './models/AIAgentResult';
+import AIAgentTurn from './models/AIAgentTurn';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
 import { defaultModel } from '../../app.config';
+import AICoreChat from './AICoreChat';
 
 export default class AIAgent<TContext = any> {
+   private _aiChat?: AICoreChat;
    private _agent: Agent<TContext>;
    private _history: AIHistory;
+   private _instructions?: string;
 
    public name: string;
+   public label: string;
    public model: AIModels;
-   public instructions?: string;
 
-   constructor(setup: AIAgentSetup) {
-      const { apiKey, name, model = defaultModel, instructions } = setup || {};
+   constructor(setup: AIAgentSetup, aiChat?: AICoreChat) {
+      const {
+         apiKey,
+         name,
+         label = name,
+         model = defaultModel,
+         instructions,
+         handoffDescription,
+         handoffOutputTypeWarningEnabled = true,
+         handoffs,
+         inputGuardrails,
+         mcpServers,
+         modelSettings,
+         outputGuardrails,
+         outputType,
+         resetToolChoice = false,
+         tools = [],
+         toolUseBehavior
+      } = setup || {};
 
       if (!name || !name.trim().length || typeof name !== 'string') {
          throw new ErrorAICore(`It's required to provide a valid name to create an AI Agent!`, 'ERROR_INVALID_AGENT_NAME');
@@ -26,16 +46,33 @@ export default class AIAgent<TContext = any> {
       }
 
       this.name = name;
+      this.label = label;
       this.model = model;
-      this.instructions = instructions;
-
+      
       // Private
+      this._aiChat = aiChat;
       this._history = new AIHistory();
+      this._instructions = instructions;
       this._agent = new Agent<TContext>({
          name,
          model,
-         instructions
+         instructions: this.fullInstructions,
+         handoffDescription,
+         handoffOutputTypeWarningEnabled,
+         handoffs,
+         inputGuardrails,
+         mcpServers,
+         modelSettings,
+         outputGuardrails,
+         outputType,
+         resetToolChoice,
+         tools,
+         toolUseBehavior
       });
+   }
+
+   public get aiChat(): AICoreChat | undefined {
+      return this._aiChat;
    }
 
    public get agent(): Agent<TContext> {
@@ -44,6 +81,14 @@ export default class AIAgent<TContext = any> {
 
    public get history(): AIHistoryItem[] {
       return Array.from(this._history.values());
+   }
+
+   public get instructions() {
+      return this._instructions;
+   }
+
+   public get fullInstructions() {
+      return [this.aiChat?.instructions, this.instructions].filter(Boolean).join('\n\n');
    }
 
    public get setHistoryItem() {
@@ -58,7 +103,7 @@ export default class AIAgent<TContext = any> {
       return this._history.getItem.bind(this._history);
    }
 
-   public turn(setup?: AIAgentResultSetup): AIAgentResult {
-      return new AIAgentResult(setup, this);
+   public turn(setup?: AIAgentTurnSetup): AIAgentTurn {
+      return new AIAgentTurn(setup, this);
    }
 }

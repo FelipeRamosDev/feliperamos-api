@@ -1,10 +1,10 @@
 import { ResponseInputFile, ResponseInputImage, ResponseInputItem, ResponseInputText } from 'openai/resources/responses/responses';
 import { AICoreInputCellSetup, CellMessageContent, CellRole } from '../AICore.types';
-import AICoreResult from '../models/AICoreResult';
+import AICoreTurn from '../models/AICoreTurn';
 import ErrorAICore from '../ErrorAICore';
 import AICoreHelpers from '../AICoreHelpers';
-import AIChatResult from '../models/AIChatResult';
-import AIAgentResult from '../models/AIAgentResult';
+import AIChatTurn from '../models/AIChatTurn';
+import AIAgentTurn from '../models/AIAgentTurn';
 import { AgentInputItem } from '@openai/agents';
 import AgentInputItemModel from './AgentInputItemModel';
 import ResponseInputItemModel from './ResponseInputItemModel';
@@ -15,11 +15,11 @@ export default class AICoreInputCell {
    public role: CellRole;
    public content: CellMessageContent;
 
-   constructor(aiResult: AIAgentResult | AIChatResult | AICoreResult, setup: AICoreInputCellSetup) {
+   constructor(aiResult: AIAgentTurn | AIChatTurn | AICoreTurn, setup: AICoreInputCellSetup) {
       const { id, type = 'message', role, textContent, content = [] } = setup || {};
 
       if (!aiResult) {
-         throw new ErrorAICore(`It's required to provide a valid "parent" AICoreResult instance to create a new AICoreInputCell instance!`);
+         throw new ErrorAICore(`It's required to provide a valid "parent" AICoreTurn instance to create a new AICoreInputCell instance!`);
       }
 
       this.id = id;

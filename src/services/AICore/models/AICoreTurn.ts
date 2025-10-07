@@ -1,11 +1,11 @@
 import { AICoreResultSetup, AIModels, CellRole } from '../AICore.types';
 import ErrorAICore from '../ErrorAICore';
-import AICoreInputCell from '../models/AICoreInputCell';
+import AICoreInputCell from './AICoreInputCell';
 import { defaultModel } from '../../../app.config';
 import AICoreChat from '../AICoreChat';
 import AIAgent from '../AIAgent';
 
-export default class AICoreResult {
+export default class AICoreTurn {
    private _parent?: AICoreChat | AIAgent;
    private _instructions?: string;
    private _input: AICoreInputCell[];

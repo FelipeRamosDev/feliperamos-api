@@ -1,16 +1,16 @@
 import { NonStreamRunOptions, run, StreamedRunResult, StreamRunOptions } from '@openai/agents';
 import AIAgent from '../AIAgent';
-import { AIAgentResultSetup } from '../AICore.types';
-import AICoreResult from './AICoreResult';
+import { AIAgentTurnSetup } from '../AICore.types';
+import AICoreTurn from './AICoreTurn';
 import ErrorAICore from '../ErrorAICore';
 import AgentOutputItemModel from './AgentOutputItemModel';
 import { defaultModel } from '../../../app.config';
 
-export default class AIAgentResult extends AICoreResult {
+export default class AIAgentTurn extends AICoreTurn {
    private _aiAgent: AIAgent;
    private _options: NonStreamRunOptions | StreamRunOptions;
 
-   constructor (setup: AIAgentResultSetup = {}, aiAgent: AIAgent) {
+   constructor (setup: AIAgentTurnSetup = {}, aiAgent: AIAgent) {
       super(setup, aiAgent);
       const { model } = setup || {};
 
@@ -26,11 +26,9 @@ export default class AIAgentResult extends AICoreResult {
    }
 
    public get parsedInput() {
-      const history = this.aiAgent.history.map(item => item.toAgentInputItem());
-      const input = this.input.map(cell => cell.toAgentInputItem());
-
-      return [...history, ...input];
+      return this.aiAgent.history.map(item => item.toAgentInputItem());
    }
+
    public get options(): NonStreamRunOptions | StreamRunOptions {
       return this._options;
    }
@@ -62,10 +60,10 @@ export default class AIAgentResult extends AICoreResult {
       }
 
       return new Promise(async (resolve, reject) => {
-         this.setOptions({ stream: true });
-         this.aiAgent.setHistoryBulk(this.input);
-
          try {
+            this.setOptions({ stream: true });
+            this.aiAgent.setHistoryBulk(this.input);
+
             const result = await run(this.aiAgent.agent, this.parsedInput, this.options as StreamRunOptions);
             const textStream = result.toTextStream({ compatibleWithNodeStreams: true });
 

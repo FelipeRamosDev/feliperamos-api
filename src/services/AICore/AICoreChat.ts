@@ -2,25 +2,26 @@ import OpenAI from 'openai';
 import AICore from './AICore';
 import ErrorAICore from './ErrorAICore';
 import AICoreHelpers from './AICoreHelpers';
-import { AICoreChatOptions, AIModels } from './AICore.types';
+import { AIAgentSetup, AICoreChatOptions, AIModels } from './AICore.types';
 import { Chat } from '../../database/models/messages_schemas';
-import { defaultSystemType } from '../../app.config';
-import AIChatResult from './models/AIChatResult';
+import AIChatTurn from './models/AIChatTurn';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
+import AIAgent from './AIAgent';
+import AgentStore from './models/AgentStore';
 
 export default class AICoreChat {
    private _aiCore: AICore;
    private _options: AICoreChatOptions;
    private _history: AIHistory;
+   private _agents: AgentStore;
    private _stored?: () => Chat;
+   private _isInit: boolean;
 
    public id?: number;
-   public system_type: string;
    public label?: string;
    public model: AIModels;
-   public systemPrompt?: string;
-   public isInitialized: boolean;
+   public instructions?: string;
 
    constructor(aiCore: AICore, options: AICoreChatOptions) {
       const { id } = options;
@@ -28,21 +29,21 @@ export default class AICoreChat {
       this._aiCore = aiCore;
       this._options = options;
       this._history = new AIHistory();
+      this._agents = new AgentStore();
 
-      const { label, system_type = defaultSystemType, model, systemMessage, smPath, history = [] } = this._options || {};
+      const { label, model, instructions, smPath, history = [] } = this._options || {};
       const smLoaded = smPath ? AICoreHelpers.loadMarkdown(smPath) : '';
-      const textSM = smLoaded || systemMessage;
+      const textSM = smLoaded || instructions;
 
       this.id = id;
-      this.system_type = system_type;
       this.label = label;
       this.model = model || this._aiCore.model;
-      this.isInitialized = false;
+      this._isInit = false;
 
       this.setHistoryBulk(history);
 
       if (textSM) {
-         this.systemPrompt = textSM;
+         this.instructions = textSM;
       }
    }
 
@@ -58,8 +59,16 @@ export default class AICoreChat {
       return Array.from(this._history.values());
    }
 
+   public get agents(): AIAgent[] {
+      return Array.from(this._agents.values());
+   }
+
    public get stored(): Chat | undefined {
       return this._stored?.();
+   }
+
+   public get isInit(): boolean {
+      return Boolean(this._isInit);
    }
 
    public get setHistoryItem() {
@@ -78,10 +87,9 @@ export default class AICoreChat {
       return {
          id: this.id,
          label: this.label,
-         system_type: this.system_type,
          model: this.model,
-         systemPrompt: this.systemPrompt,
-         isInitialized: this.isInitialized
+         instructions: this.instructions,
+         isInit: this.isInit
       };
    }
 
@@ -89,15 +97,14 @@ export default class AICoreChat {
       try {
          const createdChat = await Chat.create({
             label: this.label,
-            system_type: this.system_type,
             model: this.model,
-            instructions: this.systemPrompt,
+            instructions: this.instructions,
          });
 
          this.id = createdChat.id;
          this._stored = () => createdChat;
 
-         this.isInitialized = true;
+         this._isInit = true;
          this.aiCore.setChat(this);
 
          return this;
@@ -106,7 +113,14 @@ export default class AICoreChat {
       }
    }
 
-   public response(model: AIModels = this.model, systemPrompt?: string): AIChatResult {
-      return new AIChatResult({ model, systemPrompt }, this);
+   public response(model: AIModels = this.model, systemPrompt?: string): AIChatTurn {
+      return new AIChatTurn({ model, systemPrompt }, this);
+   }
+
+   public setAgent(agentSetup: AIAgentSetup) {
+      const agent = new AIAgent(agentSetup, this);
+
+      this._agents.setAgent(agent);
+      return agent;
    }
 }

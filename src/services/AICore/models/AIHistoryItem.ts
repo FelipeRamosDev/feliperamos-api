@@ -26,7 +26,7 @@ export default class AIHistoryItem {
       }
 
       this.createdAt = createdAt.toJSON();
-      this.id = id || `user-${createdAt.getTime()}`;
+      this.id = id || `${role}_${createdAt.getTime()}`;
 
       if (role === 'user' || role === 'system') {
          this.role = role;
@@ -35,12 +35,6 @@ export default class AIHistoryItem {
          this.role = 'assistant';
          this.content = content as CellMessageContent;
       }
-   }
-
-   public get textOutput(): string {
-      if (this.role !== 'assistant') return '';
-
-      return '';
    }
 
    toAgentInputItem(): AgentInputItem {
