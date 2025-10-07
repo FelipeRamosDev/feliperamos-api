@@ -1,18 +1,16 @@
-import { ResponseCreateParamsNonStreaming, ResponseCreateParamsStreaming, ResponseOutputItem } from 'openai/resources/responses/responses';
-import { AIChatResultSetup, AICoreResponseStreamCallbacks, CellRole } from '../AICore.types';
+import { ResponseCreateParamsNonStreaming, ResponseCreateParamsStreaming, ResponseOutputMessage } from 'openai/resources/responses/responses';
+import { AIChatResultSetup, AICoreResponseStreamCallbacks } from '../AICore.types';
 import AICoreChat from '../AICoreChat';
 import AICoreResult from './AICoreResult';
-import AIChatHistoryItem from '../models/AIChatHistoryItem';
 import ErrorAICore from '../ErrorAICore';
-import AICoreOutputCell from '../models/AICoreOutputCell';
-import AICoreInputCell from '../models/AICoreInputCell';
+import AIHistoryItem from './AIHistoryItem';
 
 export default class AIChatResult extends AICoreResult {
    private _aiChat?: AICoreChat;
    private _options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming;
 
    constructor (setup: AIChatResultSetup, aiChat?: AICoreChat) {
-      super(setup);
+      super(setup, aiChat);
       const { model } = setup || {};
 
       this._aiChat = aiChat;
@@ -26,8 +24,8 @@ export default class AIChatResult extends AICoreResult {
       return this._aiChat;
    }
 
-   public get chatHistory(): Partial<AIChatHistoryItem>[] {
-      return this._aiChat?.history.map(item => item.toObject()) || [];
+   public get chatHistory(): AIHistoryItem[] {
+      return this.aiChat?.history || [];
    }
 
    options(options: ResponseCreateParamsNonStreaming | ResponseCreateParamsStreaming): AIChatResult {
@@ -36,57 +34,23 @@ export default class AIChatResult extends AICoreResult {
    }
 
    buildOptions() {
-      return { ...this._options, input: [...this.chatHistory, ...this.input] };
-   }
-
-   pushInputToHistory(responseId: string) {
-      if (!this.aiChat) return;
-
-      this.input.forEach(cell => {
-         this.aiChat?.newHistoryItem(new AICoreInputCell(this, {
-            id: responseId,
-            type: cell.type,
-            role: cell.role as CellRole,
-            content: cell.content
-         }));
-      });
-   }
-
-   pushOutputToHistory(outputCells: ResponseOutputItem[]) {
-      if (!this.aiChat) return;
-
-      outputCells
-         .filter(cell => cell.type === 'message')
-         .forEach(cell => {
-            this.aiChat?.newHistoryItem(new AICoreOutputCell({ ...cell, id: cell.id }));
-         });
+      return { ...this._options, input: [...this.chatHistory, ...this.input].map(item => item.toResponseInputItem()) };
    }
 
    public async create() {
       try {
          const options = this.buildOptions();
-         const response = await this.aiChat?.client.responses.create(options as ResponseCreateParamsNonStreaming);
+         this.aiChat?.setHistoryBulk(this.input);
 
+         const response = await this.aiChat?.client.responses.create(options as ResponseCreateParamsNonStreaming);
          if (!response) {
             throw new ErrorAICore('No response received from AI service.', 'AICORE_CHAT_RESPONSE_NO_RESPONSE');
          }
 
-         this.pushInputToHistory(response?.id);
-
-         response?.output
-            .filter(cell => cell.type === 'message')
-            .map(cell => (
-               this.aiChat?.newHistoryItem(
-                  new AICoreOutputCell({ 
-                     ...cell, 
-                     id: cell.id 
-                  })
-               )
-            ));
-
+         this.aiChat?.setHistoryBulk(response.output as ResponseOutputMessage[])
          return response;
       } catch (error: any) {
-         throw new ErrorAICore(error.message || `Failed to create AI chat response.`, error.code || 'AICORE_CHAT_RESPONSE_CREATE_ERROR');
+         throw new ErrorAICore(error.message || `Failed to create AI chat response.`, 'AICORE_CHAT_RESPONSE_CREATE_ERROR');
       }
    }
 
@@ -100,9 +64,9 @@ export default class AIChatResult extends AICoreResult {
       try {
          const options = this.buildOptions();
          const stream = this.aiChat.client.responses.stream(options as ResponseCreateParamsStreaming);
-
-         stream.on('response.created', ({ response }) => {
-            this.pushInputToHistory(response.id);
+         
+         this.aiChat?.setHistoryBulk(this.input);
+         stream.on('response.created', () => {
             onCreated?.(arguments[0]);
          });
 
@@ -115,7 +79,7 @@ export default class AIChatResult extends AICoreResult {
          });
 
          stream.on('response.completed', ({ response }) => {
-            this.pushOutputToHistory(response.output);
+            this.aiChat?.setHistoryBulk(response.output as ResponseOutputMessage[]);
             onComplete?.(arguments[0]);
          });
 
@@ -129,7 +93,7 @@ export default class AIChatResult extends AICoreResult {
 
          return stream;
       } catch (error: any) {
-         throw new ErrorAICore(error.message || `Failed to create AI chat response stream.`, error.code || 'AICORE_CHAT_RESPONSE_STREAM_ERROR');
+         throw new ErrorAICore(error.message || `Failed to create AI chat response stream.`, 'AICORE_CHAT_RESPONSE_STREAM_ERROR');
       }
    }
 }

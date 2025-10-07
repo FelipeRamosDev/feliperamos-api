@@ -1,25 +1,33 @@
 import { AICoreResultSetup, AIModels, CellRole } from '../AICore.types';
 import ErrorAICore from '../ErrorAICore';
 import AICoreInputCell from '../models/AICoreInputCell';
-import AICore from '../AICore';
+import { defaultModel } from '../../../app.config';
+import AICoreChat from '../AICoreChat';
+import AIAgent from '../AIAgent';
 
 export default class AICoreResult {
+   private _parent?: AICoreChat | AIAgent;
    private _instructions?: string;
    private _input: AICoreInputCell[];
    private _model: AIModels;
 
    public parentInstructions?: string;
 
-   constructor (setup: AICoreResultSetup) {
-      const { model = AICore.defaultModel } = setup || {};
+   constructor (setup: AICoreResultSetup, parent?: AICoreChat | AIAgent) {
+      const { model = defaultModel } = setup || {};
 
+      this._parent = parent;
       this._input = [];
       this._model = model;
       this._instructions = '';
       this.parentInstructions;
    }
 
-   public get input() {
+   public get parent(): AICoreChat | AIAgent | undefined {
+      return this._parent;
+   }
+
+   public get input(): AICoreInputCell[] {
       return this._input;
    }
 
@@ -44,14 +52,14 @@ export default class AICoreResult {
       return this;
    }
 
-   setInstructions(instructions: string): this {
+   setInstructions(instructions: string): AICoreInputCell {
       if (!instructions || typeof instructions !== 'string' || instructions.trim().length === 0) {
-         return this;
+         throw new ErrorAICore('Invalid instructions provided to setInstructions method. Instructions must be a non-empty string.', 'AICORE_RESULT_INVALID_INSTRUCTIONS');
       }
 
       this._instructions = instructions;
-      this.addCell('system', this.instructions);
-      return this;
+      const cell = this.addCell('system', this.instructions);
+      return cell;
    }
 
    addCell(role: CellRole, textContent?: string): AICoreInputCell {

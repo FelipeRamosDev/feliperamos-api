@@ -30,10 +30,22 @@ aiCore.startChat({
       const userInput = data.toString().trim();
       const response = chat.response();
 
-      const userCell = response.addCell('user', userInput);
+      const system = response.setInstructions('Now we are testing the AI service.');
+      // await system.attachImage('public/test.png');
 
-      const result = await response.create()
-      debugger
+      // system.addText('Here is an image attached that you can see the issue.')
+      const userCell = response.addCell('user', userInput);
+      await userCell.attachImage('public/test.png');
+
+
+      response.stream({
+         onOutputTextDelta(event) {
+            process.stdout.write(event.delta);
+         },
+         onComplete(event) {
+            console.log('\n-----------------------------------------------------------------------------\n\n');
+         },
+      });
    });
 }).catch(console.error);
 

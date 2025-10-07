@@ -5,8 +5,7 @@ import AICore from './AICore';
 import AIAgentResult from './models/AIAgentResult';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
-import AICoreInputCell from './models/AICoreInputCell';
-import AICoreOutputCell from './models/AICoreOutputCell';
+import { defaultModel } from '../../app.config';
 
 export default class AIAgent<TContext = {}> {
    private _agent: Agent<TContext>;
@@ -16,10 +15,8 @@ export default class AIAgent<TContext = {}> {
    public model: AIModels;
    public instructions?: string;
 
-   public static defaultModel: AIModels = AICore.defaultModel;
-
    constructor(setup: AIAgentSetup) {
-      const { apiKey, name, model = AIAgent.defaultModel, instructions } = setup || {};
+      const { apiKey, name, model = defaultModel, instructions } = setup || {};
 
       if (!name || !name.trim().length || typeof name !== 'string') {
          throw new ErrorAICore(`It's required to provide a valid name to create an AI Agent!`, 'ERROR_INVALID_AGENT_NAME');
