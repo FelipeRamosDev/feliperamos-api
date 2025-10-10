@@ -93,7 +93,7 @@ export default class AIAgent<TContext = any> {
          outputType,
          resetToolChoice,
          tools,
-         toolUseBehavior,
+         toolUseBehavior
       });
    }
 
