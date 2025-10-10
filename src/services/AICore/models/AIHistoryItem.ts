@@ -7,13 +7,13 @@ import AICoreInputCell from './AICoreInputCell';
 import { ResponseInputItem, ResponseOutputMessage } from 'openai/resources/responses/responses.js';
 import ResponseInputItemModel from './ResponseInputItemModel';
 
-export default class AIHistoryItem {
+export default class AIHistoryItem<TContext = any> {
    public id: string;
    public createdAt: string;
    public role: CellRole;
    public content: CellMessageContent | AIAgentOutputContent[];
 
-   constructor(setup: AICoreInputCell | ResponseOutputMessage | AgentOutputItemModel) {
+   constructor(setup: AICoreInputCell<TContext> | ResponseOutputMessage | AgentOutputItemModel) {
       const { id, role, content } = setup || {};
       const createdAt = new Date();
 

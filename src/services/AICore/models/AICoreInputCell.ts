@@ -9,13 +9,13 @@ import { AgentInputItem } from '@openai/agents';
 import AgentInputItemModel from './AgentInputItemModel';
 import ResponseInputItemModel from './ResponseInputItemModel';
 
-export default class AICoreInputCell {
+export default class AICoreInputCell<TContext = any> {
    public id?: string;
    public type?: string;
    public role: CellRole;
    public content: CellMessageContent;
 
-   constructor(aiResult: AIAgentTurn | AIChatTurn | AICoreTurn, setup: AICoreInputCellSetup) {
+   constructor(aiResult: AIAgentTurn<TContext> | AIChatTurn | AICoreTurn<TContext>, setup: AICoreInputCellSetup) {
       const { id, type = 'message', role, textContent, content = [] } = setup || {};
 
       if (!aiResult) {
@@ -40,7 +40,7 @@ export default class AICoreInputCell {
       return new ResponseInputItemModel(this.role, this.content as CellMessageContent).toResponseInputItem();
    }
 
-   addText(content: string): AICoreInputCell {
+   addText(content: string): AICoreInputCell<TContext> {
       const textContent: ResponseInputText = {
          text: content,
          type: 'input_text'
@@ -50,7 +50,7 @@ export default class AICoreInputCell {
       return this;
    }
 
-   attachFileByID(fileId: string): AICoreInputCell {
+   attachFileByID(fileId: string): AICoreInputCell<TContext> {
       const fileContent: ResponseInputFile = {
          type: 'input_file',
          file_id: fileId,
@@ -60,7 +60,7 @@ export default class AICoreInputCell {
       return this;
    }
 
-   async attachFileData(filePath: string): Promise<AICoreInputCell> {
+   async attachFileData(filePath: string): Promise<AICoreInputCell<TContext>> {
       if (!filePath || typeof filePath !== 'string' || filePath.trim().length === 0) {
          throw new ErrorAICore('Invalid file path provided to attachFileData method.', 'AICORE_INPUT_CELL_INVALID_FILE_PATH');
       }

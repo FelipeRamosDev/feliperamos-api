@@ -4,18 +4,18 @@ import AgentOutputItemModel from './AgentOutputItemModel';
 import AICoreInputCell from './AICoreInputCell';
 import AIHistoryItem from './AIHistoryItem';
 
-export default class AIHistory extends Map<string, AIHistoryItem> {
+export default class AIHistory<TContext = any> extends Map<string, AIHistoryItem<TContext>> {
    constructor() {
       super();
    }
 
-   getItem(id: string): AIHistoryItem | undefined {
+   getItem(id: string): AIHistoryItem<TContext> | undefined {
       return this.get(id);
    }
 
-   setItem(value: AICoreInputCell | ResponseOutputMessage | AgentOutputItemModel): AIHistoryItem {
+   setItem(value: AICoreInputCell<TContext> | ResponseOutputMessage | AgentOutputItemModel): AIHistoryItem<TContext> {
       try {
-         const newItem = new AIHistoryItem(value);
+         const newItem = new AIHistoryItem<TContext>(value);
    
          this.set(newItem.id, newItem);
          return newItem;
@@ -24,7 +24,7 @@ export default class AIHistory extends Map<string, AIHistoryItem> {
       }
    }
 
-   setBulk(items: (AICoreInputCell | ResponseOutputMessage | AgentOutputItemModel)[] = []): void {
+   setBulk(items: (AICoreInputCell<TContext> | ResponseOutputMessage | AgentOutputItemModel)[] = []): void {
       try {
          items.forEach((item) => this.setItem(item));
       } catch (error: any) {

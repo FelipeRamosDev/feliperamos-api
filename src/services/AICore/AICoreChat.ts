@@ -117,8 +117,8 @@ export default class AICoreChat {
       return new AIChatTurn({ model, systemPrompt }, this);
    }
 
-   public setAgent(agentSetup: AIAgentSetup) {
-      const agent = new AIAgent(agentSetup, this);
+   public setAgent<TContext>(agentSetup: AIAgentSetup<TContext>): AIAgent<TContext> {
+      const agent = new AIAgent<TContext>(agentSetup, this);
 
       this._agents.setAgent(agent);
       return agent;

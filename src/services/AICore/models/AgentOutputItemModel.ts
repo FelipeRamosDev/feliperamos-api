@@ -1,5 +1,5 @@
 import type { AgentOutputItem } from '@openai/agents';
-import { AIAgentOutputContent, CellMessageContent } from '../AICore.types';
+import { AIAgentOutputContent } from '../AICore.types';
 
 export default class AgentOutputItemModel {
    public role: 'assistant';
