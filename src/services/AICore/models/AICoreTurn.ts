@@ -1,19 +1,19 @@
-import { AICoreResultSetup, AIModels, CellRole } from '../AICore.types';
+import { AICoreTurnSetup, AIModels, CellRole } from '../AICore.types';
 import ErrorAICore from '../ErrorAICore';
 import AICoreInputCell from './AICoreInputCell';
 import { defaultModel } from '../../../app.config';
 import AICoreChat from '../AICoreChat';
 import AIAgent from '../AIAgent';
 
-export default class AICoreTurn {
-   private _parent?: AICoreChat | AIAgent;
+export default class AICoreTurn<TContext = any> {
+   private _parent?: AICoreChat | AIAgent<TContext>;
    private _instructions?: string;
-   private _input: AICoreInputCell[];
+   private _input: AICoreInputCell<TContext>[];
    private _model: AIModels;
 
    public parentInstructions?: string;
 
-   constructor (setup: AICoreResultSetup, parent?: AICoreChat | AIAgent) {
+   constructor (setup: AICoreTurnSetup, parent?: AICoreChat | AIAgent<TContext>) {
       const { model = defaultModel } = setup || {};
 
       this._parent = parent;
@@ -23,11 +23,11 @@ export default class AICoreTurn {
       this.parentInstructions;
    }
 
-   public get parent(): AICoreChat | AIAgent | undefined {
+   public get parent(): AICoreChat | AIAgent<TContext> | undefined {
       return this._parent;
    }
 
-   public get input(): AICoreInputCell[] {
+   public get input(): AICoreInputCell<TContext>[] {
       return this._input;
    }
 
@@ -52,7 +52,7 @@ export default class AICoreTurn {
       return this;
    }
 
-   addInstructions(instructions: string): AICoreInputCell {
+   addInstructions(instructions: string): AICoreInputCell<TContext> {
       if (!instructions || typeof instructions !== 'string' || instructions.trim().length === 0) {
          throw new ErrorAICore('Invalid instructions provided to addInstructions method. Instructions must be a non-empty string.', 'AICORE_RESULT_INVALID_INSTRUCTIONS');
       }
@@ -62,12 +62,12 @@ export default class AICoreTurn {
       return cell;
    }
 
-   addCell(role: CellRole, textContent?: string): AICoreInputCell {
+   addCell(role: CellRole, textContent?: string): AICoreInputCell<TContext> {
       if (!role || typeof role !== 'string' || role.trim().length === 0) {
          throw new ErrorAICore('Invalid role provided to addCell method. Role must be "user", "assistant", "developer", or "system".', 'AICORE_CHAT_RESPONSE_INVALID_CELL_ROLE');
       }
 
-      const cell = new AICoreInputCell(this, {
+      const cell = new AICoreInputCell<TContext>(this, {
          role,
          textContent
       });

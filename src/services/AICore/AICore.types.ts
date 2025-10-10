@@ -28,15 +28,15 @@ export interface AICoreSetup extends MicroserviceSetup {
    model?: AIModels;
 }
 
-export interface AICoreResultSetup {
+export interface AICoreTurnSetup {
    model?: AIModels;
    systemPrompt?: string;
 }
 
-export interface AIChatTurnSetup extends AICoreResultSetup {
+export interface AIChatTurnSetup extends AICoreTurnSetup {
 }
 
-export interface AIAgentTurnSetup extends AICoreResultSetup {
+export interface AIAgentTurnSetup extends AICoreTurnSetup {
 }
 
 export interface AICoreChatOptions {
@@ -78,7 +78,7 @@ export interface AICoreResponseStreamCallbacks {
    onOutputTextDelta?: (event: ResponseTextDeltaEvent) => void;
 }
 
-export interface AIAgentSetup {
+export interface AIAgentSetup<TContext> {
    apiKey?: string;
    name: string;
    label?: string;
@@ -92,9 +92,9 @@ export interface AIAgentSetup {
    modelSettings?: ModelSettings;
    outputGuardrails?: OutputGuardrail<"text">[];
    outputType?: "text";
-   prompt?: ((runContext: RunContext, agent: Agent<any, "text">) => Promise<ResponsePrompt> | ResponsePrompt);
+   prompt?: (runContext: RunContext<TContext>, agent: Agent<TContext>) => Promise<ResponsePrompt> | ResponsePrompt;
    resetToolChoice?: boolean;
-   tools?: Tool<any>[];
+   tools?: Tool<TContext>[];
    toolUseBehavior?: ToolUseBehavior;
 }
 
