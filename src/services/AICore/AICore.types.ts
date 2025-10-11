@@ -16,7 +16,7 @@ import {
    ResponsePrompt,
    ResponseStreamEvent
 } from 'openai/resources/responses/responses';
-import { Agent, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
+import { Agent, AgentOutputType, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
 import AIAgent from './AIAgent';
 
 export type AIModels = AllModels;
@@ -81,7 +81,7 @@ export interface AICoreResponseStreamCallbacks {
    onOutputTextDelta?: (event: ResponseTextDeltaEvent) => void;
 }
 
-export interface AIAgentSetup<TContext = any> {
+export interface AIAgentSetup<TContext = any, TOutput = unknown> {
    apiKey?: string;
    name: string;
    label?: string;
@@ -91,13 +91,13 @@ export interface AIAgentSetup<TContext = any> {
    instructionsPath?: string;
    handoffDescription?: string;
    handoffOutputTypeWarningEnabled?: boolean;
-   handoffs?: (Agent<any, any> | Handoff<any, "text">)[];
+   handoffs?: (Agent<TContext, AgentOutputType<TOutput>> | Handoff<any, AgentOutputType<TOutput>>)[];
    inputGuardrails?: InputGuardrail[];
    mcpServers?: MCPServer[];
    modelSettings?: ModelSettings;
    outputGuardrails?: OutputGuardrail<"text">[];
-   outputType?: "text";
-   prompt?: (runContext: RunContext<TContext>, agent: Agent<TContext>) => Promise<ResponsePrompt> | ResponsePrompt;
+   outputType?: AgentOutputType<TOutput>;
+   prompt?: (runContext: RunContext<TContext>, agent: Agent<TContext, AgentOutputType<TOutput>>) => Promise<ResponsePrompt> | ResponsePrompt;
    resetToolChoice?: boolean;
    tools?: Tool<TContext>[];
    toolUseBehavior?: ToolUseBehavior;
