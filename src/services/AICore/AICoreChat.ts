@@ -18,11 +18,11 @@ export default class AICoreChat {
    private _isInit: boolean;
    private _instructions: string;
    private _instructionsFile?: string;
+   private _instructionsPath?: string;
 
    public id?: number;
    public label?: string;
    public model: AIModels;
-   public instructionsFilePath?: string;
 
    constructor(aiCore: AICore, options: AICoreChatOptions) {
       this._aiCore = aiCore;
@@ -31,16 +31,17 @@ export default class AICoreChat {
       this._agents = new AgentStore();
       this._isInit = false;
 
-      const { id, label, model, instructions = '', instructionsFile, history = [], agents = [] } = this._options || {};
+      const { id, label, model, instructions = '', instructionsFile, instructionsPath, history = [], agents = [] } = this._options || {};
 
       this.id = id;
       this.label = label;
       this.model = model || this._aiCore.model;
       this._instructions = instructions || '';
+      this._instructionsFile = instructionsFile;
 
-      if (instructionsFile) {
-         this.instructionsFilePath = instructionsFile;
-         this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsFile);
+      if (instructionsPath) {
+         this._instructionsPath = instructionsPath;
+         this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsPath);
       }
 
       this.setHistoryBulk(history);
@@ -73,6 +74,10 @@ export default class AICoreChat {
 
    public get instructionsFile(): string | undefined {
       return this._instructionsFile;
+   }
+
+   public get instructionsPath(): string | undefined {
+      return this._instructionsPath;
    }
 
    public get setHistoryItem() {
@@ -135,10 +140,6 @@ export default class AICoreChat {
    }
 
    public setAgentBulk<TContext>(agents: (AIAgentSetup<TContext> | AIAgent<TContext>)[] = []): AIAgent<TContext>[] {
-      if (!Array.isArray(agents)) {
-         throw new ErrorAICore('The agents parameter must be an array.', 'AICORE_CHAT_SET_AGENTS_ERROR');
-      }
-
       return agents.map(agentSetup => this.setAgent<TContext>(agentSetup));
    }
 }

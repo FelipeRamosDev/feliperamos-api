@@ -15,6 +15,7 @@ export default class AIAgent<TContext = any> {
    private _history: AIHistory<TContext>;
    private _instructions?: string;
    private _instructionsFile?: string;
+   private _instructionsPath?: string;
 
    public name: string;
    public label: string;
@@ -41,6 +42,7 @@ export default class AIAgent<TContext = any> {
          model = defaultModel,
          instructions = '',
          instructionsFile,
+         instructionsPath,
          handoffDescription,
          handoffOutputTypeWarningEnabled = true,
          handoffs,
@@ -83,10 +85,11 @@ export default class AIAgent<TContext = any> {
       this._aiChat = aiChat;
       this._history = new AIHistory<TContext>();
       this._instructions = instructions;
+      this._instructionsFile = instructionsFile;
       
-      if (instructionsFile) {
-         this.instructionsFilePath = instructionsFile;
-         this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsFile);
+      if (instructionsPath) {
+         this._instructionsPath = instructionsPath;
+         this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsPath);
       }
 
       this._agent = new Agent<TContext>({
@@ -121,6 +124,10 @@ export default class AIAgent<TContext = any> {
 
    public get instructions() {
       return [this.aiChat?.instructions, this._instructions, this._instructionsFile].filter(Boolean).join('\n---\n');
+   }
+   
+   public get instructionsPath() {
+      return this._instructionsPath;
    }
 
    public get setHistoryItem() {

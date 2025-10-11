@@ -46,6 +46,7 @@ export interface AICoreChatOptions {
    model?: AIModels;
    instructions?: string;
    instructionsFile?: string;
+   instructionsPath?: string;
    history?: (ResponseOutputMessage | AICoreInputCell)[];
    agents?: AIAgent[];
 }
@@ -87,6 +88,7 @@ export interface AIAgentSetup<TContext = any> {
    model?: AIModels;
    instructions?: string;
    instructionsFile?: string;
+   instructionsPath?: string;
    handoffDescription?: string;
    handoffOutputTypeWarningEnabled?: boolean;
    handoffs?: (Agent<any, any> | Handoff<any, "text">)[];
