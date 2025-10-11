@@ -9,6 +9,7 @@ import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
 import AIAgent from './AIAgent';
 import AgentStore from './models/AgentStore';
+import { ModelSettings } from '@openai/agents';
 
 export default class AICoreChat {
    private _aiCore: AICore;
@@ -23,6 +24,7 @@ export default class AICoreChat {
    public id?: number;
    public label?: string;
    public model: AIModels;
+   public modelSettings?: ModelSettings;
 
    constructor(aiCore: AICore, options: AICoreChatOptions) {
       this._aiCore = aiCore;
@@ -31,11 +33,13 @@ export default class AICoreChat {
       this._agents = new AgentStore();
       this._isInit = false;
 
-      const { id, label, model, instructions = '', instructionsFile, instructionsPath, history = [], agents = [] } = this._options || {};
+      const { id, label, model, modelSettings, instructions = '', instructionsFile, instructionsPath, history = [], agents = [] } = this._options || {};
 
       this.id = id;
       this.label = label;
       this.model = model || this._aiCore.model;
+      this.modelSettings = modelSettings || this._aiCore.modelSettings;
+
       this._instructions = instructions || '';
       this._instructionsFile = instructionsFile;
 

@@ -3,6 +3,8 @@ import { AICoreChatOptions, AICoreSetup, AIModels } from './AICore.types';
 import OpenAI from 'openai';
 import AICoreChat from './AICoreChat';
 import ErrorAICore from './ErrorAICore';
+import { defaultModel } from '@/app.config';
+import { ModelSettings } from '@openai/agents';
 
 export default class AICore extends Microservice {
    private _client: OpenAI;
@@ -10,17 +12,18 @@ export default class AICore extends Microservice {
    private _chats: Map<number, AICoreChat>;
 
    public model: AIModels;
-   public static defaultModel: AIModels = 'gpt-4.1-mini';
+   public modelSettings?: ModelSettings;
 
    constructor(setup: AICoreSetup = {}) {
       super(setup);
-      const { apiKey, model = AICore.defaultModel } = setup;
+      const { apiKey, model = defaultModel, modelSettings } = setup;
 
       this._apiKey = apiKey;
       this._client = new OpenAI({ apiKey });
       this._chats = new Map<number, AICoreChat>();
 
       this.model = model;
+      this.modelSettings = modelSettings;
    }
 
    public get client(): OpenAI {
