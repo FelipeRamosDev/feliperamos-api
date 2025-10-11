@@ -7,12 +7,14 @@ import AIHistoryItem from './models/AIHistoryItem';
 import { defaultModel } from '../../app.config';
 import AICoreChat from './AICoreChat';
 import { ResponsePrompt } from 'openai/resources/responses/responses';
+import AICoreHelpers from './AICoreHelpers';
 
 export default class AIAgent<TContext = any> {
    private _aiChat?: AICoreChat;
    private _agent: Agent<TContext>;
    private _history: AIHistory<TContext>;
    private _instructions?: string;
+   private _instructionsFile?: string;
 
    public name: string;
    public label: string;
@@ -28,6 +30,7 @@ export default class AIAgent<TContext = any> {
    public resetToolChoice: boolean;
    public tools?: Tool<TContext>[];
    public toolUseBehavior?: ToolUseBehavior;
+   public instructionsFilePath?: string;
    public prompt?: (runContext: RunContext<TContext>, agent: Agent<TContext>) => Promise<ResponsePrompt> | ResponsePrompt;
 
    constructor(setup: AIAgentSetup<TContext>, aiChat?: AICoreChat) {
@@ -36,7 +39,8 @@ export default class AIAgent<TContext = any> {
          name,
          label = name,
          model = defaultModel,
-         instructions,
+         instructions = '',
+         instructionsFile,
          handoffDescription,
          handoffOutputTypeWarningEnabled = true,
          handoffs,
@@ -79,10 +83,16 @@ export default class AIAgent<TContext = any> {
       this._aiChat = aiChat;
       this._history = new AIHistory<TContext>();
       this._instructions = instructions;
+      
+      if (instructionsFile) {
+         this.instructionsFilePath = instructionsFile;
+         this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsFile);
+      }
+
       this._agent = new Agent<TContext>({
          name,
          model,
-         instructions: this.fullInstructions,
+         instructions: this.instructions,
          handoffDescription,
          handoffOutputTypeWarningEnabled,
          handoffs,
@@ -110,11 +120,7 @@ export default class AIAgent<TContext = any> {
    }
 
    public get instructions() {
-      return this._instructions;
-   }
-
-   public get fullInstructions() {
-      return [this.aiChat?.instructions, this.instructions].filter(Boolean).join('\n\n');
+      return [this.aiChat?.instructions, this._instructions, this._instructionsFile].filter(Boolean).join('\n---\n');
    }
 
    public get setHistoryItem() {
@@ -127,6 +133,11 @@ export default class AIAgent<TContext = any> {
 
    public get getHistoryItem() {
       return this._history.getItem.bind(this._history);
+   }
+
+   public setChat(aiChat: AICoreChat): this {
+      this._aiChat = aiChat;
+      return this;
    }
 
    public turn(setup?: AIAgentTurnSetup): AIAgentTurn<TContext> {
