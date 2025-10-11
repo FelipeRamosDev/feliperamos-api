@@ -27,6 +27,7 @@ export type OpenAIResponseType = Awaited<ReturnType<OpenAI['responses']['create'
 export interface AICoreSetup extends MicroserviceSetup {
    apiKey?: string;
    model?: AIModels;
+   modelSettings?: ModelSettings;
 }
 
 export interface AICoreTurnSetup {
@@ -44,6 +45,7 @@ export interface AICoreChatOptions {
    id?: number;
    label?: string;
    model?: AIModels;
+   modelSettings?: ModelSettings;
    instructions?: string;
    instructionsFile?: string;
    instructionsPath?: string;
