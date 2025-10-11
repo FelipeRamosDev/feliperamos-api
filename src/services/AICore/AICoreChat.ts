@@ -15,36 +15,37 @@ export default class AICoreChat {
    private _options: AICoreChatOptions;
    private _history: AIHistory;
    private _agents: AgentStore;
-   private _stored?: () => Chat;
    private _isInit: boolean;
+   private _instructions: string;
+   private _instructionsFile?: string;
+   private _instructionsPath?: string;
 
    public id?: number;
    public label?: string;
    public model: AIModels;
-   public instructions?: string;
 
    constructor(aiCore: AICore, options: AICoreChatOptions) {
-      const { id } = options;
-
       this._aiCore = aiCore;
       this._options = options;
       this._history = new AIHistory();
       this._agents = new AgentStore();
+      this._isInit = false;
 
-      const { label, model, instructions, smPath, history = [] } = this._options || {};
-      const smLoaded = smPath ? AICoreHelpers.loadMarkdown(smPath) : '';
-      const textSM = smLoaded || instructions;
+      const { id, label, model, instructions = '', instructionsFile, instructionsPath, history = [], agents = [] } = this._options || {};
 
       this.id = id;
       this.label = label;
       this.model = model || this._aiCore.model;
-      this._isInit = false;
+      this._instructions = instructions || '';
+      this._instructionsFile = instructionsFile;
+
+      if (instructionsPath) {
+         this._instructionsPath = instructionsPath;
+         this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsPath);
+      }
 
       this.setHistoryBulk(history);
-
-      if (textSM) {
-         this.instructions = textSM;
-      }
+      this.setAgentBulk(agents);
    }
 
    public get aiCore(): AICore {
@@ -63,12 +64,20 @@ export default class AICoreChat {
       return Array.from(this._agents.values());
    }
 
-   public get stored(): Chat | undefined {
-      return this._stored?.();
-   }
-
    public get isInit(): boolean {
       return Boolean(this._isInit);
+   }
+
+   public get instructions(): string {
+      return [this._instructions, this._instructionsFile].filter(Boolean).join('\n---\n');
+   }
+
+   public get instructionsFile(): string | undefined {
+      return this._instructionsFile;
+   }
+
+   public get instructionsPath(): string | undefined {
+      return this._instructionsPath;
    }
 
    public get setHistoryItem() {
@@ -102,7 +111,6 @@ export default class AICoreChat {
          });
 
          this.id = createdChat.id;
-         this._stored = () => createdChat;
 
          this._isInit = true;
          this.aiCore.setChat(this);
@@ -117,10 +125,21 @@ export default class AICoreChat {
       return new AIChatTurn({ model, systemPrompt }, this);
    }
 
-   public setAgent<TContext>(agentSetup: AIAgentSetup<TContext>): AIAgent<TContext> {
-      const agent = new AIAgent<TContext>(agentSetup, this);
+   public getAgent(name: string): AIAgent | undefined {
+      return this._agents.getAgent(name);
+   }
 
+   public setAgent<TContext>(agentSetup: AIAgentSetup<TContext> | AIAgent<TContext>): AIAgent<TContext> {
+      const agent = agentSetup instanceof AIAgent
+         ? agentSetup
+         : new AIAgent<TContext>(agentSetup, this);
+
+      agent.setChat(this);
       this._agents.setAgent(agent);
       return agent;
+   }
+
+   public setAgentBulk<TContext>(agents: (AIAgentSetup<TContext> | AIAgent<TContext>)[] = []): AIAgent<TContext>[] {
+      return agents.map(agentSetup => this.setAgent<TContext>(agentSetup));
    }
 }

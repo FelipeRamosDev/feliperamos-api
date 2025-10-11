@@ -17,6 +17,7 @@ import {
    ResponseStreamEvent
 } from 'openai/resources/responses/responses';
 import { Agent, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
+import AIAgent from './AIAgent';
 
 export type AIModels = AllModels;
 export type CellRole = 'user' | 'assistant' | 'system';
@@ -44,8 +45,10 @@ export interface AICoreChatOptions {
    label?: string;
    model?: AIModels;
    instructions?: string;
-   smPath?: string;
+   instructionsFile?: string;
+   instructionsPath?: string;
    history?: (ResponseOutputMessage | AICoreInputCell)[];
+   agents?: AIAgent[];
 }
 
 export interface AICoreCellSetup {
@@ -78,12 +81,14 @@ export interface AICoreResponseStreamCallbacks {
    onOutputTextDelta?: (event: ResponseTextDeltaEvent) => void;
 }
 
-export interface AIAgentSetup<TContext> {
+export interface AIAgentSetup<TContext = any> {
    apiKey?: string;
    name: string;
    label?: string;
    model?: AIModels;
    instructions?: string;
+   instructionsFile?: string;
+   instructionsPath?: string;
    handoffDescription?: string;
    handoffOutputTypeWarningEnabled?: boolean;
    handoffs?: (Agent<any, any> | Handoff<any, "text">)[];
