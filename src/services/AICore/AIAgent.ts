@@ -1,4 +1,4 @@
-import { Agent, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
+import { Agent, AgentOutputType, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
 import { AIAgentTurnSetup, AIAgentSetup, AIModels } from './AICore.types';
 import ErrorAICore from './ErrorAICore';
 import AIAgentTurn from './models/AIAgentTurn';
@@ -9,9 +9,9 @@ import AICoreChat from './AICoreChat';
 import { ResponsePrompt } from 'openai/resources/responses/responses';
 import AICoreHelpers from './AICoreHelpers';
 
-export default class AIAgent<TContext = any> {
+export default class AIAgent<TContext = any, TOutput = unknown> {
    private _aiChat?: AICoreChat;
-   private _agent: Agent<TContext>;
+   private _agent: Agent<TContext, AgentOutputType<TOutput>>;
    private _history: AIHistory<TContext>;
    private _instructions?: string;
    private _instructionsFile?: string;
@@ -22,19 +22,19 @@ export default class AIAgent<TContext = any> {
    public model: AIModels;
    public handoffDescription?: string;
    public handoffOutputTypeWarningEnabled: boolean;
-   public handoffs?: (Agent<TContext, any> | Handoff<TContext, "text">)[];
+   public handoffs?: (Agent<TContext, AgentOutputType<TOutput>> | Handoff<TContext, "text">)[];
    public inputGuardrails?: InputGuardrail[];
    public mcpServers?: MCPServer[];
    public modelSettings?: ModelSettings;
    public outputGuardrails?: OutputGuardrail<"text">[];
-   public outputType?: "text";
+   public outputType?: AgentOutputType<TOutput>;
    public resetToolChoice: boolean;
    public tools?: Tool<TContext>[];
    public toolUseBehavior?: ToolUseBehavior;
    public instructionsFilePath?: string;
-   public prompt?: (runContext: RunContext<TContext>, agent: Agent<TContext>) => Promise<ResponsePrompt> | ResponsePrompt;
+   public prompt?: (runContext: RunContext<TContext>, agent: Agent<TContext, AgentOutputType<TOutput>>) => Promise<ResponsePrompt> | ResponsePrompt;
 
-   constructor(setup: AIAgentSetup<TContext>, aiChat?: AICoreChat) {
+   constructor(setup: AIAgentSetup<TContext, AgentOutputType<TOutput>>, aiChat?: AICoreChat) {
       const {
          apiKey,
          name,
@@ -92,7 +92,7 @@ export default class AIAgent<TContext = any> {
          this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsPath);
       }
 
-      this._agent = new Agent<TContext>({
+      this._agent = new Agent<TContext, AgentOutputType<TOutput>>({
          name,
          model,
          instructions: this.instructions,
@@ -106,7 +106,7 @@ export default class AIAgent<TContext = any> {
          outputType,
          resetToolChoice,
          tools,
-         toolUseBehavior
+         toolUseBehavior,
       });
    }
 
@@ -114,7 +114,7 @@ export default class AIAgent<TContext = any> {
       return this._aiChat;
    }
 
-   public get agent(): Agent<TContext> {
+   public get agent(): Agent<TContext, AgentOutputType<TOutput>> {
       return this._agent;
    }
 
