@@ -20,7 +20,7 @@ import { Agent, AgentOutputType, Handoff, InputGuardrail, MCPServer, ModelSettin
 import AIAgent from './AIAgent';
 
 export type AIModels = AllModels;
-export type CellRole = 'user' | 'assistant' | 'system';
+export type CellRole = 'assistant' | 'system' | 'user';
 export type CellMessageContent = (ResponseInputText | ResponseInputImage | ResponseInputFile | ResponseInputAudio)[];
 export type OpenAIResponseType = Awaited<ReturnType<OpenAI['responses']['create']>>;
 
@@ -114,3 +114,20 @@ export type AIAgentOutputContent = string | CellMessageContent | Array<{
    format?: string | null;
    transcript?: string | null;
 }>;
+
+export interface AgentFunctionCall {
+   id?: string;
+   type: 'function_call' | 'function_call_result';
+   name?: string;
+   arguments?: string;
+   callId: string;
+   status?: 'in_progress' | 'completed' | 'incomplete';
+   providerData?: Record<string, any>;
+}
+
+export interface AIToolSetup {
+   name: string;
+   description?: string;
+   parameters?: import('zod/v4').ZodObject<any>;
+   execute?: (...args: any[]) => any;
+}
