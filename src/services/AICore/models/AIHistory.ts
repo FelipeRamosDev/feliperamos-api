@@ -16,6 +16,10 @@ export default class AIHistory<TContext = any> extends Map<string, AIHistoryItem
    setItem(value: AICoreInputCell<TContext> | ResponseOutputMessage | AgentOutputItemModel): AIHistoryItem<TContext> {
       try {
          const newItem = new AIHistoryItem<TContext>(value);
+
+         if (newItem.isToolCall) {
+            return newItem;
+         }
    
          this.set(newItem.id, newItem);
          return newItem;

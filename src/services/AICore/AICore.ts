@@ -3,7 +3,7 @@ import { AICoreChatOptions, AICoreSetup, AIModels } from './AICore.types';
 import OpenAI from 'openai';
 import AICoreChat from './AICoreChat';
 import ErrorAICore from './ErrorAICore';
-import { defaultModel } from '@/app.config';
+import { defaultModel } from '../../app.config';
 import { ModelSettings } from '@openai/agents';
 
 export default class AICore extends Microservice {

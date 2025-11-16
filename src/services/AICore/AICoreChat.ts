@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { ModelSettings } from '@openai/agents';
 import AICore from './AICore';
 import ErrorAICore from './ErrorAICore';
 import AICoreHelpers from './AICoreHelpers';
@@ -9,7 +10,6 @@ import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
 import AIAgent from './AIAgent';
 import AgentStore from './models/AgentStore';
-import { ModelSettings } from '@openai/agents';
 
 export default class AICoreChat {
    private _aiCore: AICore;
@@ -133,17 +133,17 @@ export default class AICoreChat {
       return this._agents.getAgent(name);
    }
 
-   public setAgent<TContext>(agentSetup: AIAgentSetup<TContext> | AIAgent<TContext>): AIAgent<TContext> {
+   public setAgent<TContext, TOutput>(agentSetup: AIAgentSetup<TContext, TOutput> | AIAgent<TContext>): AIAgent<TContext> {
       const agent = agentSetup instanceof AIAgent
          ? agentSetup
-         : new AIAgent<TContext>(agentSetup, this);
+         : new AIAgent<TContext, TOutput>(agentSetup, this);
 
       agent.setChat(this);
       this._agents.setAgent(agent);
       return agent;
    }
 
-   public setAgentBulk<TContext>(agents: (AIAgentSetup<TContext> | AIAgent<TContext>)[] = []): AIAgent<TContext>[] {
-      return agents.map(agentSetup => this.setAgent<TContext>(agentSetup));
+   public setAgentBulk<TContext, TOutput>(agents: (AIAgentSetup<TContext, TOutput> | AIAgent<TContext, TOutput>)[] = []): AIAgent<TContext, TOutput>[] {
+      return agents.map(agentSetup => this.setAgent<TContext, TOutput>(agentSetup));
    }
 }
