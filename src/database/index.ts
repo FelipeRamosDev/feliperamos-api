@@ -1,5 +1,5 @@
-import { PostgresDB } from '../services';
 import { AdminUser } from './models/users_schema';
+import PostgresDB from '../services/Database/PostgresDB';
 import companies_schema from './schemas/companies_schema';
 import experiences_schema from './schemas/experiences_schema';
 import skills_schema from './schemas/skills_schema';
@@ -9,7 +9,7 @@ import languages_schema from './schemas/languages_schema';
 import educations_schema from './schemas/educations_schema';
 import opportunities_schema from './schemas/opportunities_schema';
 import letters_schemas from './schemas/letters_schemas';
-import comments_schemas from './schemas/comments_schemas';
+import messages_schema from './schemas/messages_schema';
 
 const database = new PostgresDB({
    dbName: process.env.POSTGRES_DB,
@@ -27,7 +27,7 @@ const database = new PostgresDB({
       educations_schema,
       opportunities_schema,
       letters_schemas,
-      comments_schemas
+      messages_schema,
    ]
 });
 

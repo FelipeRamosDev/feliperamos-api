@@ -8,6 +8,14 @@ class ErrorEventEndpoint extends Error {
       this.code = code;
       this.error = true;
    }
+
+   toObject() {
+      return {
+         error: this.error,
+         message: this.message,
+         code: this.code,
+      };
+   }
 }
 
 export default ErrorEventEndpoint;

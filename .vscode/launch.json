@@ -23,6 +23,12 @@
          "type": "node-terminal"
       },
       {
+         "command": "npm run watch:ai",
+         "name": "AI Service Watch",
+         "request": "launch",
+         "type": "node-terminal"
+      },
+      {
          "name": "Debug Main App",
          "type": "node",
          "request": "launch",

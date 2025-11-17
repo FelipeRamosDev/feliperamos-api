@@ -86,22 +86,38 @@ export default class Microservice {
    }
 
    genRandomBytes(bytes: number = 4): string {
-      return crypto.randomBytes(bytes).toString('hex');
+      return Microservice.genRandomBytes(bytes);
    }
 
    sendTo(path: string, data: any, callback?: (...params: any) => void | Promise<void>) {
+      Microservice.sendTo(path, data, this.id, callback);
+   }
+
+   publishEvent(eventName: string, data: any) {
+      Microservice.publishEvent(eventName, data);
+   }
+
+   log(...args: any[]) {
+      console.log(`[${this.containerName}]`, ...args);
+   }
+
+   static sendTo(path: string, data: any, microserviceID: string, callback?: (...params: any) => void | Promise<void>) {
       if (callback) {
          const callbackID = this.genRandomBytes();
 
          callbacks.set(callbackID, callback);
          data.callbackID = callbackID;
-         data.fromPath = this.id;
+         data.fromPath = microserviceID;
       }
 
       this.publishEvent(path, data);
    }
 
-   publishEvent(eventName: string, data: any) {
+   static genRandomBytes(bytes: number = 4): string {
+      return crypto.randomBytes(bytes).toString('hex');
+   }
+
+   static publishEvent(eventName: string, data: any) {
       let dataString: string;
    
       try {
@@ -112,9 +128,5 @@ export default class Microservice {
       }
 
       publisher.publish(eventName, dataString);
-   }
-
-   log(...args: any[]) {
-      console.log(`[${this.containerName}]`, ...args);
    }
 }
