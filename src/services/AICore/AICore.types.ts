@@ -64,7 +64,6 @@ export interface AICoreInputCellSetup extends AICoreCellSetup {
 }
 
 export interface AICoreOutputCellSetup extends AICoreCellSetup {
-   
 }
 
 export interface AICoreCellSetup {
