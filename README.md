@@ -1,6 +1,6 @@
-# Felipe Ramos API - Microservices Backend (v1.6.1)
+# Felipe Ramos API - Microservices Backend (v1.7.0)
 
-A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career management platform. Now featuring comprehensive cover letter generation, job opportunity management, AI-powered CV customization, LinkedIn job data extraction, and enhanced career application workflows. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, advanced AI assistance, and comprehensive automated career management workflows.
+A sophisticated microservices-based backend system powering Felipe Ramos' interactive portfolio and AI-powered career management platform. Now featuring the **OpenAI Agents SDK integration** for advanced AI orchestration, comprehensive cover letter generation, job opportunity management, AI-powered CV customization, LinkedIn job data extraction, and enhanced career application workflows. Built with Node.js, TypeScript, and a modular architecture supporting real-time communication, agent-based AI assistance, and comprehensive automated career management workflows.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
@@ -12,6 +12,18 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 
 ## 🚀 Features
+
+### New in v1.7.0 - OpenAI Agents SDK Integration
+- **🤖 AICore Service**: Complete AI service rewrite using OpenAI Agents SDK (`@openai/agents`) for advanced AI orchestration
+- **🎯 Agent-Based Architecture**: Multi-agent system with specialized agents for CV generation, cover letters, and career assistance
+- **🔄 Dual Response Patterns**: Support for both direct chat responses and agent-based execution with tool integration
+- **💬 Enhanced Chat Management**: Persistent chat sessions with intelligent history tracking and context management
+- **🛠️ Tool Integration**: Extensible tool system for agents with function calling and structured outputs
+- **🔗 Agent Handoffs**: Seamless agent-to-agent task delegation for complex workflows
+- **📝 Instruction System**: Flexible instruction loading from text or markdown files for agent customization
+- **🗄️ Database Integration**: Chat persistence with new `chats` table in `messages_schema`
+- **🎨 Type-Safe API**: Comprehensive TypeScript coverage with generic type support for contexts and outputs
+- **📚 Comprehensive Documentation**: Extensive README with usage examples, patterns, and best practices
 
 ### New in v1.6.0 - Cover Letter & Job Opportunity Management
 - **📝 AI-Powered Cover Letter Generation**: Complete cover letter creation system with OpenAI integration for personalized, job-specific cover letters
@@ -78,7 +90,7 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 
 | Service | Port | Description |
 |---------|------|-------------|
-| **AI Service** | - | OpenAI GPT assistant integration |
+| **AICore Service** | - | OpenAI Agents SDK integration with multi-agent orchestration |
 | **Socket Server** | 5000 | Real-time WebSocket communication |
 | **API Server** | 3001 | RESTful API endpoints |
 | **Slack Service** | 4000 | Slack bot and webhook handling |
@@ -86,7 +98,7 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 
 ### Core Services
 
-- **🤖 AI Service**: OpenAI assistant with thread management
+- **🤖 AICore Service**: OpenAI Agents SDK with multi-agent orchestration, chat management, and tool integration
 - **🔌 Socket Server**: Real-time communication with namespaces
 - **🛡️ Server API**: HTTP/HTTPS server with CORS and security
 - **💾 Redis DB**: Caching, sessions, and pub/sub messaging
@@ -109,7 +121,9 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 - **express-session 1.18+** - Session management
 
 ### AI & Integration
-- **OpenAI API 4.103+** - GPT assistant integration with specialized CV generation and cover letter creation capabilities
+- **OpenAI Agents SDK (@openai/agents 0.1.9+)** - Official OpenAI Agents framework for advanced AI orchestration
+- **OpenAI API 5.23+** - Latest OpenAI SDK with response streaming and function calling
+- **Zod 3.25+** - Schema validation for agent tool definitions
 - **Slack Bolt 4.4+** - Slack app framework
 - **Puppeteer 24.15+** - Headless browser automation for PDF generation, cover letter creation, and LinkedIn data extraction
 
@@ -129,7 +143,7 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 feliperamos-api/
 ├── src/
 │   ├── containers/              # Service containers
-│   │   ├── ai.service.ts       # AI/OpenAI service
+│   │   ├── ai.service.ts       # AICore service with OpenAI Agents SDK
 │   │   ├── api-server.service.ts # REST API server
 │   │   ├── slack.service.ts    # Slack integration
 │   │   ├── socket-server.service.ts # Socket.IO server
@@ -138,8 +152,9 @@ feliperamos-api/
 │   │   │   ├── cv-chat/        # CV chat namespace and events
 │   │   │   ├── cover-letter/   # Cover letter generation namespace
 │   │   │   └── opportunities/  # Job opportunities namespace
-│   │   └── routes/             # API route definitions
-│   │       ├── ai/             # AI-powered routes for CV and cover letter generation
+│   │   └── routes/             # Inter-service communication routes
+│   │       ├── ai/             # AI service event endpoints
+│   │       │   └── get-chat.route.ts # Chat retrieval endpoint
 │   │       └── virtual-browser/ # VirtualBrowser event routes
 │   ├── database/               # Database layer
 │   │   ├── index.ts           # Database initialization
@@ -153,7 +168,9 @@ feliperamos-api/
 │   │   │   ├── experiences_schema/ # Experience management models
 │   │   │   ├── opportunities_schema/ # Job opportunities management models
 │   │   │   ├── letters_schema/ # Cover letters management models
-│   │   │   └── comments_schema/ # Comments system models
+│   │   │   └── messages_schema/ # Messages and chat system models
+│   │   │       ├── Chat/      # Chat session model with database integration
+│   │   │       └── Comment/   # Comment model
 │   │   ├── schemas/           # Database schema definitions
 │   │   └── tables/            # Table structure definitions
 │   ├── routes/                # API endpoint implementations
@@ -169,7 +186,25 @@ feliperamos-api/
 │   │   ├── user/              # User management routes
 │   │   └── health.route.ts    # Health check endpoint
 │   ├── services/              # Core service classes
-│   │   ├── AI/                # OpenAI integration
+│   │   ├── AI/                # Legacy OpenAI integration (deprecated)
+│   │   ├── AICore/            # New OpenAI Agents SDK integration
+│   │   │   ├── AICore.ts      # Main AICore service class
+│   │   │   ├── AICoreChat.ts  # Chat session management
+│   │   │   ├── AIAgent.ts     # Agent configuration and execution
+│   │   │   ├── AICoreHelpers.ts # Utility functions
+│   │   │   ├── ErrorAICore.ts # Custom error handling
+│   │   │   ├── README.md      # Comprehensive documentation
+│   │   │   └── models/        # AICore models
+│   │   │       ├── AIChatTurn.ts # Chat response handling
+│   │   │       ├── AIAgentTurn.ts # Agent execution wrapper
+│   │   │       ├── AICoreTurn.ts # Base turn class
+│   │   │       ├── AICoreInputCell.ts # Input message builder
+│   │   │       ├── AIHistory.ts # History store
+│   │   │       ├── AIHistoryItem.ts # History entries
+│   │   │       ├── AgentStore.ts # Agent registry
+│   │   │       ├── AgentInputItemModel.ts # Agent input formatting
+│   │   │       ├── AgentOutputItemModel.ts # Agent output formatting
+│   │   │       └── ResponseInputItemModel.ts # Response formatting
 │   │   ├── ClusterManager/    # Process management
 │   │   ├── Database/          # PostgreSQL service
 │   │   ├── EventEndpoint/     # Event handling
@@ -181,7 +216,11 @@ feliperamos-api/
 │   │   ├── SocketServer/     # Socket.IO implementation
 │   │   └── VirtualBrowser/   # Headless browser automation service
 │   ├── global/               # Global types and utilities
-│   └── models/               # Data models
+│   ├── models/               # Data models
+│   └── prompts/              # AI prompt templates
+│       └── instructions/     # Agent instruction files
+│           ├── cv-agent.md   # CV generation agent instructions
+│           └── summary-chat.md # Chat summary instructions
 ├── cert/                     # SSL certificates
 ├── docker-compose.yml        # Docker services configuration
 ├── Dockerfile               # Container build instructions
@@ -215,9 +254,8 @@ feliperamos-api/
    ```env
    # OpenAI Configuration
    OPENAI_API_KEY=your_openai_api_key
-   OPENAI_ASSISTANT_ID=your_assistant_id
-   OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id
-   OPENAI_MODEL=gpt-4o-mini
+   OPENAI_ASSISTANT_ID=your_assistant_id (legacy, for backward compatibility)
+   OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id (legacy, for backward compatibility)
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
@@ -300,9 +338,8 @@ feliperamos-api/
    ```env
    # OpenAI Configuration
    OPENAI_API_KEY=your_openai_api_key
-   OPENAI_ASSISTANT_ID=your_assistant_id
-   OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id
-   OPENAI_MODEL=gpt-4o-mini
+   OPENAI_ASSISTANT_ID=your_assistant_id (legacy, for backward compatibility)
+   OPENAI_ASSISTANT_BUILD_CV=your_cv_generation_assistant_id (legacy, for backward compatibility)
    
    # Server Configuration
    SOCKET_SERVER_PORT=5000
@@ -443,39 +480,75 @@ npm run start:slack &
 | `npm run clean:cache` | Clear ts-node and npm cache |
 | `npm run debug:socket-fresh` | Fresh socket debug (PowerShell) |
 
-## 🤖 AI Service Features
+## 🤖 AICore Service Features
 
-### OpenAI Integration
-- **GPT Assistant**: Specialized AI trained on Felipe's professional background
-- **CV Generation Assistant**: Dedicated AI assistant for intelligent CV summary generation and customization
-- **Cover Letter Generation**: AI-powered personalized cover letter creation based on job opportunities
-- **Thread Management**: Persistent conversation contexts
-- **Message Handling**: Structured request/response processing
-- **Error Handling**: Robust error management and fallbacks
+### OpenAI Agents SDK Integration
+- **Multi-Agent Architecture**: Orchestrate multiple specialized AI agents with distinct roles and capabilities
+- **Agent-Based Execution**: Run agents with tool integration, function calling, and structured outputs
+- **Agent Handoffs**: Seamlessly delegate tasks between agents for complex workflows
+- **Flexible Configuration**: Configure agents with custom instructions, tools, guardrails, and model settings
+- **Context Management**: Type-safe context handling with generic type support for custom contexts
+
+### Chat Management System
+- **Persistent Chat Sessions**: Database-backed chat sessions with unique IDs and labels
+- **Intelligent History Tracking**: Automatic conversation history management with role-based organization
+- **Multi-Model Support**: Configure different AI models per chat or per response (gpt-4o, gpt-4o-mini, etc.)
+- **Instruction System**: Load instructions from text, markdown files, or inline strings
+- **Agent Store**: Manage multiple agents per chat session with easy retrieval and configuration
+
+### Dual Response Patterns
+
+#### Chat Response Pattern (`AIChatTurn`)
+- Direct OpenAI response streaming with real-time callbacks
+- Non-streaming `.create()` for immediate complete responses
+- Streaming `.stream()` with event callbacks (text deltas, status updates, completion, errors)
+- Full history integration with automatic context management
+- Multi-modal input support (text, files, images)
+
+#### Agent Response Pattern (`AIAgentTurn`)
+- Synchronous `.run()` for agent execution with tool usage
+- Streaming `.stream(onChunk)` for real-time agent output
+- Automatic tool invocation and result handling
+- Agent-to-agent handoff support
+- Output guardrails and validation
+
+### Advanced Input Handling
+- **Text Content**: Simple text messages with role specification (user, assistant, system)
+- **File Attachments**: Attach files by OpenAI file ID or local file path with automatic base64 encoding
+- **Image Support**: Attach images by URL or local path with automatic MIME type detection
+- **Multi-modal Arrays**: Combine text, images, and files in single messages
 
 ### AI-Powered Career Content Generation
-- **Job-Specific CV Summaries**: Generate tailored CV summaries based on specific job requirements
-- **Personalized Cover Letters**: Create compelling cover letters matched to job opportunities and company profiles
-- **LinkedIn Integration**: Extract job descriptions from LinkedIn and create matching content
+- **Job-Specific CV Summaries**: Generate tailored CV summaries using specialized agents
+- **Personalized Cover Letters**: Create compelling cover letters with company and job context
+- **LinkedIn Integration**: Extract job descriptions and create matching content
 - **ATS Optimization**: AI-generated content optimized for Applicant Tracking Systems
-- **Custom Prompts**: Flexible prompt system for personalized content generation
+- **Custom Prompts**: Flexible prompt system with instruction files and inline customization
 - **Real-time Generation**: Socket-based real-time content creation with status updates
 
 ### Enhanced AI Capabilities
-- **Model Optimization**: Updated to use gpt-4o-mini for improved performance and cost efficiency
-- **Advanced Prompt Engineering**: Sophisticated prompt templates for cover letters and CV summaries
-- **Multi-format Output**: Support for various document formats and templates
+- **Model Flexibility**: Support for all OpenAI models (gpt-4o, gpt-4o-mini, gpt-4-turbo, etc.)
+- **Tool Integration**: Extensible tool system with Zod schema validation
 - **Context Awareness**: AI understands job requirements, company culture, and career progression
+- **Error Recovery**: Comprehensive error handling with detailed error codes and messages
+- **Type Safety**: Full TypeScript coverage with generic types for contexts and outputs
 
 ### Core Capabilities
-- Career history inquiries
-- Skills and expertise questions
-- Project discussions
-- Professional experience details
-- Resume/CV information and customization
-- Cover letter creation and personalization
-- Job-specific content optimization
-- LinkedIn job data analysis and matching
+- Career history inquiries with context-aware responses
+- Skills and expertise questions with AI-powered analysis
+- Project discussions with detailed technical understanding
+- Professional experience details extraction and summarization
+- Resume/CV information and customization with agent-based generation
+- Cover letter creation and personalization using specialized agents
+- Job-specific content optimization with ATS compliance
+- LinkedIn job data analysis and intelligent matching
+
+### Developer Experience
+- **Fluent API**: Chain method calls for intuitive chat and agent configuration
+- **Comprehensive Documentation**: Extensive README in `src/services/AICore/` with usage examples
+- **Type-Safe Design**: Generic types for custom contexts, tools, and outputs
+- **Error Handling**: Custom `ErrorAICore` class with descriptive error codes
+- **Helper Utilities**: File loading, MIME type detection, and base64 encoding utilities
 
 ## 🔌 Socket Server Features
 
@@ -548,7 +621,9 @@ npm run start:slack &
 - **Curriculums Schema**: Enhanced CV/Resume management with integrated languages, educations, and favoriting capabilities
 - **Opportunities Schema**: Job opportunities with company relationships, LinkedIn integration, and CV associations
 - **Letters Schema**: Cover letter storage with user, company, and opportunity relationships
-- **Comments Schema**: Commentary system for opportunities and letters with full relationship mapping
+- **Messages Schema**: Chat sessions and comments with AI conversation persistence
+  - **Chats Table**: Persistent chat sessions with labels, models, and instructions
+  - **Comments Table**: Commentary system for opportunities and letters
 
 ### Redis Cache
 - **Session Storage**: User session persistence with JWT integration
@@ -561,7 +636,7 @@ npm run start:slack &
 ### Services Configuration
 ```yaml
 services:
-  ai-service:        # OpenAI integration service
+  ai-service:        # AICore service with OpenAI Agents SDK integration
   slack-service:     # Slack bot service  
   api-server:        # REST API server (Port 7000)
   socket-server:     # Socket.IO server (Port 5000)
@@ -687,6 +762,7 @@ services:
 - `GET /health` - Service health status and diagnostics
 
 ### Socket-based AI Routes (Event Endpoints)
+- `/ai/get-chat` - Retrieve chat session by ID (Event endpoint for inter-service communication)
 - `/ai/generate-cv-summary` - Generate AI-powered CV summaries based on job requirements (Socket event)
 - `/ai/generate-letter` - Generate AI-powered cover letters for specific opportunities (Socket event)
 - `/ai/assistant-generate` - Generate AI responses (Socket event)
@@ -703,6 +779,50 @@ services:
 - **Horizontal Scaling**: Multiple service instances
 - **Load Balancing**: Request distribution
 - **Cluster Mode**: Multi-process support
+
+## 📋 What's New in v1.7.0
+
+### 🤖 AICore Service - OpenAI Agents SDK Integration
+- **Complete AI Service Rewrite**: Migrated from OpenAI Assistant API to OpenAI Agents SDK (`@openai/agents`) for advanced AI orchestration
+- **Multi-Agent Architecture**: Support for multiple specialized agents with distinct roles, tools, and capabilities
+- **Agent-Based Execution**: New `AIAgent` class with support for tool integration, function calling, and agent handoffs
+- **Dual Response Patterns**: Separate patterns for chat responses (`AIChatTurn`) and agent execution (`AIAgentTurn`)
+- **Enhanced Chat Management**: New `AICoreChat` class with persistent database storage, history tracking, and agent registry
+- **Intelligent History System**: `AIHistory` and `AIHistoryItem` classes for conversation context management
+- **Advanced Input Handling**: `AICoreInputCell` with support for text, file attachments, and image uploads
+- **Instruction System**: Load agent/chat instructions from markdown files or inline text
+- **Type-Safe Design**: Comprehensive TypeScript coverage with generic types for contexts and outputs
+- **Helper Utilities**: File loading, MIME type detection, and base64 encoding for multi-modal inputs
+
+### 🗄️ Database Schema Updates
+- **New Schema**: `messages_schema` (renamed from `comments_schemas`)
+- **New Table**: `chats` table for persistent chat sessions with labels, models, and instructions
+- **New Model**: `Chat` class with database integration and AI chat retrieval methods
+- **Schema Migration**: Updated database initialization to use `messages_schema`
+
+### 🔧 Technical Enhancements
+- **OpenAI SDK Update**: Upgraded to OpenAI SDK v5.23+ (from v4.103) with response streaming support
+- **New Dependencies**: Added `@openai/agents` (v0.1.9) and `zod` (v3.25+) for schema validation
+- **Inter-Service Communication**: New `/ai/get-chat` event endpoint for retrieving chat sessions across services
+- **Microservice Improvements**: Enhanced `Microservice` class with static methods for cross-service communication
+- **Error Handling**: New `ErrorAICore` class with descriptive error codes and improved error management
+- **TypeScript Configuration**: Updated `tsconfig.json` with deprecation handling for OpenAI SDK compatibility
+
+### 📚 Documentation & Developer Experience
+- **Comprehensive README**: Added extensive documentation in `src/services/AICore/README.md` with:
+  - Architecture overview and class descriptions
+  - Usage examples (basic chat, streaming, file attachments, agents)
+  - Error handling patterns and best practices
+  - Type definitions and API reference
+- **GitHub Copilot Instructions**: Updated `.github/copilot-instructions.md` with AICore patterns
+- **VS Code Integration**: New "AI Service Watch" debug configuration in `.vscode/launch.json`
+- **Code Examples**: Template instruction files in `src/prompts/instructions/`
+
+### 🚀 Migration Notes
+- **Breaking Changes**: Old `AI` service patterns no longer supported (legacy code remains for backward compatibility)
+- **New API**: Use `AICore.startChat()` instead of old assistant-based methods
+- **Chat Persistence**: All chats now stored in database with unique IDs
+- **Agent System**: Leverage new agent architecture for specialized AI tasks
 
 ## 📋 What's New in v1.6.0
 
