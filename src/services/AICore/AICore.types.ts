@@ -53,12 +53,6 @@ export interface AICoreChatOptions {
    agents?: AIAgent[];
 }
 
-export interface AICoreCellSetup {
-   role: CellRole;
-   textContent?: string;
-   content?: CellMessageContent;
-}
-
 export interface AICoreInputCellSetup extends AICoreCellSetup {
    textContent?: string;
 }
@@ -127,6 +121,6 @@ export interface AgentFunctionCall {
 export interface AIToolSetup {
    name: string;
    description?: string;
-   parameters?: import('zod/v4').ZodObject<any>;
+   parameters?: import('zod').ZodObject<any>;
    execute?: (...args: any[]) => any;
 }

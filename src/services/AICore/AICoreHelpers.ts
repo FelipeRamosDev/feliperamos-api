@@ -100,6 +100,7 @@ export default class AICoreHelpers {
          case '.htm':
             return 'text/html';
          case '.css':
+            return 'text/css';
          default:
             return 'unknown';
       }
