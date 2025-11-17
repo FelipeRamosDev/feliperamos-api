@@ -46,7 +46,7 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
          instructionsPath,
          handoffDescription,
          handoffOutputTypeWarningEnabled = true,
-         handoffs,
+         handoffs = [],
          inputGuardrails,
          mcpServers,
          outputGuardrails,
@@ -110,44 +110,57 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
       });
    }
 
-   public get aiChat(): AICoreChat | undefined {
+   get aiChat(): AICoreChat | undefined {
       return this._aiChat;
    }
 
-   public get agent(): Agent<TContext, AgentOutputType<TOutput>> {
+   get agent(): Agent<TContext, AgentOutputType<TOutput>> {
       return this._agent;
    }
 
-   public get history(): AIHistoryItem<TContext>[] {
+   get history(): AIHistoryItem<TContext>[] {
       return Array.from(this._history.values());
    }
 
-   public get instructions() {
+   get instructions() {
       return [this.aiChat?.instructions, this._instructions, this._instructionsFile].filter(Boolean).join('\n---\n');
    }
    
-   public get instructionsPath() {
+   get instructionsPath() {
       return this._instructionsPath;
    }
 
-   public get setHistoryItem() {
+   get setHistoryItem() {
       return this._history.setItem.bind(this._history);
    }
 
-   public get setHistoryBulk() {
+   get setHistoryBulk() {
       return this._history.setBulk.bind(this._history);
    }
 
-   public get getHistoryItem() {
+   get getHistoryItem() {
       return this._history.getItem.bind(this._history);
    }
 
-   public setChat(aiChat: AICoreChat): this {
+   get asTool() {
+      return this._agent.asTool.bind(this._agent);
+   }
+
+   setChat(aiChat: AICoreChat): this {
       this._aiChat = aiChat;
       return this;
    }
 
-   public turn(setup?: AIAgentTurnSetup): AIAgentTurn<TContext> {
+   turn(setup?: AIAgentTurnSetup): AIAgentTurn<TContext> {
       return new AIAgentTurn<TContext>(setup, this);
+   }
+
+   addHandoff(handoff: AIAgent): this {
+      if (!Array.isArray(this.handoffs)) {
+         this.handoffs = [];
+      }
+
+      this.handoffs.push(handoff.agent);
+      return this;
    }
 }
