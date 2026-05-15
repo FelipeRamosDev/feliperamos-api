@@ -1,9 +1,9 @@
 import { AICoreTurnSetup, AIModels, CellRole } from '../AICore.types';
 import ErrorAICore from '../ErrorAICore';
 import AICoreInputCell from './AICoreInputCell';
-import { defaultModel } from '../../../app.config';
 import AICoreChat from '../AICoreChat';
 import AIAgent from '../AIAgent';
+import { defaultAIModel } from '../../../settings';
 
 export default class AICoreTurn<TContext = any> {
    private _parent?: AICoreChat | AIAgent<TContext>;
@@ -14,7 +14,7 @@ export default class AICoreTurn<TContext = any> {
    public parentInstructions?: string;
 
    constructor (setup: AICoreTurnSetup, parent?: AICoreChat | AIAgent<TContext>) {
-      const { model = defaultModel } = setup || {};
+      const { model = defaultAIModel } = setup || {};
 
       this._parent = parent;
       this._input = [];
