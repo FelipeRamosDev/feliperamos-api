@@ -28,6 +28,9 @@ export interface AICoreSetup extends MicroserviceSetup {
    apiKey?: string;
    model?: AIModels;
    modelSettings?: ModelSettings;
+   instructions?: string;
+   instructionsFile?: string;
+   instructionsPath?: string;
 }
 
 export interface AICoreTurnSetup {
@@ -42,8 +45,8 @@ export interface AIAgentTurnSetup extends AICoreTurnSetup {
 }
 
 export interface AICoreChatOptions {
-   id?: number;
-   label?: string;
+   id?: string;
+   label: string;
    model?: AIModels;
    modelSettings?: ModelSettings;
    instructions?: string;

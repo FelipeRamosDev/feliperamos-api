@@ -105,4 +105,49 @@ export default class AICoreHelpers {
             return 'unknown';
       }
    }
+
+   /**
+    * Safely serialize RunResult output for transmission over Redis/JSON
+    * Extracts text content and basic structure from agent output items
+    */
+   static serializeRunOutput(output: any): any {
+      if (!output) return null;
+
+      // If output is an array, serialize each item
+      if (Array.isArray(output)) {
+         return output.map(item => this.serializeOutputItem(item));
+      }
+
+      // If output is a single item
+      return this.serializeOutputItem(output);
+   }
+
+   private static serializeOutputItem(item: any): any {
+      if (!item || typeof item !== 'object') {
+         return item;
+      }
+
+      // Extract only serializable properties
+      const serializable: any = {};
+
+      // Common properties that are safe to serialize
+      const safeProps = ['role', 'content', 'type', 'name', 'callId', 'status', 'text', 'message'];
+      
+      for (const prop of safeProps) {
+         if (prop in item && item[prop] !== undefined) {
+            serializable[prop] = item[prop];
+         }
+      }
+
+      // Handle text property specially (common in agent outputs)
+      if ('toText' in item && typeof item.toText === 'function') {
+         try {
+            serializable.text = item.toText();
+         } catch (e) {
+            // Ignore if toText fails
+         }
+      }
+
+      return Object.keys(serializable).length > 0 ? serializable : String(item);
+   }
 }

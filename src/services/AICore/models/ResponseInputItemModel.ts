@@ -1,5 +1,5 @@
-import { ResponseInputItem } from "openai/resources/responses/responses.js";
-import { CellMessageContent, CellRole } from "../AICore.types";
+import { ResponseInputItem } from 'openai/resources/responses/responses.js';
+import { CellMessageContent, CellRole } from '../AICore.types';
 
 export default class ResponseInputItemModel {
    public role: CellRole;
@@ -11,6 +11,6 @@ export default class ResponseInputItemModel {
    }
 
    toResponseInputItem(): ResponseInputItem {
-      return { role: this.role, content: this.content };
+      return { role: this.role, content: this.content } as ResponseInputItem;
    }
 }

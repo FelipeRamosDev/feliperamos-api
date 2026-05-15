@@ -13,7 +13,11 @@ export default class AIHistory<TContext = any> extends Map<string, AIHistoryItem
       return this.get(id);
    }
 
-   setItem(value: AICoreInputCell<TContext> | ResponseOutputMessage | AgentOutputItemModel): AIHistoryItem<TContext> {
+   setItem(value: AICoreInputCell<TContext> | ResponseOutputMessage | AgentOutputItemModel): AIHistoryItem<TContext> | undefined {
+      if (value?.type === 'reasoning') {
+         return;
+      }
+
       try {
          const newItem = new AIHistoryItem<TContext>(value);
 

@@ -4,7 +4,7 @@ import { AIAgentTurnSetup } from '../AICore.types';
 import AICoreTurn from './AICoreTurn';
 import ErrorAICore from '../ErrorAICore';
 import AgentOutputItemModel from './AgentOutputItemModel';
-import { defaultModel } from '../../../app.config';
+import { defaultAIModel } from '../../../settings';
 
 export default class AIAgentTurn<TContext> extends AICoreTurn<TContext> {
    private _aiAgent: AIAgent<TContext>;
@@ -18,27 +18,31 @@ export default class AIAgentTurn<TContext> extends AICoreTurn<TContext> {
       this._options = {};
 
       this.parentInstructions = this.aiAgent.instructions;
-      this.setModel(model || this.aiAgent.model || defaultModel);
+      this.setModel(model || this.aiAgent.model || defaultAIModel);
    }
 
    private get aiAgent(): AIAgent<TContext> {
       return this._aiAgent;
    }
 
-   public get parsedInput() {
-      return this.aiAgent.history.map(item => item.toAgentInputItem());
+   get parsedInput() {
+      if (this.aiAgent.aiChat) {
+         return this.aiAgent.aiChat.history.map(item => item.toAgentInputItem());
+      } else {
+         return this.aiAgent.history.map(item => item.toAgentInputItem());
+      }
    }
 
-   public get options(): NonStreamRunOptions<TContext> | StreamRunOptions<TContext> {
+   get options(): NonStreamRunOptions<TContext> | StreamRunOptions<TContext> {
       return this._options;
    }
 
-   public setOptions(options: NonStreamRunOptions<TContext> | StreamRunOptions<TContext>): this {
+   setOptions(options: NonStreamRunOptions<TContext> | StreamRunOptions<TContext>): this {
       this._options = { ...this._options, ...options };
       return this;
    }
 
-   public async run(): Promise<RunResult<TContext, any>> {
+   async run(): Promise<RunResult<TContext, any>> {
       if (!this.aiAgent) {
          throw new ErrorAICore(`No aiAgent associated with this result.`, 'ERROR_NO_AGENT_ASSOCIATED');
       }
@@ -54,7 +58,7 @@ export default class AIAgentTurn<TContext> extends AICoreTurn<TContext> {
       }
    }
 
-   public async stream(onChunk: (text: string) => void): Promise<StreamedRunResult<TContext, any>> {
+   async stream(onChunk: (text: string) => void, onError?: (error: any) => void): Promise<StreamedRunResult<TContext, any>> {
       if (!this.aiAgent) {
          throw new ErrorAICore(`No aiAgent associated with this result.`, 'ERROR_NO_AGENT_ASSOCIATED');
       }
@@ -67,7 +71,9 @@ export default class AIAgentTurn<TContext> extends AICoreTurn<TContext> {
             const result = await run(this.aiAgent.agent, this.parsedInput, this.options as StreamRunOptions<TContext>);
             const textStream = result.toTextStream({ compatibleWithNodeStreams: true });
 
+            textStream.on('error', (error) => onError?.(error));
             textStream.on('data', (chunk) => onChunk?.(chunk));
+
             result.completed.then(() => {
                this.aiAgent.setHistoryBulk(result.output as AgentOutputItemModel[]);
                resolve(result);

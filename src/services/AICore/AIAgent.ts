@@ -1,13 +1,13 @@
 import { Agent, AgentOutputType, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
-import { AIAgentTurnSetup, AIAgentSetup, AIModels } from './AICore.types';
+import { AIAgentSetup, AIAgentTurnSetup, AIModels } from './AICore.types';
 import ErrorAICore from './ErrorAICore';
 import AIAgentTurn from './models/AIAgentTurn';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
-import { defaultModel } from '../../app.config';
 import AICoreChat from './AICoreChat';
 import { ResponsePrompt } from 'openai/resources/responses/responses';
 import AICoreHelpers from './AICoreHelpers';
+import { defaultAIModel } from '../../settings';
 
 export default class AIAgent<TContext = any, TOutput = unknown> {
    private _aiChat?: AICoreChat;
@@ -39,7 +39,7 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
          apiKey,
          name,
          label = name,
-         model = defaultModel,
+         model = defaultAIModel,
          modelSettings,
          instructions = '',
          instructionsFile,
@@ -119,7 +119,11 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
    }
 
    get history(): AIHistoryItem<TContext>[] {
-      return Array.from(this._history.values());
+      if (this.aiChat) {
+         return this.aiChat.history;
+      } else {
+         return Array.from(this._history.values());
+      }
    }
 
    get instructions() {
@@ -131,18 +135,30 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
    }
 
    get setHistoryItem() {
-      return this._history.setItem.bind(this._history);
+      if (this.aiChat) {
+         return this.aiChat.setHistoryItem;
+      } else {
+         return this._history.setItem.bind(this._history);
+      }
    }
 
    get setHistoryBulk() {
-      return this._history.setBulk.bind(this._history);
+      if (this.aiChat) {
+         return this.aiChat.setHistoryBulk;
+      } else {
+         return this._history.setBulk.bind(this._history);
+      }
    }
 
    get getHistoryItem() {
-      return this._history.getItem.bind(this._history);
+      if (this.aiChat) {
+         return this.aiChat.getHistoryItem;
+      } else {
+         return this._history.getItem.bind(this._history);
+      }
    }
 
-   get asTool() {
+   get asTool(): typeof this._agent.asTool {
       return this._agent.asTool.bind(this._agent);
    }
 
