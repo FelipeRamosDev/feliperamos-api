@@ -5,7 +5,7 @@
  */
 
 import { Socket } from 'socket.io';
-import { ClientInfo, SocketMessage } from './SocketServer.types';
+import { ClientInfo } from './SocketServer.types';
 
 /**
  * @class SocketClient

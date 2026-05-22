@@ -5,9 +5,8 @@
  * with ServerAPI integration and all the available features.
  */
 
-import { SocketServer, SocketNamespace, SocketRoom, SocketClient } from './index';
+import { SocketServer } from './index';
 import ServerAPI from '../ServerAPI/ServerAPI';
-import { NamespaceConfig, RoomConfig } from './SocketServer.types';
 
 // Example: Basic SocketServer setup
 export class SocketServerExample {

@@ -1,5 +1,5 @@
 import { NamespaceEvent } from '../../../../services/SocketServer';
-import socketServer from '../../../socket-server.service';
+import socketServer from '../../../socket-server/socket-server.service';
 
 const typingStatus: Map<string, boolean> = new Map();
 
@@ -29,7 +29,7 @@ const assistantInboxEvent: NamespaceEvent = {
             return;
          }
    
-         socketServer.sendTo('/ai/assistant-generate', { input: content, threadID }, (response = {}) => {
+         socketServer.sendTo('/ai-core/common/chat-message', { input: content, chatId: threadID }, (response = {}) => {
             const { error, message, success, output, threadID } = response;
    
             if (error) {

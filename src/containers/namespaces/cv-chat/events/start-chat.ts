@@ -16,7 +16,9 @@ const startChatEvent: NamespaceEvent = {
          name: `cvchat-room-${clientID}`,
          onCreate: (room) => {
             room.addClient(client).catch((error) => {
-               console.error(`Error adding client ${client.id} to room ${clientRoom.name}:`, error);
+               if (error) {
+                  console.error(`Error adding client ${client.id} to room ${clientRoom.name}:`, error.message);
+               }
 
                callback({
                   error: true,

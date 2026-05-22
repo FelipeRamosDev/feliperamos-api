@@ -2,7 +2,7 @@ import ErrorEventEndpoint from '../../../services/EventEndpoint/ErrorEventEndpoi
 import { AI, EventEndpoint } from '../../../services';
 import type { GenerateSummaryParams } from '../../types/routes/ai/generate-cv-summary.types';
 import generateCVSummaryPrompt from '../../../prompts/generate-cv-summary';
-import { assistantBuildCV } from '../../../containers/ai.service';
+import { assistantBuildCV } from '../../../containers/ai-core/ai-core.service';
 
 export default new EventEndpoint({
    path: '/ai/generate-cv-summary',
