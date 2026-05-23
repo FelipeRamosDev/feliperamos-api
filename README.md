@@ -143,18 +143,34 @@ A sophisticated microservices-based backend system powering Felipe Ramos' intera
 feliperamos-api/
 ├── src/
 │   ├── containers/              # Service containers
-│   │   ├── ai.service.ts       # AICore service with OpenAI Agents SDK
+│   │   ├── ai-core/            # AICore service (OpenAI Agents SDK)
+│   │   │   ├── ai-core.service.ts # AICore microservice entry point
+│   │   │   ├── agents/         # Specialized AI agents
+│   │   │   │   ├── LetterGen/  # Cover letter generation agent
+│   │   │   │   ├── ResumeBot/  # Resume/portfolio chat agent
+│   │   │   │   └── SummaryGen/ # CV summary generation agent
+│   │   │   ├── chats/          # Chat option definitions
+│   │   │   │   └── resume/     # Resume chat configuration
+│   │   │   └── events/         # AI Core event endpoints
+│   │   │       └── common/     # Common events (new-chat, chat-message)
 │   │   ├── api-server.service.ts # REST API server
 │   │   ├── slack.service.ts    # Slack integration
-│   │   ├── socket-server.service.ts # Socket.IO server
+│   │   ├── socket-server/      # Socket.IO server
+│   │   │   ├── socket-server.service.ts # Socket microservice entry point
+│   │   │   ├── events/         # Socket server event endpoints
+│   │   │   │   ├── message-chunk.event.ts
+│   │   │   │   ├── message-end.event.ts
+│   │   │   │   └── message-error.event.ts
+│   │   │   ├── middlewares/    # Namespace event middlewares
+│   │   │   │   └── startChat.ts # Creates room + AI chat on connect
+│   │   │   └── namespaces/     # Socket namespaces
+│   │   │       ├── chat/       # /chat namespace (resume bot)
+│   │   │       ├── cover-letter/ # /cover-letter namespace
+│   │   │       └── opportunity/ # /opportunity namespace
 │   │   ├── virtual-browser.service.ts # VirtualBrowser service
-│   │   ├── namespaces/         # Socket namespaces
-│   │   │   ├── cv-chat/        # CV chat namespace and events
-│   │   │   ├── cover-letter/   # Cover letter generation namespace
-│   │   │   └── opportunities/  # Job opportunities namespace
 │   │   └── routes/             # Inter-service communication routes
 │   │       ├── ai/             # AI service event endpoints
-│   │       │   └── get-chat.route.ts # Chat retrieval endpoint
+│   │       │   └── resume-chat.route.ts # Resume chat HTTP endpoint
 │   │       └── virtual-browser/ # VirtualBrowser event routes
 │   ├── database/               # Database layer
 │   │   ├── index.ts           # Database initialization
@@ -289,6 +305,7 @@ feliperamos-api/
    # SSL Configuration (Optional)
    SSL_KEY_PATH=./cert/ssl.key
    SSL_CERT_PATH=./cert/ssl.crt
+   USE_SSL=true  # Set to 'false' to disable HTTPS even when cert paths are provided
    
    # CORS Configuration
    CORS_ORIGIN=http://localhost:3000,https://yourdomain.com
@@ -373,6 +390,7 @@ feliperamos-api/
    # SSL Configuration (Optional)
    SSL_KEY_PATH=./cert/ssl.key
    SSL_CERT_PATH=./cert/ssl.crt
+   USE_SSL=true  # Set to 'false' to disable HTTPS even when cert paths are provided
    
    # CORS Configuration
    CORS_ORIGIN=http://localhost:3000,https://yourdomain.com
@@ -559,23 +577,23 @@ npm run start:slack &
 - **Connection Tracking**: Client connection statistics and monitoring
 
 ### Socket Events
-#### CV Chat Namespace (`/cv-chat`)
-- `start-chat` - Initialize new chat session
-- `assistant-message` - AI response delivery
-- `assistant-typing` - Typing indicators
-- `user-message` - User message handling
+#### Chat Namespace (`/chat`)
+- `start-chat` - Create a new room and initialize an AI chat session (uses `startChatMiddleware`)
+- `message-in` - Send a user message to the AI agent; forwards to `/ai-core/common/chat-message`
 
 #### Cover Letter Namespace (`/cover-letter`)
-- `generate-letter` - AI-powered cover letter generation
-- `letter-status` - Real-time generation status updates
-- `letter-complete` - Completed cover letter delivery
-- `letter-error` - Error handling for failed generations
+- `start-letter` - Create a new room and initialize an AI chat session for letter generation (uses `startChatMiddleware`)
+- `generate-letter` - AI-powered cover letter generation; sends `opportunityId`, `roomId`, `agentId` and forwards to AI Core
 
-#### Opportunities Namespace (`/opportunities`)
-- `generate-summary` - AI-powered CV summary generation for specific opportunities
-- `summary-status` - Real-time CV summary generation status updates
-- `summary-complete` - Completed CV summary delivery
-- `summary-error` - Error handling for failed CV summary generations
+#### Opportunity Namespace (`/opportunity`)
+- `start-build` - Create a new room and initialize an AI chat session for opportunity building (uses `startChatMiddleware`)
+- `scrape-linkedin-job` - Extract job data from a LinkedIn URL; forwards to VirtualBrowser service
+- `generate-summary` - AI-powered CV summary generation for a specific opportunity; forwards to AI Core
+
+#### Socket Server Event Endpoints (inter-service, via Redis pub/sub)
+- `/socket-server/message-chunk` - Forward a streaming AI response chunk to the client room
+- `/socket-server/message-end` - Forward the final AI response to the client room
+- `/socket-server/message-error` - Forward an AI error event to the client room
 
 ## 🖥️ VirtualBrowser Service Features
 
@@ -761,11 +779,12 @@ services:
 - `POST /virtual-browser/linkedin/job-infos` - Extract job information from LinkedIn URLs (Admin/Master)
 - `GET /health` - Service health status and diagnostics
 
-### Socket-based AI Routes (Event Endpoints)
-- `/ai/get-chat` - Retrieve chat session by ID (Event endpoint for inter-service communication)
-- `/ai/generate-cv-summary` - Generate AI-powered CV summaries based on job requirements (Socket event)
-- `/ai/generate-letter` - Generate AI-powered cover letters for specific opportunities (Socket event)
-- `/ai/assistant-generate` - Generate AI responses (Socket event)
+### AI Core Routes
+- `POST /ai-core/resume-chat` - Start or continue a resume chat; creates a new chat session if `chatId` is not provided, then forwards the message to the AI Core service
+
+### AI Core Event Endpoints (inter-service, via Redis pub/sub)
+- `/ai-core/common/new-chat` - Create a new AI chat session with a given label
+- `/ai-core/common/chat-message` - Send a message to an AI agent within an active chat session
 
 ## 🚀 Production Deployment
 

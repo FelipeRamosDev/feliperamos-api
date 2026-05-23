@@ -1831,81 +1831,94 @@ Service health status and diagnostics.
 
 ---
 
-## Socket-based AI Routes (Event Endpoints)
+## AI Core Routes
 
-These are Socket.IO event endpoints, not HTTP REST endpoints. They are used for real-time communication with the AI services.
+### POST /ai-core/resume-chat
+Start or continue a resume chat session. If no `chatId` is provided, a new AI chat session is created automatically before sending the message.
 
-### /ai/generate-cv-summary
-Generate AI-powered CV summaries based on job requirements.
+**Access**: Public  
+**Content-Type**: `application/json`
 
-**Type**: Socket Event  
-**Access**: Authenticated Socket Connection
-
-#### Event Data
+#### Request Body
 ```json
 {
-  "aiThreadID": "thread_abc123",
-  "jobDescription": "Senior Full Stack Developer position requiring React, Node.js...",
-  "additionalMessage": "Focus on leadership experience"
+  "chatId": "chat_abc123",
+  "message": "Tell me about your experience with React"
+}
+```
+> **Note:** `chatId` is optional. Omit it to start a fresh session; the response will include the new `chatId` for subsequent requests.
+
+#### Response (200 OK)
+```json
+{
+  "chatId": "chat_abc123",
+  "result": "I have extensive experience with React development, having worked on..."
 }
 ```
 
-#### Response Event
+#### Response (400 Bad Request)
 ```json
 {
-  "success": true,
-  "output": "Generated CV summary tailored to the job requirements..."
-}
-```
-
----
-
-### /ai/generate-letter
-Generate AI-powered cover letters for specific opportunities.
-
-**Type**: Socket Event  
-**Access**: Authenticated Socket Connection
-
-#### Event Data
-```json
-{
-  "aiThreadID": "thread_abc123",
-  "currentLetter": "Dear Hiring Manager...",
-  "jobDescription": "Senior Full Stack Developer position...",
-  "additionalMessage": "Emphasize experience with React and team leadership"
-}
-```
-
-#### Response Event
-```json
-{
-  "success": true,
-  "output": "Generated cover letter content..."
+  "message": "Message is required to evaluate turn",
+  "code": "MESSAGE_REQUIRED",
+  "status": 400
 }
 ```
 
 ---
 
-### /ai/assistant-generate
-Generate AI responses for general assistant functionality.
+## AI Core Event Endpoints (inter-service, via Redis pub/sub)
 
-**Type**: Socket Event  
-**Access**: Authenticated Socket Connection
+These endpoints are used for real-time communication between microservices over Redis pub/sub, not directly from HTTP clients.
+
+### /ai-core/common/new-chat
+Create a new AI chat session.
+
+**Type**: Event Endpoint (Redis pub/sub)
 
 #### Event Data
 ```json
 {
-  "input": "Tell me about your experience with React development",
-  "threadID": "thread_abc123"
+  "chatId": "chat_abc123",
+  "label": "resume"
 }
 ```
 
-#### Response Event
+#### Response
 ```json
 {
   "success": true,
-  "threadID": "thread_abc123",
-  "output": "I have extensive experience with React development..."
+  "chatId": "chat_abc123",
+  "message": "New chat started successfully."
+}
+```
+
+---
+
+### /ai-core/common/chat-message
+Send a message to an AI agent within an active chat session.
+
+**Type**: Event Endpoint (Redis pub/sub)
+
+#### Event Data
+```json
+{
+  "chatId": "chat_abc123",
+  "message": "Tell me about your React experience",
+  "agentId": "resume-bot",
+  "forwardEnd": "/socket-server/message-end",
+  "context": {}
+}
+```
+> **Note:** `forwardEnd` is optional — it overrides the default endpoint used to forward the final AI response to the socket server.
+
+#### Response
+```json
+{
+  "success": true,
+  "messageId": "chat_abc123_3",
+  "roomId": "chat_abc123",
+  "finalOutput": "Generated AI response..."
 }
 ```
 
