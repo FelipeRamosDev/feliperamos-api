@@ -10,6 +10,7 @@ import {
    NamespaceConfig, 
    NamespaceMiddleware, 
    NamespaceEvent,
+   NamespaceEventMiddleware,
    ExtendedSocket, 
    RoomConfig,
    RoomDetails
@@ -133,9 +134,10 @@ export class SocketNamespace {
    /**
     * Register event handler
     */
-   on(eventName: string, handler: (socket: Socket, ...args: any[]) => void): void {
+   on(eventName: string, handler: (socket: Socket, ...args: any[]) => void, middlewares?: NamespaceEventMiddleware[]): void {
       const event: NamespaceEvent = {
          name: eventName,
+         middlewares,
          handler
       };
 
@@ -394,7 +396,19 @@ export class SocketNamespace {
       // Register custom events for this client
       this._events.forEach((event, eventName) => {
          socket.on(eventName, (...args: any[]) => {
-            event.handler.call(self, socket, ...args);
+            const middlewares = event.middlewares || [];
+
+            if (middlewares.length === 0) {
+               event.handler.call(self, socket, ...args);
+               return;
+            }
+
+            self.runEventMiddlewares(middlewares, socket, args, (enrichedData?: any) => {
+               const handlerArgs = enrichedData !== undefined
+                  ? [enrichedData, ...args.slice(1)]
+                  : args;
+               event.handler.call(self, socket, ...handlerArgs);
+            });
          });
       });
 
@@ -415,6 +429,49 @@ export class SocketNamespace {
       socket.on('room-message', (data: { roomId: string; event: string; message: any }) => {
          this.sendToRoom(data.roomId, data.event, data.message, socket.id);
       });
+   }
+
+   /**
+    * Run event-level middlewares in series before invoking the event handler.
+    * Calls `done(enrichedData)` when all pass, or invokes the socket callback with
+    * the error if any middleware calls `next(err)`.
+    * Middlewares may call `next(null, enrichedData)` to forward enriched data to
+    * subsequent middlewares and the final handler.
+    */
+   private runEventMiddlewares(
+      middlewares: NamespaceEventMiddleware[],
+      socket: Socket,
+      args: any[],
+      done: (enrichedData?: any) => void
+   ): void {
+      let currentData = args[0];
+      let index = 0;
+
+      const next = (err?: Error | null, enrichedData?: any): void => {
+         if (err) {
+            const callback = args[args.length - 1];
+            if (typeof callback === 'function') {
+               callback(err);
+            } else {
+               console.error(`[SocketNamespace] Middleware error for socket ${socket.id}:`, err);
+            }
+            return;
+         }
+
+         if (enrichedData !== undefined) {
+            currentData = enrichedData;
+         }
+
+         const middleware = middlewares[index++];
+         if (!middleware) {
+            done(currentData);
+            return;
+         }
+
+         middleware.call(this, socket, currentData, next);
+      };
+
+      next();
    }
 
    /**

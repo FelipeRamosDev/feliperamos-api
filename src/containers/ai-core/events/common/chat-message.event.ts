@@ -4,7 +4,7 @@ import ErrorEventEndpoint from '../../../../services/EventEndpoint/ErrorEventEnd
 export default new EventEndpoint({
    path: '/ai-core/common/chat-message',
    async controller(data, done) {
-      const { chatId, message, agentId, forwardEnd } = Object(data);
+      const { chatId, message, agentId, forwardEnd, context } = Object(data);
 
       try {
          const chat = aiCore.getChat(chatId);
@@ -34,7 +34,7 @@ export default new EventEndpoint({
 
          // Send final message to client
          global.aiCore.sendTo(forwardEnd || '/socket-server/message-end', { roomId: chatId, messageId, finalOutput: result.finalOutput });
-         done?.({ success: true, messageId });
+         done?.({ success: true, messageId, roomId: chatId, finalOutput: result.finalOutput });
       } catch (error: any) {
          const err = new ErrorEventEndpoint(`Failed to start new chat: ${error?.message || ''}`, error?.code || 'AI_CORE_NEW_CHAT_FAILED');
 
