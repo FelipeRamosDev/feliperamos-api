@@ -1,6 +1,9 @@
 import 'dotenv/config';
-import { ServerAPI, SocketServer } from '../services';
-import { cvChatNS, opportunitiesNS, coverLetterNS } from './namespaces';
+import { ServerAPI, SocketServer } from '../../services';
+import messageChunkEvent from './events/message-chunk.event';
+import messageEndEvent from './events/message-end.event';
+import messageErrorEvent from './events/message-error.event';
+import { chatNS, opportunityNS, coverLetterNS } from './namespaces';
 
 const {
    SSL_KEY_PATH,
@@ -27,21 +30,22 @@ const server = new ServerAPI({
    }
 });
 
-const socketServer = new SocketServer({
-   id: 'socket-server',
+global.socket = new SocketServer({
    serverAPI: server,
-   namespaces: [ cvChatNS, opportunitiesNS, coverLetterNS ],
-   onError(error) {
-      console.error('Socket Server encountered an error:', error);
+   containerName: 'socket-server',
+   namespaces: [ chatNS, opportunityNS, coverLetterNS ],
+   endpoints: [ messageChunkEvent, messageEndEvent, messageErrorEvent ],
+   onError: function (error) {
+      console.error(`Socket HTTP Server encountered an error when constructing the SocketServer!`, error);
       process.exit(1);
    }
 });
 
-socketServer.start().then(() => {
+global.socket.start().then(() => {
    console.log(`Socket Server is running on port ${SOCKET_SERVER_PORT}`);
 }).catch((error) => {
    console.error('Error starting Socket Server:', error);
    process.exit(1);
 });
 
-export default socketServer;
+export default global.socket;

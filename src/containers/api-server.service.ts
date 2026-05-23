@@ -75,6 +75,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.replace(/ 
 const {
    SSL_KEY_PATH,
    SSL_CERT_PATH,
+   USE_SSL,
    API_SECRET = 'default_secret',
    REDIS_URL = 'redis://localhost:6379'
 } = process.env;
@@ -84,7 +85,8 @@ if (isNaN(SERVER_API_PORT)) {
 }
 
 const cookiesMaxAge = 24 * 60 * 60 * 1000; // 1 day
-const sslConfig = SSL_KEY_PATH && SSL_CERT_PATH ? {
+const shouldUseSSL = USE_SSL !== 'false';
+const sslConfig = shouldUseSSL && SSL_KEY_PATH && SSL_CERT_PATH ? {
    keySSLPath: SSL_KEY_PATH,
    certSSLPath: SSL_CERT_PATH
 } : undefined;

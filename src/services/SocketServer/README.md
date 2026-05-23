@@ -10,7 +10,8 @@ A comprehensive Socket.IO server implementation that integrates with the ServerA
 - **Client Management**: Track and manage individual client connections
 - **Message Routing**: Send messages to specific clients, rooms, or broadcast globally
 - **Authentication**: Support for namespace-level authentication
-- **Middleware Support**: Add custom middleware to namespaces
+- **Middleware Support**: Namespace-level and event-level middleware pipelines
+- **Event Middleware**: Per-event middleware chain with data enrichment support (`NamespaceEventMiddleware`)
 - **Statistics Tracking**: Monitor connections, messages, and server performance
 - **SSL Support**: Automatic SSL support when ServerAPI is configured with SSL
 
@@ -270,7 +271,51 @@ namespace.on('custom-event', (socket, data) => {
    console.log('Custom event received:', data);
    socket.emit('custom-response', { status: 'received' });
 });
+
+// Add custom event with event-level middlewares
+namespace.on('authenticated-event', (socket, data) => {
+   // Handler receives enriched data from middleware
+   console.log('Authenticated event:', data);
+}, [
+   function(socket, data, next) {
+      // Validate or enrich data before the handler runs
+      if (!data.token) {
+         return next(new Error('Token is required'));
+      }
+      next(null, { ...data, userId: verifyToken(data.token) });
+   }
+]);
 ```
+
+## Event-Level Middlewares
+
+The `NamespaceEventMiddleware` type allows you to add a per-event middleware pipeline that runs before the event handler. Middlewares run in series and can:
+- Validate incoming data and short-circuit with an error (`next(err)`)
+- Enrich/transform data and forward it to subsequent middlewares and the handler (`next(null, enrichedData)`)
+- Pass through unchanged (`next()`)
+
+```typescript
+import { NamespaceEventMiddleware, NamespaceEvent } from './SocketServer.types';
+
+const authMiddleware: NamespaceEventMiddleware = function(socket, data, next) {
+   if (!data.token) {
+      return next(new Error('Token required'));
+   }
+   // Enrich data with decoded user
+   next(null, { ...data, user: decodeToken(data.token) });
+};
+
+const chatEvent: NamespaceEvent = {
+   name: 'start-chat',
+   middlewares: [ authMiddleware ],
+   handler(socket, data, callback) {
+      // data.user is now available, injected by the middleware
+      callback({ success: true, userId: data.user.id });
+   }
+};
+```
+
+> **Note:** If a middleware calls `next(err)`, the error is forwarded to the socket's acknowledgement callback (if present) and the event handler is **not** invoked.
 
 ## Error Handling
 
@@ -383,6 +428,20 @@ interface NamespaceConfig {
    connectionHandler?: Function;  // Custom connection handler
    disconnectionHandler?: Function; // Custom disconnection handler
 }
+
+// Event with optional per-event middleware pipeline
+interface NamespaceEvent {
+   name: string;
+   middlewares?: NamespaceEventMiddleware[]; // Runs before handler; can enrich or reject data
+   handler: (socket, ...args) => void;
+}
+
+// Event middleware signature
+type NamespaceEventMiddleware = (
+   socket: Socket,
+   data: any,
+   next: (err?: Error | null, enrichedData?: any) => void
+) => void;
 ```
 
 ### Room Configuration

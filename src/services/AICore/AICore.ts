@@ -4,7 +4,6 @@ import Microservice from '../Microservice/Microservice';
 import { AICoreChatOptions, AICoreSetup, AIModels } from './AICore.types';
 import AICoreChat from './AICoreChat';
 import ErrorAICore from './ErrorAICore';
-import { defaultAIModel } from '../../settings';
 import AICoreHelpers from './AICoreHelpers';
 
 export default class AICore extends Microservice {
@@ -21,7 +20,7 @@ export default class AICore extends Microservice {
 
    constructor(setup: AICoreSetup = {}) {
       super(setup);
-      const { apiKey, model = defaultAIModel, modelSettings, instructions, instructionsFile, instructionsPath } = setup;
+      const { apiKey, model = 'gpt-4o', modelSettings, instructions, instructionsFile, instructionsPath } = setup;
 
       this._apiKey = apiKey;
       this._client = new OpenAI({ apiKey });
