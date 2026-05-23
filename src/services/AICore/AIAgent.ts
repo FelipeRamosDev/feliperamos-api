@@ -73,7 +73,6 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
       this.handoffs = handoffs;
       this.inputGuardrails = inputGuardrails;
       this.mcpServers = mcpServers;
-      this.modelSettings = modelSettings;
       this.outputGuardrails = outputGuardrails;
       this.outputType = outputType;
       this.resetToolChoice = resetToolChoice;
@@ -92,6 +91,21 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
          this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsPath);
       }
 
+      const hasAnyTooling = Boolean(
+         (tools && tools.length > 0)
+         || (handoffs && handoffs.length > 0)
+         || (mcpServers && mcpServers.length > 0)
+      );
+
+      const effectiveModelSettings: ModelSettings = hasAnyTooling
+         ? (modelSettings || {})
+         : {
+            ...(modelSettings || {}),
+            parallelToolCalls: false,
+         };
+
+      this.modelSettings = effectiveModelSettings;
+
       this._agent = new Agent<TContext, AgentOutputType<TOutput>>({
          name,
          model,
@@ -101,7 +115,7 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
          handoffs,
          inputGuardrails,
          mcpServers,
-         modelSettings,
+         modelSettings: effectiveModelSettings,
          outputGuardrails,
          outputType,
          resetToolChoice,

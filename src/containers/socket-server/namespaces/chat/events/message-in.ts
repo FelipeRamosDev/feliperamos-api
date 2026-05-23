@@ -8,19 +8,19 @@ const userMessageEvent: NamespaceEvent = {
       const room = this.getRoom(roomId);
 
       if (!room) {
-         callback(new ErrorSocketServer(`Room with ID ${roomId} not found.`, 'SOCKET_SERVER_ROOM_NOT_FOUND'));
+         callback?.(new ErrorSocketServer(`Room with ID ${roomId} not found.`, 'SOCKET_SERVER_ROOM_NOT_FOUND'));
          return;
       }
 
       socket.sendTo('/ai-core/common/chat-message', { chatId: roomId, message, agentId, forwardEnd }, (response: any) => {
          if (response.error) {
             console.error(`Error sending user message to AI core for room ${roomId}:`, response.error);
-            callback(new ErrorSocketServer(`Failed to send user message to AI core.`, 'AI_CORE_MESSAGE_FAILED'));
+            callback?.(new ErrorSocketServer(`Failed to send user message to AI core.`, 'AI_CORE_MESSAGE_FAILED'));
             return;
          }
       });
 
-      callback({
+      callback?.({
          success: true,
          message: `Message received!`
       });
