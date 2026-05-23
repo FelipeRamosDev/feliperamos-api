@@ -151,9 +151,26 @@ feliperamos-api/
 │   │   │   │   └── SummaryGen/ # CV summary generation agent
 │   │   │   ├── chats/          # Chat option definitions
 │   │   │   │   └── resume/     # Resume chat configuration
-│   │   │   └── events/         # AI Core event endpoints
-│   │   │       └── common/     # Common events (new-chat, chat-message)
-│   │   ├── api-server.service.ts # REST API server
+│   │   │   ├── events/         # AI Core event endpoints (inter-service, via Redis pub/sub)
+│   │   │   │   ├── common/     # Common events (new-chat, chat-message)
+│   │   │   │   ├── assistant-generate.event.ts # Assistant generate event (/ai-core/assistant-generate)
+│   │   │   │   └── get-chat.event.ts           # Get chat session event
+│   │   │   └── types/          # AI Core type definitions
+│   │   ├── api-server/         # REST API server
+│   │   │   ├── api-server.service.ts # API server microservice entry point
+│   │   │   └── routes/         # HTTP API endpoint handlers
+│   │   │       ├── auth/       # Authentication routes
+│   │   │       ├── skill/      # Skills CRUD operations
+│   │   │       ├── company/    # Company CRUD operations
+│   │   │       ├── language/   # Language skills CRUD operations
+│   │   │       ├── education/  # Education CRUD operations
+│   │   │       ├── curriculum/ # CV/Resume CRUD operations
+│   │   │       ├── experience/ # Experience CRUD operations
+│   │   │       ├── opportunity/ # Job opportunities CRUD operations
+│   │   │       ├── cover-letter/ # Cover letters CRUD operations
+│   │   │       ├── user/       # User management routes
+│   │   │       ├── health.route.ts # Health check endpoint
+│   │   │       └── README.md   # API routes documentation
 │   │   ├── slack.service.ts    # Slack integration
 │   │   ├── socket-server/      # Socket.IO server
 │   │   │   ├── socket-server.service.ts # Socket microservice entry point
@@ -167,11 +184,16 @@ feliperamos-api/
 │   │   │       ├── chat/       # /chat namespace (resume bot)
 │   │   │       ├── cover-letter/ # /cover-letter namespace
 │   │   │       └── opportunity/ # /opportunity namespace
-│   │   ├── virtual-browser.service.ts # VirtualBrowser service
-│   │   └── routes/             # Inter-service communication routes
-│   │       ├── ai/             # AI service event endpoints
-│   │       │   └── resume-chat.route.ts # Resume chat HTTP endpoint
-│   │       └── virtual-browser/ # VirtualBrowser event routes
+│   │   └── virtual-browser/    # VirtualBrowser service
+│   │       ├── virtual-browser.service.ts # VirtualBrowser microservice entry point
+│   │       └── events/         # VirtualBrowser event endpoints (inter-service, via Redis pub/sub)
+│   │           ├── cv-create-pdf.event.ts   # Generate CV PDF
+│   │           ├── cv-delete-pdf.event.ts   # Delete CV PDF
+│   │           ├── letter/
+│   │           │   ├── create-pdf.event.ts  # Generate cover letter PDF
+│   │           │   └── delete-pdf.event.ts  # Delete cover letter PDF
+│   │           └── linkedin/
+│   │               └── job-infos.event.ts   # Extract LinkedIn job data
 │   ├── database/               # Database layer
 │   │   ├── index.ts           # Database initialization
 │   │   ├── models/            # Data models & ORM
@@ -189,18 +211,6 @@ feliperamos-api/
 │   │   │       └── Comment/   # Comment model
 │   │   ├── schemas/           # Database schema definitions
 │   │   └── tables/            # Table structure definitions
-│   ├── routes/                # API endpoint implementations
-│   │   ├── auth/              # Authentication routes
-│   │   ├── skill/             # Skills CRUD operations
-│   │   ├── company/           # Company CRUD operations
-│   │   ├── language/          # Language skills CRUD operations
-│   │   ├── education/         # Education CRUD operations
-│   │   ├── curriculum/        # CV/Resume CRUD operations
-│   │   ├── experience/        # Experience CRUD operations
-│   │   ├── opportunity/       # Job opportunities CRUD operations
-│   │   ├── cover-letter/      # Cover letters CRUD operations
-│   │   ├── user/              # User management routes
-│   │   └── health.route.ts    # Health check endpoint
 │   ├── services/              # Core service classes
 │   │   ├── AI/                # Legacy OpenAI integration (deprecated)
 │   │   ├── AICore/            # New OpenAI Agents SDK integration
@@ -232,11 +242,8 @@ feliperamos-api/
 │   │   ├── SocketServer/     # Socket.IO implementation
 │   │   └── VirtualBrowser/   # Headless browser automation service
 │   ├── global/               # Global types and utilities
-│   ├── models/               # Data models
-│   └── prompts/              # AI prompt templates
-│       └── instructions/     # Agent instruction files
-│           ├── cv-agent.md   # CV generation agent instructions
-│           └── summary-chat.md # Chat summary instructions
+│   ├── helpers/              # Utility helper functions
+│   └── models/               # Data models
 ├── cert/                     # SSL certificates
 ├── docker-compose.yml        # Docker services configuration
 ├── Dockerfile               # Container build instructions
@@ -478,18 +485,18 @@ npm run start:slack &
 | `npm run start` | Start built application |
 | `npm run start:ai` | Start built AI service |
 | `npm run start:socket-server` | Start built Socket server |
-| `npm run start:api-server` | Start built API server |
+| `npm run start:api-server` | Start built API server (`dist/src/containers/api-server/api-server.service.js`) |
 | `npm run start:slack` | Start built Slack service |
-| `npm run start:virtual-browser` | Start built VirtualBrowser service |
+| `npm run start:virtual-browser` | Start built VirtualBrowser service (`dist/src/containers/virtual-browser/virtual-browser.service.js`) |
 
 ### Watch Mode
 | Script | Description |
 |--------|-------------|
 | `npm run watch:ai` | Watch AI service with nodemon |
 | `npm run watch:socket-server` | Watch Socket server with nodemon |
-| `npm run watch:api-server` | Watch API server with nodemon |
+| `npm run watch:api-server` | Watch API server with nodemon (`src/containers/api-server/api-server.service.ts`) |
 | `npm run watch:slack` | Watch Slack service with nodemon |
-| `npm run watch:virtual-browser` | Watch VirtualBrowser service with nodemon |
+| `npm run watch:virtual-browser` | Watch VirtualBrowser service with nodemon (`src/containers/virtual-browser/virtual-browser.service.ts`) |
 
 ### Utilities
 | Script | Description |
@@ -594,6 +601,13 @@ npm run start:slack &
 - `/socket-server/message-chunk` - Forward a streaming AI response chunk to the client room
 - `/socket-server/message-end` - Forward the final AI response to the client room
 - `/socket-server/message-error` - Forward an AI error event to the client room
+
+#### VirtualBrowser Event Endpoints (inter-service, via Redis pub/sub)
+- `/virtual-browser/cv-create-pdf` - Generate a CV PDF from the frontend template
+- `/virtual-browser/cv-delete-pdf` - Delete a CV PDF file
+- `/virtual-browser/letter/create-pdf` - Generate a cover letter PDF
+- `/virtual-browser/letter/delete-pdf` - Delete a cover letter PDF file
+- `/virtual-browser/linkedin/job-infos` - Extract job information from a LinkedIn URL
 
 ## 🖥️ VirtualBrowser Service Features
 
@@ -776,13 +790,11 @@ services:
 - `GET /user/cvs` - Get user's CVs with filtering options (Admin/Master)
 
 ### General
-- `POST /virtual-browser/linkedin/job-infos` - Extract job information from LinkedIn URLs (Admin/Master)
 - `GET /health` - Service health status and diagnostics
 
-### AI Core Routes
-- `POST /ai-core/resume-chat` - Start or continue a resume chat; creates a new chat session if `chatId` is not provided, then forwards the message to the AI Core service
-
 ### AI Core Event Endpoints (inter-service, via Redis pub/sub)
+- `/ai-core/assistant-generate` - Send a message to the assistant and receive a streamed response
+- `/ai-core/get-chat` - Retrieve an existing AI chat session by ID
 - `/ai-core/common/new-chat` - Create a new AI chat session with a given label
 - `/ai-core/common/chat-message` - Send a message to an AI agent within an active chat session
 
@@ -822,7 +834,7 @@ services:
 ### 🔧 Technical Enhancements
 - **OpenAI SDK Update**: Upgraded to OpenAI SDK v5.23+ (from v4.103) with response streaming support
 - **New Dependencies**: Added `@openai/agents` (v0.1.9) and `zod` (v3.25+) for schema validation
-- **Inter-Service Communication**: New `/ai/get-chat` event endpoint for retrieving chat sessions across services
+- **Inter-Service Communication**: New `/ai-core/get-chat` event endpoint for retrieving chat sessions across services
 - **Microservice Improvements**: Enhanced `Microservice` class with static methods for cross-service communication
 - **Error Handling**: New `ErrorAICore` class with descriptive error codes and improved error management
 - **TypeScript Configuration**: Updated `tsconfig.json` with deprecation handling for OpenAI SDK compatibility
@@ -835,7 +847,7 @@ services:
   - Type definitions and API reference
 - **GitHub Copilot Instructions**: Updated `.github/copilot-instructions.md` with AICore patterns
 - **VS Code Integration**: New "AI Service Watch" debug configuration in `.vscode/launch.json`
-- **Code Examples**: Template instruction files in `src/prompts/instructions/`
+- **Code Examples**: AI prompt and instruction logic embedded in agent and chat definitions under `src/containers/ai-core/`
 
 ### 🚀 Migration Notes
 - **Breaking Changes**: Old `AI` service patterns no longer supported (legacy code remains for backward compatibility)

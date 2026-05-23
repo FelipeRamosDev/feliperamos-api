@@ -1780,42 +1780,6 @@ Get user's CVs with filtering options.
 
 ## General Routes
 
-### POST /virtual-browser/linkedin/job-infos
-Extract job information from LinkedIn URLs.
-
-**Access**: Admin/Master  
-**Content-Type**: `application/json`
-
-#### Request Body
-```json
-{
-  "jobURL": "https://www.linkedin.com/jobs/view/123456789"
-}
-```
-
-#### Response (200 OK)
-```json
-{
-  "jobCompany": "Tech Innovations Inc",
-  "jobTitle": "Senior Full Stack Developer",
-  "jobDescription": "We are looking for a senior full stack developer with experience in React, Node.js, and cloud technologies...",
-  "jobLocation": "San Francisco, CA",
-  "jobSeniority": "Senior level",
-  "jobEmploymentType": "Full-time"
-}
-```
-
-#### Response (400 Bad Request)
-```json
-{
-  "message": "Job URL is required",
-  "code": "JOB_URL_REQUIRED",
-  "status": 400
-}
-```
-
----
-
 ### GET /health
 Service health status and diagnostics.
 
@@ -1831,45 +1795,52 @@ Service health status and diagnostics.
 
 ---
 
-## AI Core Routes
+## AI Core Event Endpoints (inter-service, via Redis pub/sub)
 
-### POST /ai-core/resume-chat
-Start or continue a resume chat session. If no `chatId` is provided, a new AI chat session is created automatically before sending the message.
+These endpoints are used for real-time communication between microservices over Redis pub/sub, not directly from HTTP clients.
 
-**Access**: Public  
-**Content-Type**: `application/json`
+### /ai-core/assistant-generate
+Send a message to the assistant and receive a streamed response. Used by the Slack service and other inter-service callers.
 
-#### Request Body
+**Type**: Event Endpoint (Redis pub/sub)
+
+#### Event Data
 ```json
 {
-  "chatId": "chat_abc123",
-  "message": "Tell me about your experience with React"
-}
-```
-> **Note:** `chatId` is optional. Omit it to start a fresh session; the response will include the new `chatId` for subsequent requests.
-
-#### Response (200 OK)
-```json
-{
-  "chatId": "chat_abc123",
-  "result": "I have extensive experience with React development, having worked on..."
+  "input": "Tell me about your experience with React",
+  "threadID": "thread_abc123"
 }
 ```
 
-#### Response (400 Bad Request)
+#### Response
 ```json
 {
-  "message": "Message is required to evaluate turn",
-  "code": "MESSAGE_REQUIRED",
-  "status": 400
+  "data": "I have extensive experience with React development, having worked on..."
 }
 ```
 
 ---
 
-## AI Core Event Endpoints (inter-service, via Redis pub/sub)
+### /ai-core/get-chat
+Retrieve an existing AI chat session by ID.
 
-These endpoints are used for real-time communication between microservices over Redis pub/sub, not directly from HTTP clients.
+**Type**: Event Endpoint (Redis pub/sub)
+
+#### Event Data
+```json
+{
+  "chatId": "chat_abc123"
+}
+```
+
+#### Response
+```json
+{
+  "chat": { ... }
+}
+```
+
+---
 
 ### /ai-core/common/new-chat
 Create a new AI chat session.
