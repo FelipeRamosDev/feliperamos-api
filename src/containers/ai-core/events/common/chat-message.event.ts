@@ -36,7 +36,7 @@ export default new EventEndpoint({
          global.aiCore.sendTo(forwardEnd || '/socket-server/message-end', { roomId: chatId, messageId, finalOutput: result.finalOutput });
          done?.({ success: true, messageId, roomId: chatId, finalOutput: result.finalOutput });
       } catch (error: any) {
-         const err = new ErrorEventEndpoint(`Failed to start new chat: ${error?.message || ''}`, error?.code || 'AI_CORE_NEW_CHAT_FAILED');
+         const err = new ErrorEventEndpoint(`Failed to send message: ${error?.message || ''}`, error?.code || 'AI_CORE_NEW_CHAT_FAILED');
 
          global.aiCore.sendTo('/socket-server/message-error', { roomId: chatId, error: err });
          done?.(err);

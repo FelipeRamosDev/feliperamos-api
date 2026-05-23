@@ -21,15 +21,3 @@ global.aiCore = new AICore({
 
 // Declaring the AI Chats
 global.aiCore.setChatOptions(resume);
-
-// export const assistantChatCV = global.service;
-// export const assistantBuildCV = new AICore({
-//    id: 'assistant-build-cv',
-//    apiKey: OPENAI_API_KEY,
-//    onServiceReady: function () {
-//       console.log(`[${this.containerName}] AI service is ready!`);
-//    },
-//    onError: function (err) {
-//       console.error(`[${this.containerName}] AI service encountered an error:`, err);
-//    }
-// });
