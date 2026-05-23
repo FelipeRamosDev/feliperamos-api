@@ -1,8 +1,8 @@
 import { startChatMiddleware } from '../../../middlewares/startChat';
 import { NamespaceEvent } from '../../../../../services/SocketServer';
 
-const startChatEvent: NamespaceEvent = {
-   name: 'start-chat',
+const startBuildEvent: NamespaceEvent = {
+   name: 'start-build',
    middlewares: [
       startChatMiddleware
    ],
@@ -11,9 +11,9 @@ const startChatEvent: NamespaceEvent = {
          success: true,
          roomId: data.roomId,
          chatId: data.chatId,
-         message: 'Chat created and joined successfully.'
+         message: 'Build created and joined successfully.'
       });
    }
 };
 
-export default startChatEvent;
+export default startBuildEvent;

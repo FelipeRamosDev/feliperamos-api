@@ -58,10 +58,23 @@ export interface NamespaceMiddleware {
 }
 
 /**
+ * Namespace event middleware function.
+ * Runs before the event handler. Call `next()` to proceed, `next(err)` to short-circuit,
+ * or `next(null, enrichedData)` to forward data to subsequent middlewares and the handler.
+ */
+export type NamespaceEventMiddleware = (
+   this: SocketNamespace,
+   socket: Socket,
+   data: any,
+   next: (err?: Error | null, enrichedData?: any) => void
+) => void;
+
+/**
  * Namespace event interface
  */
 export interface NamespaceEvent {
    name: string;
+   middlewares?: NamespaceEventMiddleware[];
    handler: (this: SocketNamespace, socket: Socket, ...args: any[]) => void;
 }
 
