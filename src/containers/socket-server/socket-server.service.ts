@@ -3,7 +3,7 @@ import { ServerAPI, SocketServer } from '../../services';
 import messageChunkEvent from './events/message-chunk.event';
 import messageEndEvent from './events/message-end.event';
 import messageErrorEvent from './events/message-error.event';
-import { chatNS, opportunityNS } from './namespaces';
+import { chatNS, opportunityNS, coverLetterNS } from './namespaces';
 
 const {
    SSL_KEY_PATH,
@@ -33,7 +33,7 @@ const server = new ServerAPI({
 global.socket = new SocketServer({
    serverAPI: server,
    containerName: 'socket-server',
-   namespaces: [ chatNS, opportunityNS ],
+   namespaces: [ chatNS, opportunityNS, coverLetterNS ],
    endpoints: [ messageChunkEvent, messageEndEvent, messageErrorEvent ],
    onError: function (error) {
       console.error(`Socket HTTP Server encountered an error when constructing the SocketServer!`, error);
