@@ -18,6 +18,5 @@ global.aiCore = new AICore({
    ]
 });
 
-
 // Declaring the AI Chats
 global.aiCore.setChatOptions(resume);

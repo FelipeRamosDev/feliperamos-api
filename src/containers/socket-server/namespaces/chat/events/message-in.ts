@@ -12,7 +12,7 @@ const userMessageEvent: NamespaceEvent = {
          return;
       }
 
-      global.socket.sendTo('/ai-core/common/chat-message', { chatId: roomId, message, agentId, forwardEnd }, (response: any) => {
+      global.socket.sendTo('/ai-core/common/chat-message', { chatId: roomId, stream: true, message, agentId, forwardEnd }, (response: any) => {
          if (response.error) {
             console.error(`Error sending user message to AI core for room ${roomId}:`, response.error);
             callback?.(new ErrorSocketServer(`Failed to send user message to AI core.`, 'AI_CORE_MESSAGE_FAILED'));

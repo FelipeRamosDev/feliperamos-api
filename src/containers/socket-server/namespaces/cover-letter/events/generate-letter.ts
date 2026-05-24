@@ -6,7 +6,7 @@ import socketServer from '../../../socket-server.service';
 const generateLetter: NamespaceEvent = {
    name: 'generate-letter',
    async handler(socket, data = {}, callback) {
-      const { opportunityId, roomId, agentId } = data;
+      const { opportunityId, roomId, agentId, prompt, context } = data;
       const room = this.getRoom(roomId);
 
       if (!opportunityId) {
@@ -26,9 +26,17 @@ const generateLetter: NamespaceEvent = {
       }
 
       const chatId = roomId; 
-      const message = `Generate a cover letter for the following job opportunity`;
+      const message = prompt || `Generate a cover letter for the following job opportunity`;
 
-      socketServer.sendTo('/ai-core/common/chat-message', { chatId, message, agentId }, (response) => {
+      socketServer.sendTo('/ai-core/common/chat-message', {
+         chatId, message, agentId,
+         context: {
+            jobDescription: opportunity.job_description,
+            companyName: opportunity.company?.company_name,
+            jobTitle: opportunity.job_title,
+            ...context
+         }
+      }, (response) => {
          if (!response.success) {
             this.sendToClient(socket.id, 'letter:generate-letter:status', 'error');
             return callback(new ErrorSocketServer('Error generating cover letter', 'AI_GENERATE_LETTER_ERROR'));
@@ -38,8 +46,7 @@ const generateLetter: NamespaceEvent = {
             success: true,
             opportunity,
             messageId: response.messageId,
-            letterSubject: `Application for ${opportunity.job_title} position`,
-            letterBody: response.finalOutput
+            ...response.finalOutput
          });
 
          this.sendToClient(socket.id, 'letter:generate-letter:status', 'success');
