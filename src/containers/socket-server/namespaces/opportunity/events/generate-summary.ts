@@ -48,7 +48,7 @@ const generateSummaryEvent: NamespaceEvent = {
          }
 
          this.sendToRoom(room.id, 'opportunities:generate-summary:status', 'success');
-         callback({ summary: response.finalOutput });
+         callback(response.finalOutput);
       });
    }
 };

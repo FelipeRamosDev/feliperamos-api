@@ -109,7 +109,13 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
       this._agent = new Agent<TContext, AgentOutputType<TOutput>>({
          name,
          model,
-         instructions: this.instructions,
+         instructions: (runContext) => {
+            const ctx = runContext?.context;
+            const contextStr = ctx && Object.keys(ctx).length
+               ? `\n\n<context>\n${JSON.stringify(ctx, null, 2)}\n</context>`
+               : '';
+            return this.instructions + contextStr;
+         },
          handoffDescription,
          handoffOutputTypeWarningEnabled,
          handoffs,
