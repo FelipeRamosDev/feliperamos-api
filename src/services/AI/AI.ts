@@ -151,7 +151,7 @@ export default class AI extends Microservice {
          // Poll until complete
          let runStatus;
          do {
-            runStatus = await this.threads.runs.retrieve(thread.id, run.id);
+            runStatus = await this.threads.runs.retrieve(run.id, { thread_id: thread.id });
             await new Promise(res => setTimeout(res, 1000));
          } while (runStatus.status !== 'completed');
 

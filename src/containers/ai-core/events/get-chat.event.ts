@@ -1,6 +1,5 @@
 import { EventEndpoint } from '../../../services';
 import ErrorEventEndpoint from '../../../services/EventEndpoint/ErrorEventEndpoint';
-import aiService from '../../ai.service';
 
 export default new EventEndpoint({
    path: '/ai/get-chat',
@@ -8,7 +7,7 @@ export default new EventEndpoint({
       const { chatId } = data;
 
       try {
-         const chat = aiService.getChat(chatId);
+         const chat = aiCore.getChat(chatId);
    
          if (!chat) {
             return done(new ErrorEventEndpoint(`Chat with id "${chatId}" not found.`, 'AI_GET_CHAT_NOT_FOUND').toObject());

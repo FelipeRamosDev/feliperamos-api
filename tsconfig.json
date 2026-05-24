@@ -18,10 +18,8 @@
       "noImplicitThis": true,
       "strictNullChecks": true,
       "allowJs": true,
-      "ignoreDeprecations": "6.0",
-      "baseUrl": "./",
       "paths": {
-         "@/*": ["src/*"]
+         "@/*": ["./src/*"]
       }
    },
    "ts-node": {
@@ -30,8 +28,7 @@
       "transpileOnly": true,
       "files": true,
       "compilerOptions": {
-         "module": "Node16",
-         "ignoreDeprecations": "5.0"
+         "module": "Node16"
       }
    },
    "include": ["*.ts", "*.service.ts", "*.route.ts", "src/**/*.ts"],
