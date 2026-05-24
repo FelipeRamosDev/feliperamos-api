@@ -4,7 +4,6 @@ import AICore from './AICore';
 import ErrorAICore from './ErrorAICore';
 import AICoreHelpers from './AICoreHelpers';
 import { AIAgentSetup, AICoreChatOptions, AIModels } from './AICore.types';
-import { Chat } from '../../database/models/messages_schemas';
 import AIChatTurn from './models/AIChatTurn';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
@@ -21,7 +20,7 @@ export default class AICoreChat {
    private _instructionsFile?: string;
    private _instructionsPath?: string;
 
-   public id?: number;
+   public id?: string;
    public label?: string;
    public model: AIModels;
    public modelSettings?: ModelSettings;
@@ -35,7 +34,7 @@ export default class AICoreChat {
 
       const { id, label, model, modelSettings, instructions = '', instructionsFile, instructionsPath, history = [], agents = [] } = this._options || {};
 
-      this.id = id;
+      this.id = id || crypto.randomUUID();
       this.label = label;
       this.model = model || this._aiCore.model;
       this.modelSettings = modelSettings || this._aiCore.modelSettings;
@@ -52,51 +51,51 @@ export default class AICoreChat {
       this.setAgentBulk(agents);
    }
 
-   public get aiCore(): AICore {
+   get aiCore(): AICore {
       return this._aiCore;
    }
 
-   public get client(): OpenAI {
+   get client(): OpenAI {
       return this.aiCore?.client;
    }
 
-   public get history(): AIHistoryItem[] {
+   get history(): AIHistoryItem[] {
       return Array.from(this._history.values());
    }
 
-   public get agents(): AIAgent[] {
+   get agents(): AIAgent[] {
       return Array.from(this._agents.values());
    }
 
-   public get isInit(): boolean {
+   get isInit(): boolean {
       return Boolean(this._isInit);
    }
 
-   public get instructions(): string {
-      return [this._instructions, this._instructionsFile].filter(Boolean).join('\n---\n');
+   get instructions(): string {
+      return [this.aiCore?.instructions || '', this._instructions, this._instructionsFile].filter(Boolean).join('\n\n');
    }
 
-   public get instructionsFile(): string | undefined {
+   get instructionsFile(): string | undefined {
       return this._instructionsFile;
    }
 
-   public get instructionsPath(): string | undefined {
+   get instructionsPath(): string | undefined {
       return this._instructionsPath;
    }
 
-   public get setHistoryItem() {
+   get setHistoryItem() {
       return this._history.setItem.bind(this._history);
    }
 
-   public get setHistoryBulk() {
+   get setHistoryBulk() {
       return this._history.setBulk.bind(this._history);
    }
 
-   public get getHistoryItem() {
+   get getHistoryItem() {
       return this._history.getItem.bind(this._history);
    }
 
-   public toObject() {
+   toObject() {
       return {
          id: this.id,
          label: this.label,
@@ -106,34 +105,15 @@ export default class AICoreChat {
       };
    }
 
-   public async start() {
-      try {
-         const createdChat = await Chat.create({
-            label: this.label,
-            model: this.model,
-            instructions: this.instructions,
-         });
-
-         this.id = createdChat.id;
-
-         this._isInit = true;
-         this.aiCore.setChat(this);
-
-         return this;
-      } catch (error) {
-         throw new ErrorAICore(`Failed to initialize AICoreChat with id "${this.id}".`, 'AICORE_CHAT_INIT_ERROR');
-      }
-   }
-
-   public response(model: AIModels = this.model, systemPrompt?: string): AIChatTurn {
+   response(model: AIModels = this.model, systemPrompt?: string): AIChatTurn {
       return new AIChatTurn({ model, systemPrompt }, this);
    }
 
-   public getAgent(name: string): AIAgent | undefined {
+   getAgent(name: string): AIAgent | undefined {
       return this._agents.getAgent(name);
    }
 
-   public setAgent<TContext, TOutput>(agentSetup: AIAgentSetup<TContext, TOutput> | AIAgent<TContext>): AIAgent<TContext> {
+   setAgent<TContext, TOutput>(agentSetup: AIAgentSetup<TContext, TOutput> | AIAgent<TContext>): AIAgent<TContext> {
       const agent = agentSetup instanceof AIAgent
          ? agentSetup
          : new AIAgent<TContext, TOutput>(agentSetup, this);
@@ -143,7 +123,19 @@ export default class AICoreChat {
       return agent;
    }
 
-   public setAgentBulk<TContext, TOutput>(agents: (AIAgentSetup<TContext, TOutput> | AIAgent<TContext, TOutput>)[] = []): AIAgent<TContext, TOutput>[] {
+   setAgentBulk<TContext, TOutput>(agents: (AIAgentSetup<TContext, TOutput> | AIAgent<TContext, TOutput>)[] = []): AIAgent<TContext, TOutput>[] {
       return agents.map(agentSetup => this.setAgent<TContext, TOutput>(agentSetup));
+   }
+
+   close() {
+      this.aiCore.endChat(this.id!);
+   }
+
+   static buildChatOptions(options: AICoreChatOptions): AICoreChatOptions {
+      if (typeof options.label !== 'string') {
+         throw new ErrorAICore(`Chat options must include a valid label.`, 'AICORE_INVALID_CHAT_OPTIONS_LABEL');
+      }
+
+      return options;
    }
 }

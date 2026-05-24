@@ -1,13 +1,13 @@
 import { Agent, AgentOutputType, Handoff, InputGuardrail, MCPServer, ModelSettings, OutputGuardrail, RunContext, Tool, ToolUseBehavior } from '@openai/agents';
-import { AIAgentTurnSetup, AIAgentSetup, AIModels } from './AICore.types';
+import { AIAgentSetup, AIAgentTurnSetup, AIModels } from './AICore.types';
 import ErrorAICore from './ErrorAICore';
 import AIAgentTurn from './models/AIAgentTurn';
 import AIHistory from './models/AIHistory';
 import AIHistoryItem from './models/AIHistoryItem';
-import { defaultModel } from '../../app.config';
 import AICoreChat from './AICoreChat';
 import { ResponsePrompt } from 'openai/resources/responses/responses';
 import AICoreHelpers from './AICoreHelpers';
+import { defaultAIModel } from '../../settings';
 
 export default class AIAgent<TContext = any, TOutput = unknown> {
    private _aiChat?: AICoreChat;
@@ -39,7 +39,7 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
          apiKey,
          name,
          label = name,
-         model = defaultModel,
+         model = defaultAIModel,
          modelSettings,
          instructions = '',
          instructionsFile,
@@ -73,7 +73,6 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
       this.handoffs = handoffs;
       this.inputGuardrails = inputGuardrails;
       this.mcpServers = mcpServers;
-      this.modelSettings = modelSettings;
       this.outputGuardrails = outputGuardrails;
       this.outputType = outputType;
       this.resetToolChoice = resetToolChoice;
@@ -92,16 +91,37 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
          this._instructionsFile = AICoreHelpers.loadMarkdown(instructionsPath);
       }
 
+      const hasAnyTooling = Boolean(
+         (tools && tools.length > 0)
+         || (handoffs && handoffs.length > 0)
+         || (mcpServers && mcpServers.length > 0)
+      );
+
+      const effectiveModelSettings: ModelSettings = hasAnyTooling
+         ? (modelSettings || {})
+         : {
+            ...(modelSettings || {}),
+            parallelToolCalls: false,
+         };
+
+      this.modelSettings = effectiveModelSettings;
+
       this._agent = new Agent<TContext, AgentOutputType<TOutput>>({
          name,
          model,
-         instructions: this.instructions,
+         instructions: (runContext) => {
+            const ctx = runContext?.context;
+            const contextStr = ctx && Object.keys(ctx).length
+               ? `\n\n<context>\n${JSON.stringify(ctx, null, 2)}\n</context>`
+               : '';
+            return this.instructions + contextStr;
+         },
          handoffDescription,
          handoffOutputTypeWarningEnabled,
          handoffs,
          inputGuardrails,
          mcpServers,
-         modelSettings,
+         modelSettings: effectiveModelSettings,
          outputGuardrails,
          outputType,
          resetToolChoice,
@@ -119,7 +139,11 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
    }
 
    get history(): AIHistoryItem<TContext>[] {
-      return Array.from(this._history.values());
+      if (this.aiChat) {
+         return this.aiChat.history;
+      } else {
+         return Array.from(this._history.values());
+      }
    }
 
    get instructions() {
@@ -131,18 +155,30 @@ export default class AIAgent<TContext = any, TOutput = unknown> {
    }
 
    get setHistoryItem() {
-      return this._history.setItem.bind(this._history);
+      if (this.aiChat) {
+         return this.aiChat.setHistoryItem;
+      } else {
+         return this._history.setItem.bind(this._history);
+      }
    }
 
    get setHistoryBulk() {
-      return this._history.setBulk.bind(this._history);
+      if (this.aiChat) {
+         return this.aiChat.setHistoryBulk;
+      } else {
+         return this._history.setBulk.bind(this._history);
+      }
    }
 
    get getHistoryItem() {
-      return this._history.getItem.bind(this._history);
+      if (this.aiChat) {
+         return this.aiChat.getHistoryItem;
+      } else {
+         return this._history.getItem.bind(this._history);
+      }
    }
 
-   get asTool() {
+   get asTool(): typeof this._agent.asTool {
       return this._agent.asTool.bind(this._agent);
    }
 
