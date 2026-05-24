@@ -75,7 +75,7 @@ export default class AICoreInputCell<TContext = any> {
          this.content.push(fileContent);
          return this;
       } catch (error: any) {
-         throw new ErrorAICore(error.message || `Failed to read file data from path: ${filePath}.`, error.code || 'AICORE_INPUT_CELL_FILE_READ_ERROR');
+         throw new ErrorAICore(error?.message || `Failed to read file data from path: ${filePath}.`, error?.code || 'AICORE_INPUT_CELL_FILE_READ_ERROR');
       }
    }
 
@@ -103,7 +103,7 @@ export default class AICoreInputCell<TContext = any> {
 
             this.content.push(imageContent);
          } catch (error: any) {
-            throw new ErrorAICore(error.message || `Failed to read image file from path: ${imageUrl}.`, error.code || 'AICORE_INPUT_CELL_IMAGE_READ_ERROR');
+            throw new ErrorAICore(error?.message || `Failed to read image file from path: ${imageUrl}.`, error?.code || 'AICORE_INPUT_CELL_IMAGE_READ_ERROR');
          }
       }
    }

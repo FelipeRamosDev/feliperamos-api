@@ -1,4 +1,3 @@
-import { defaultLocale } from '@/app.config';
 import path from 'path';
 
 export function frontendURL(path: string, queryParams: Record<string, string | number | boolean> = {}): string {
