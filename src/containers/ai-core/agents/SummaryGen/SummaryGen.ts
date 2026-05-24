@@ -7,19 +7,14 @@ interface SummaryGenContext {
    jobCompany?: string;
 }
 
-interface SummaryGenOutput {
-   summary: string | '';
-   feedback: string | '';
-}
-
-export default new AIAgent<SummaryGenContext, SummaryGenOutput>({
+export default new AIAgent<SummaryGenContext, typeof outputSchema>({
    name: 'summary-gen',
    label: 'Summary Generator',
-   model: 'gpt-5-mini',
+   model: 'gpt-5.1',
    outputType: outputSchema,
    instructionsPath: 'src/containers/ai-core/agents/SummaryGen/SummaryGen.system.md',
    modelSettings: {
       parallelToolCalls: true,
-      reasoning: { effort: 'low' }
+      // reasoning: { effort: 'low' }
    }
 });
