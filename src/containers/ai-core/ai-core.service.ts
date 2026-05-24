@@ -2,6 +2,8 @@ import 'dotenv/config';
 import { AICore } from '../../services';
 import newChatEvent from './events/common/new-chat.event';
 import chatMessage from './events/common/chat-message.event';
+import assistantGenerateEvent from './events/assistant-generate.event';
+import getChatEvent from './events/get-chat.event';
 import { resume } from './chats';
 
 const { OPENAI_API_KEY } = process.env;
@@ -14,7 +16,9 @@ global.aiCore = new AICore({
    apiKey: OPENAI_API_KEY,
    endpoints: [
       newChatEvent,
-      chatMessage
+      chatMessage,
+      assistantGenerateEvent,
+      getChatEvent
    ]
 });
 

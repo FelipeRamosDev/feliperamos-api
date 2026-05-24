@@ -15,7 +15,7 @@ export default new EventEndpoint({
             message: 'New chat started successfully.'
          });
       } catch (error: any) {
-         done?.(new ErrorEventEndpoint(`Failed to start new chat: ${error.message}`, 'AI_CORE_NEW_CHAT_FAILED')); 
+         done?.(new ErrorEventEndpoint(`Failed to start new chat: ${error.message}`, 'AI_CORE_NEW_CHAT_FAILED').toObject()); 
       }
    }
 });

@@ -9,16 +9,16 @@ export default new EventEndpoint({
       try {
          const chat = aiCore.getChat(chatId);
          if (!chat) {
-            return done?.(new ErrorEventEndpoint(`Chat with ID ${chatId} not found.`, 'AI_CORE_CHAT_NOT_FOUND'));
+            return done?.(new ErrorEventEndpoint(`Chat with ID ${chatId} not found.`, 'AI_CORE_CHAT_NOT_FOUND').toObject());
          }
 
          if (!agentId) {
-            return done?.(new ErrorEventEndpoint(`Agent ID is required.`, 'AI_CORE_AGENT_ID_REQUIRED'));
+            return done?.(new ErrorEventEndpoint(`Agent ID is required.`, 'AI_CORE_AGENT_ID_REQUIRED').toObject());
          }
 
          const agent = chat.getAgent(agentId);
          if (!agent) {
-            return done?.(new ErrorEventEndpoint(`Agent '${agentId}' not found in chat ${chatId}.`, 'AI_CORE_AGENT_NOT_FOUND'));
+            return done?.(new ErrorEventEndpoint(`Agent '${agentId}' not found in chat ${chatId}.`, 'AI_CORE_AGENT_NOT_FOUND').toObject());
          }
 
          const messageId = `${chatId}_${agent.history.length}`;
@@ -39,13 +39,13 @@ export default new EventEndpoint({
          }
 
          if (!result) {
-            return done?.(new ErrorEventEndpoint(`No response from AI agent.`, 'AI_CORE_NO_RESPONSE'));
+            return done?.(new ErrorEventEndpoint(`No response from AI agent.`, 'AI_CORE_NO_RESPONSE').toObject());
          }
 
          global.aiCore.sendTo(forwardEnd || '/socket-server/message-end', { roomId: chatId, messageId, finalOutput: result.finalOutput });
          done?.({ success: true, messageId, roomId: chatId, finalOutput: result.finalOutput });
       } catch (error: any) {
-         const err = new ErrorEventEndpoint(`Failed to send message: ${error?.message || ''}`, error?.code || 'AI_CORE_NEW_CHAT_FAILED');
+         const err = new ErrorEventEndpoint(`Failed to send message: ${error?.message || ''}`, error?.code || 'AI_CORE_NEW_CHAT_FAILED').toObject();
 
          global.aiCore.sendTo('/socket-server/message-error', { roomId: chatId, error: err });
          done?.(err);

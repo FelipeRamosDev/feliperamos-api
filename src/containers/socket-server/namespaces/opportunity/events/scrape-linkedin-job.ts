@@ -11,7 +11,7 @@ const scrapeLinkedInJob: NamespaceEvent = {
       const existingRoom = this.getRoom(roomId);
 
       if (!existingRoom) {
-         this.sendToRoom(clientID, 'opportunities:scrape-linkedin-job:status', 'error');
+         this.sendToClient(clientID, 'opportunities:scrape-linkedin-job:status', 'error');
          return callback({ error: new ErrorSocketServer(`Room not found`, 'ROOM_NOT_FOUND') });
       }
 
